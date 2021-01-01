@@ -1,0 +1,59 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Hack Brooklyn Plaza",
+    "description": "The Hack Brooklyn Plaza backend API.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https"
+    }
+  ],
+  "paths": {
+    "/newsletter/subscribe": {
+      "post": {
+        "summary": "Subscribes a member to the Hack Brooklyn newsletter.",
+        "requestBody": {
+          "description": "Info about the user to subscribe.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": true,
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "firstName": "John",
+                "lastName": "Doe",
+                "email": "email@example.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The member has been subscribed."
+          },
+          "400": {
+            "description": "An invalid email address was provided or the member is already subscribed."
+          },
+          "500": {
+            "description": "The member could not be subscribed due to a server error."
+          }
+        }
+      }
+    }
+  }
+}
