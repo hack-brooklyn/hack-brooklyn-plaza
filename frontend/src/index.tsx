@@ -1,8 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import 'typeface-major-mono-display';
+import 'typeface-anonymous-pro';
+import 'normalize.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+export const API_BASE = 'http://localhost:8080/api';  // Temporary testing API
 
 ReactDOM.render(
   <React.StrictMode>
@@ -10,8 +14,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
