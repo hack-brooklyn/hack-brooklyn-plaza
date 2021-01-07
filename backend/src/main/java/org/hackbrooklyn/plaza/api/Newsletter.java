@@ -1,11 +1,10 @@
 package org.hackbrooklyn.plaza.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.hackbrooklyn.plaza.PlazaApplication;
+import org.hackbrooklyn.plaza.model.MailchimpMember;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -225,28 +224,4 @@ class MemberSubscriptionRequest {
     private String firstName;
     private String lastName;
     private String email;
-}
-
-/**
- * Represents the parts that we need from Mailchimp's "List Member" object from their API.
- */
-@Data
-@NoArgsConstructor
-@RequiredArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-class MailchimpMember {
-
-    @NonNull
-    @JsonProperty("email_address")
-    private String emailAddress;
-
-    @NonNull
-    private String status;
-
-    @NonNull
-    @JsonProperty("merge_fields")
-    private Map<String, String> mergeFields;
-
-    @NonNull
-    private String[] tags;
 }
