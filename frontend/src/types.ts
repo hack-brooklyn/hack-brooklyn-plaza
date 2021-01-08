@@ -1,7 +1,7 @@
 // List of countries and abbreviations
 // Adapted from https://github.com/samayo/country-json
 
-interface Country {
+export interface Country {
   country: string;
   abbreviation: string;
 }
