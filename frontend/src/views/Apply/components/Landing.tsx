@@ -3,6 +3,7 @@ import LinkButton from '../../../components/LinkButton';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import styled from 'styled-components/macro';
+import { MonoHeading } from 'commonStyles';
 import { API_BASE } from 'index';
 
 const Landing = (): JSX.Element => {
@@ -33,8 +34,8 @@ const Landing = (): JSX.Element => {
     ;
 
     return (
-      <StyledSection>
-        <WelcomeHeading>Welcome!</WelcomeHeading>
+      <ApplyContainer>
+        <MonoHeading>Welcome!</MonoHeading>
         <StyledParagraph>
         <span role="text">
           Hack Brooklyn is back again for another 24 hours of innovation on <strong>March 20,
@@ -73,20 +74,14 @@ const Landing = (): JSX.Element => {
             Sign Up
           </Button>
         </StyledForm>
-      </StyledSection>
+      </ApplyContainer>
     );
   }
 ;
 
-const StyledSection = styled.section`
+export const ApplyContainer = styled.section`
   max-width: 600px;
   margin: 0 auto;
-`;
-
-const WelcomeHeading = styled.h1`
-  font-family: 'Anonymous Pro', monospace;
-  font-weight: bold;
-  text-align: center;
 `;
 
 const StyledParagraph = styled.p<{
@@ -108,7 +103,7 @@ const StyledForm = styled(Form)`
   text-align: center;
 
   label {
-    font -size: 1.25rem;
+    font-size: 1.25rem;
   }
 
   input {
