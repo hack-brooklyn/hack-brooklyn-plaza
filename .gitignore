@@ -325,3 +325,6 @@ build/
 
 ## Backend
 target/
+
+## Other
+*.env
