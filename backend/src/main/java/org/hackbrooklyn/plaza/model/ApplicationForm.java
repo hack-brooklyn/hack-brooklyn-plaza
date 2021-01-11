@@ -30,7 +30,6 @@ public class ApplicationForm {
     private int applicationNumber;
 
     @Column(name = "user_id")
-    @Type(type="pg-uuid")
     @NotNull
     @JsonIgnore
     private UUID userId;
