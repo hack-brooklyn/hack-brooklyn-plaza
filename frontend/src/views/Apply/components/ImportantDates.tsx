@@ -6,7 +6,7 @@ import GeneralAppDate from 'assets/apply/general-apps.svg';
 import ApplicationDeadlineDate from 'assets/apply/application-deadline.svg';
 import AcceptanceReleaseDate from 'assets/apply/acceptances-release.svg';
 
-const ImportantDates = () => {
+const ImportantDates = (): JSX.Element => {
   return (
     <StyledSection>
       <StyledHeading>Important Dates</StyledHeading>

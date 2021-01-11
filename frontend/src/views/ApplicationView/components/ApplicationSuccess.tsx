@@ -2,7 +2,7 @@ import React from 'react';
 import checkmark from 'assets/checkmark.svg';
 import styled from 'styled-components/macro';
 
-const ApplicationSuccess = () => {
+const ApplicationSuccess = (): JSX.Element => {
   return (
     <article>
       <ImageAndHeading>
