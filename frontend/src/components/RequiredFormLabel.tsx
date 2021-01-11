@@ -5,7 +5,7 @@ export interface RequiredFormLabelProps {
   children: React.ReactNode;
 }
 
-const RequiredFormLabel = (props: RequiredFormLabelProps) => {
+const RequiredFormLabel = (props: RequiredFormLabelProps): JSX.Element => {
   const { children } = props;
 
   return (

@@ -8,7 +8,7 @@ interface LinkButtonProps {
   children?: React.ReactNode;
 }
 
-const LinkButton = (props: LinkButtonProps) => {
+const LinkButton = (props: LinkButtonProps): JSX.Element => {
   const { to, children, size } = props;
 
   return (

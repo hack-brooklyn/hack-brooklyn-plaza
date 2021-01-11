@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
 
-const RequiredAsterisk = () => {
+const RequiredAsterisk = (): JSX.Element => {
   return (
     <RedAsteriskStyle>*</RedAsteriskStyle>
   );

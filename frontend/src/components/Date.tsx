@@ -7,7 +7,7 @@ interface DateProps {
   children?: React.ReactNode;
 }
 
-const Date = (props: DateProps) => {
+const Date = (props: DateProps): JSX.Element => {
   const { src, alt, children } = props;
 
   return (
