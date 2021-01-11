@@ -48,6 +48,6 @@ const ShortResponseQuestion = (props: ShortResponseQuestionProps) => {
 
 const QuestionContainer = styled.div`
   margin-bottom: 1rem;
-`
+`;
 
 export default PartFour;
