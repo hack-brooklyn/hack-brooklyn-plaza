@@ -7,6 +7,8 @@ import { MonoHeading } from 'commonStyles';
 import { API_BASE } from 'index';
 
 const Landing = (): JSX.Element => {
+    const [firstName, setFirstName] = useState<string>('');
+    const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
 
     const handleSubmit = (event: Event) => {
@@ -17,7 +19,11 @@ const Landing = (): JSX.Element => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email: email })
+            body: JSON.stringify({
+              firstName: firstName,
+              lastName: lastName,
+              email: email
+            })
           }
         )
           .then(res => {
@@ -59,20 +65,42 @@ const Landing = (): JSX.Element => {
         </ApplyTextAndButton>
 
         <StyledParagraph>
-          Not a priority applicant? No problem! Enter your email below to join our mailing list and we’ll send you an
+          Not a priority applicant? No problem! Enter your info below to join our mailing list and we’ll send you an
           email when applications go live to the public. <strong>You’ll also receive priority consideration for the
           general application!</strong>
         </StyledParagraph>
 
         <StyledForm onSubmit={handleSubmit}>
+          <NameFormContainer>
+            <Form.Group controlId="newsletterFirstName">
+              <Form.Label>First Name</Form.Label>
+              <Form.Control type="text"
+                            value={firstName}
+                            onChange={(event) => setFirstName(event.target.value)}
+                            required
+              />
+            </Form.Group>
+            <Form.Group controlId="newsletterLastName">
+              <Form.Label>Last Name</Form.Label>
+              <Form.Control type="text"
+                            value={lastName}
+                            onChange={(event) => setLastName(event.target.value)}
+                            required
+              />
+            </Form.Group>
+          </NameFormContainer>
+
           <Form.Group controlId="newsletterEmail">
             <Form.Label>Email Address</Form.Label>
-            <Form.Control type="email" value={email} onChange={(event) => setEmail(event.target.value)}
-                          placeholder="email@example.com" required />
+            <Form.Control type="email"
+                          value={email}
+                          onChange={(event) => setEmail(event.target.value)}
+                          required
+            />
           </Form.Group>
-          <Button type="submit" variant="info">
+          <StyledSubmitButton type="submit" variant="info">
             Sign Up
-          </Button>
+          </StyledSubmitButton>
         </StyledForm>
       </ApplyContainer>
     );
@@ -100,16 +128,29 @@ const ButtonContainer = styled.div`
 `;
 
 const StyledForm = styled(Form)`
-  text-align: center;
+  margin: 0 auto;
+  width: 80%;
 
   label {
     font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
   }
+`;
 
-  input {
-    margin: 0 auto;
-    width: 65%;
+const NameFormContainer = styled.div`
+  margin-bottom: 1rem;
+
+  @media screen and (min-width: 992px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 1.5rem;
   }
+`;
+
+const StyledSubmitButton = styled(Button)`
+  display: block;
+  margin: 1.25rem auto 0;
 `;
 
 export default Landing;

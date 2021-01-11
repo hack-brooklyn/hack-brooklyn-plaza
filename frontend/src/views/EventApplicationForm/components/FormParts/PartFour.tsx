@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledFieldset, StyledTitleLegend } from 'views/ApplicationView/styles';
+import { StyledFieldset, StyledTitleLegend } from 'views/EventApplicationForm/styles';
 import { FastField } from 'formik';
 import { StyledFormLabel } from 'commonStyles';
 import styled from 'styled-components/macro';

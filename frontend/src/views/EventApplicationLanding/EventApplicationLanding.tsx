@@ -2,7 +2,7 @@ import React from 'react';
 import Landing from './components/Landing';
 import ImportantDates from './components/ImportantDates';
 
-const Apply = (): JSX.Element => {
+const EventApplicationLanding = (): JSX.Element => {
   return (
     <>
       <Landing />
@@ -11,4 +11,4 @@ const Apply = (): JSX.Element => {
   );
 };
 
-export default Apply;
+export default EventApplicationLanding;

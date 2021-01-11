@@ -4,10 +4,10 @@ import { FastField, Field } from 'formik';
 import Form from 'react-bootstrap/Form';
 import RequiredFormLabel from 'components/RequiredFormLabel';
 import { Option } from 'types';
-import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/ApplicationView/styles';
+import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/EventApplicationForm/styles';
 import { StyledFormLabel, StyledFormLabelLegend } from 'commonStyles';
-import { FormPartProps } from 'views/ApplicationView/components/ApplicationForm';
-import { ethnicityOptions, genderOptions, pronounOptions, shirtSizeOptions } from 'views/ApplicationView/formOptions';
+import { FormPartProps } from 'views/EventApplicationForm/components/ApplicationForm';
+import { ethnicityOptions, genderOptions, pronounOptions, shirtSizeOptions } from 'views/EventApplicationForm/formOptions';
 
 interface PartOneProps extends FormPartProps {
   countryOptions: Option[] | undefined;

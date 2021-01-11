@@ -2,11 +2,11 @@ import React from 'react';
 import Select from 'react-select/creatable';
 import Form from 'react-bootstrap/Form';
 import RequiredFormLabel from 'components/RequiredFormLabel';
-import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/ApplicationView/styles';
+import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/EventApplicationForm/styles';
 import { FastField } from 'formik';
 import { StyledFormLabel } from 'commonStyles';
-import { FormPartProps } from 'views/ApplicationView/components/ApplicationForm';
-import { levelsOfStudyOptions } from 'views/ApplicationView/formOptions';
+import { FormPartProps } from 'views/EventApplicationForm/components/ApplicationForm';
+import { levelsOfStudyOptions } from 'views/EventApplicationForm/formOptions';
 
 const PartTwo = (props: FormPartProps): JSX.Element => {
   const { formik } = props;

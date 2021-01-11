@@ -1,6 +1,6 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
-import { StyledFieldset } from 'views/ApplicationView/styles';
+import { StyledFieldset } from 'views/EventApplicationForm/styles';
 import { FastField } from 'formik';
 import RequiredAsterisk from 'components/RequiredAsterisk';
 

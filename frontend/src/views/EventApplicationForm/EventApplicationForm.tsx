@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import { MonoHeading } from 'commonStyles';
-import ApplicationForm from 'views/ApplicationView/components/ApplicationForm';
-import ApplicationSuccess from 'views/ApplicationView/components/ApplicationSuccess';
+import ApplicationForm from 'views/EventApplicationForm/components/ApplicationForm';
+import ApplicationSuccess from 'views/EventApplicationForm/components/ApplicationSuccess';
 
-const ApplicationView = (): JSX.Element => {
+const EventApplicationForm = (): JSX.Element => {
   const [applicationSubmitted, setApplicationSubmitted] = useState<boolean>(false);
 
   return (
@@ -31,4 +31,4 @@ const ApplicationContainer = styled.div`
   margin: 0 auto;
 `;
 
-export default ApplicationView;
+export default EventApplicationForm;
