@@ -1,6 +1,5 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form';
-import styled from 'styled-components/macro';
+import { StyledFormLabel } from 'commonStyles';
 
 export interface RequiredFormLabelProps {
   children: React.ReactNode;
@@ -16,10 +15,5 @@ const RequiredFormLabel = (props: RequiredFormLabelProps) => {
     </StyledFormLabel>
   );
 };
-
-export const StyledFormLabel = styled(Form.Label)`
-  font-size: 1.25rem;
-  font-weight: bold;
-`;
 
 export default RequiredFormLabel;
