@@ -1,0 +1,16 @@
+[[headers]]
+for = "/static/media/*.woff2"
+[headers.values]
+cache-control = '''
+    public,
+	max-age=86400,
+	immutable'''
+
+[[redirects]]
+from = "/*"
+to = "/"
+status = 200
+
+[build]
+command = "npm run build"
+publish = "build"
