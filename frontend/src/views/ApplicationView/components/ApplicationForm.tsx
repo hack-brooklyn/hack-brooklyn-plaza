@@ -123,7 +123,7 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
   </Formik>;
 };
 
-const displaySubmissionError = (err: any) => {
+const displaySubmissionError = (err: Error) => {
   alert('There was an error submitting your application! Please try again.');
   console.error(err);
 };
