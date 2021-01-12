@@ -24,8 +24,8 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-@RequestMapping(path = "/newsletter")
-public class Newsletter {
+@RequestMapping("/newsletter")
+public class NewsletterController {
 
     // Mailchimp params
     @Value("${MAILCHIMP_API_KEY}")
@@ -47,7 +47,7 @@ public class Newsletter {
     static final Logger logger = LoggerFactory.getLogger(PlazaApplication.class);
     private final RestTemplate restTemplate;
 
-    public Newsletter(RestTemplate restTemplate) {
+    public NewsletterController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
@@ -62,10 +62,9 @@ public class Newsletter {
      * Subscribes a member to the Hack Brooklyn newsletter on Mailchimp.
      *
      * @param request The request body.
-     * @return The response.
      */
     @PostMapping(path = "subscribe")
-    public ResponseEntity subscribeUser(@RequestBody MemberSubscriptionRequest request) {
+    public ResponseEntity<Void> subscribeUser(@RequestBody MemberSubscriptionRequest request) {
         final String firstName = request.getFirstName();
         final String lastName = request.getLastName();
         final String email = request.getEmail();
@@ -74,7 +73,7 @@ public class Newsletter {
         // Validate email address before starting
         if (!EmailValidator.getInstance().isValid(email)) {
             logger.error("Invalid email address detected!");
-            return ResponseEntity.badRequest().body("Invalid email address");
+            return ResponseEntity.badRequest().build();
         }
 
         // Before subscribing the member, we need to check if the member is already subscribed.
@@ -90,7 +89,7 @@ public class Newsletter {
             emailHash = Hex.encodeHexString(md5);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body("Error subscribing member");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         // Now, we can proceed to do the check
@@ -117,28 +116,31 @@ public class Newsletter {
                     memberInfoRequestBody,
                     MailchimpMember.class);
 
-            // 200 OK response
+            // Handle 200 OK
+            // If we get a 200 OK response, the member is already subscribed
             if (memberInfoResponse.getStatusCode() == HttpStatus.OK) {
                 // Check if the member is already subscribed
                 MailchimpMember member = memberInfoResponse.getBody();
                 assert member != null;  // Not null since we checked for 200 OK
                 if (member.getStatus().equals("subscribed")) {
                     logger.info("The member is already subscribed!");
-                    return ResponseEntity.badRequest().body("User already subscribed");
+                    return ResponseEntity.status(HttpStatus.CONFLICT).build();
                 }
             }
             // Else, the member is unsubscribed and wants to resubscribe.
             subscriptionAction = SubscriptionActions.RESUBSCRIBE;
         } catch (HttpClientErrorException e) {
-            // HttpClientErrorException should not throw with 200 OK
-            // If there's another error, something might have gone wrong
-            // 404 Not Found response
+            // Handle other errors
+            // It's fine to get a 404 Not Found response here, it just means that the member isn't subscribed
+            // If we get another error, something might have gone wrong
+
             if (e.getStatusCode() != HttpStatus.NOT_FOUND) {
+                // Handle errors other than 404 Not Found
                 e.printStackTrace();
-                return ResponseEntity.status(500).body("Error subscribing member");
+                return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
             }
 
-            // Else, the member isn't subscribed and wants to subscribe for the first time.
+            // Else, we have a 404 error. The member isn't subscribed and wants to subscribe for the first time.
             subscriptionAction = SubscriptionActions.SUBSCRIBE_NEW;
         }
 
@@ -180,7 +182,7 @@ public class Newsletter {
                     logger.info("New member successfully subscribed!");
                     return ResponseEntity.ok().build();
                 } else {
-                    return ResponseEntity.status(500).body("Error subscribing member");
+                    return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
                 }
             case RESUBSCRIBE:
                 // Resubscribe the member
@@ -190,10 +192,10 @@ public class Newsletter {
                     return ResponseEntity.ok().build();
                 } catch (HttpClientErrorException e) {
                     e.printStackTrace();
-                    return ResponseEntity.status(500).body("Error resubscribing member");
+                    return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
                 }
             default:
-                return ResponseEntity.status(500).body("Error subscribing member");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -209,19 +211,20 @@ public class Newsletter {
 
         return headers;
     }
-}
 
-enum SubscriptionActions {
-    SUBSCRIBE_NEW,
-    RESUBSCRIBE
-}
+    private enum SubscriptionActions {
+        SUBSCRIBE_NEW,
+        RESUBSCRIBE
+    }
 
-/**
- * The subscription newsletter's request body.
- */
-@Getter
-class MemberSubscriptionRequest {
-    private String firstName;
-    private String lastName;
-    private String email;
+    /**
+     * The newsletter subscription's request body.
+     */
+    @RequiredArgsConstructor
+    @Getter
+    private static class MemberSubscriptionRequest {
+        private final String firstName;
+        private final String lastName;
+        private final String email;
+    }
 }
