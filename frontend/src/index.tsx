@@ -12,7 +12,7 @@ import 'typeface-anonymous-pro';
 import 'normalize.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export const API_ROOT = 'https://api.hackbrooklyn.org';  // Temporary testing API
+export const API_ROOT = 'https://api.hackbrooklyn.org';
 
 ReactDOM.render(
   <React.StrictMode>
