@@ -31,6 +31,7 @@ const Description = styled.p`
   margin-top: 1rem;
   font-weight: bold;
   font-size: 1.5rem;
+  text-align: center;
 `;
 
 export default Date;

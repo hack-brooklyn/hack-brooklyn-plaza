@@ -1,18 +1,18 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from 'views/Home/Home';
-import EventApplicationLanding from 'views/EventApplicationLanding/EventApplicationLanding';
-import EventApplicationForm from 'views/EventApplicationForm/EventApplicationForm';
+import ApplicationLanding from 'views/ApplicationLanding/ApplicationLanding';
+import ApplicationPage from 'views/ApplicationPage/ApplicationPage';
 
 const Routes = (): JSX.Element => {
   return (
     <Switch>
-      <Route path="/apply/priority">
-        <EventApplicationForm />
+      <Route path="/apply/form">
+        <ApplicationPage />
       </Route>
 
       <Route path="/apply">
-        <EventApplicationLanding />
+        <ApplicationLanding />
       </Route>
 
       <Route path="/" exact>

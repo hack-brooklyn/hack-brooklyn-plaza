@@ -10,6 +10,7 @@ export interface ApplicationFormValues {
   firstName: string;
   lastName: string;
   email: string;
+  priorityApplicantEmail?: string;
   country: string;
   gender?: string;
   pronouns?: string;

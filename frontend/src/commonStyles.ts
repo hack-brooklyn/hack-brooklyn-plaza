@@ -7,7 +7,6 @@ export const MonoHeading = styled.h1`
   text-align: center;
 `;
 
-// Form Field Label
 export const FormLabelStyles = css`
   font-size: 1.25rem;
   font-weight: bold;
