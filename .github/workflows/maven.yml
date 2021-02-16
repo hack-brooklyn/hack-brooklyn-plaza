@@ -21,12 +21,5 @@ jobs:
         with:
           java-version: 1.8
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
-        env:
-          MAILCHIMP_API_KEY: fakekey
-          MAILCHIMP_SERVER: fakeserver
-          MAILCHIMP_LIST_ID: fakelistid
-          GENERAL_APPLICATION_DEADLINE: 2021-01-01T00:00:00-00:00
-          AWS_S3_BUCKET: hack-brooklyn-plaza-test
-
+        run: mvn -B package --file pom.xml -Dmaven.test.skip=true
         working-directory: backend
