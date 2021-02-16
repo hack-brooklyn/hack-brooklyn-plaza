@@ -1,8 +1,9 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form';
-import { StyledFieldset } from 'views/EventApplicationForm/styles';
 import { FastField } from 'formik';
+import Form from 'react-bootstrap/Form';
+
 import RequiredAsterisk from 'components/RequiredAsterisk';
+import { StyledFieldset } from 'views/ApplicationPage/styles';
 
 const Agreements = (): JSX.Element => {
   return (
@@ -32,7 +33,7 @@ const Agreements = (): JSX.Element => {
 
 const TermsAndConditions = () => {
   return (
-    <a href="http://www.google.com">
+    <a href="https://hackbrooklyn.org/files/termsandconditions.pdf" target="_blank" rel="noopener noreferrer">
       Terms and Conditions
     </a>
   );
@@ -40,7 +41,7 @@ const TermsAndConditions = () => {
 
 const CodeOfConduct = () => {
   return (
-    <a href="http://www.google.com">
+    <a href="https://hackbrooklyn.org/files/codeofconduct.pdf" target="_blank" rel="noopener noreferrer">
       Code of Conduct
     </a>
   );

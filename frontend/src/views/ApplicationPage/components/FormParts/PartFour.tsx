@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyledFieldset, StyledTitleLegend } from 'views/EventApplicationForm/styles';
+import { StyledFieldset, StyledTitleLegend } from 'views/ApplicationPage/styles';
 import { FastField } from 'formik';
 import { StyledFormLabel } from 'commonStyles';
 import styled from 'styled-components/macro';
@@ -7,7 +7,7 @@ import styled from 'styled-components/macro';
 const PartFour = (): JSX.Element => {
   return (
     <StyledFieldset>
-      <StyledTitleLegend>Part 4: Short Response</StyledTitleLegend>
+      <StyledTitleLegend>Part 4: Short Response (Optional)</StyledTitleLegend>
       <ShortResponseQuestion
         name="shortResponseOne"
         question="What do you hope to gain by coming to Hack Brooklyn?"

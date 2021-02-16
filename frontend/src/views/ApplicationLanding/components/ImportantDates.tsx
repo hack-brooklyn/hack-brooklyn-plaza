@@ -11,17 +11,17 @@ const ImportantDates = (): JSX.Element => {
     <StyledSection>
       <StyledHeading>Important Dates</StyledHeading>
       <DateGrid>
-        <Date src={PriorityAppDate} alt="January 4, 2021">
+        <Date src={PriorityAppDate} alt="February 19, 2021">
           Priority Applications Open
         </Date>
-        <Date src={GeneralAppDate} alt="January 11, 2021">
-          General Applications Open
+        <Date src={GeneralAppDate} alt="March 5, 2021">
+          General Applications Open (Tentative)
         </Date>
-        <Date src={ApplicationDeadlineDate} alt="February 22, 2021">
-          Last Day to Apply
-        </Date>
-        <Date src={AcceptanceReleaseDate} alt="March 1, 2021">
+        <Date src={AcceptanceReleaseDate} alt="March 29, 2021">
           Acceptances Begin Releasing
+        </Date>
+        <Date src={ApplicationDeadlineDate} alt="April 16, 2021">
+          Last Day to Apply
         </Date>
       </DateGrid>
     </StyledSection>

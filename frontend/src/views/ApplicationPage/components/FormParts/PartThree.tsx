@@ -1,9 +1,10 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
-import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/EventApplicationForm/styles';
+import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/ApplicationPage/styles';
 import { FastField } from 'formik';
 import { StyledFormLabel } from 'commonStyles';
-import { FormPartProps } from 'views/EventApplicationForm/components/ApplicationForm';
+import { FormPartProps } from 'views/ApplicationPage/components/ApplicationForm';
+import styled from 'styled-components/macro';
 
 const PartThree = (props: FormPartProps): JSX.Element => {
   const { formik } = props;
@@ -11,6 +12,8 @@ const PartThree = (props: FormPartProps): JSX.Element => {
   return (
     <StyledFieldset>
       <StyledTitleLegend>Part 3: Professional Info</StyledTitleLegend>
+      <Note>Note: Your URLs should begin with <strong>http://</strong> or <strong>https://</strong>.</Note>
+
       <ApplicationFormFields>
         <Form.Group controlId="applicationGitHubUrl">
           <StyledFormLabel>GitHub URL</StyledFormLabel>
@@ -61,5 +64,9 @@ const PartThree = (props: FormPartProps): JSX.Element => {
     </StyledFieldset>
   );
 };
+
+const Note = styled.p`
+  text-align: center
+`;
 
 export default PartThree;

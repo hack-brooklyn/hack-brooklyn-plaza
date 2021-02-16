@@ -1,6 +1,7 @@
 import React from 'react';
-import checkmark from 'assets/checkmark.svg';
 import styled from 'styled-components/macro';
+
+import checkmark from 'assets/checkmark.svg';
 
 const ApplicationSuccess = (): JSX.Element => {
   return (
