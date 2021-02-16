@@ -26,10 +26,10 @@ const App = (): JSX.Element => {
 };
 
 const StyledMain = styled.main`
-  margin: 2rem 1rem;
+  margin: 6rem 1rem;
 
   @media screen and (min-width: 992px) {
-    margin: 2rem auto;
+    margin: 6rem auto;
   }
 `;
 

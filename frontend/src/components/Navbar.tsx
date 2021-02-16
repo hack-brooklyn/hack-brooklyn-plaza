@@ -25,6 +25,12 @@ const StyledNavbar = styled.nav`
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
+
+  position: fixed;
+  background-color: white;
+  top: 0;
+  width: 100%;
+  z-index: 100;
 `;
 
 const NavbarContent = styled.div`
