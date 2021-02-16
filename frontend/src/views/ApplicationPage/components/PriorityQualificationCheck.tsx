@@ -6,6 +6,8 @@ import { toast } from 'react-toastify';
 import styled from 'styled-components/macro';
 import { API_ROOT } from 'index';
 import { Alert } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import startCase from 'lodash.startcase';
 
 interface PriorityQualificationCheckProps {
   isPriorityApplicant: boolean;
@@ -27,9 +29,9 @@ const PriorityQualificationCheck = (props: PriorityQualificationCheckProps): JSX
       email: email
     };
 
-    let resData;
+    let res;
     try {
-      const res = await fetch(`${API_ROOT}/apply/checkPriorityEligibility`,
+      res = await fetch(`${API_ROOT}/apply/checkPriorityEligibility`,
         {
           method: 'POST',
           headers: {
@@ -38,17 +40,39 @@ const PriorityQualificationCheck = (props: PriorityQualificationCheckProps): JSX
           body: JSON.stringify(checkPriorityEligibilityBody)
         }
       );
-      resData = await res.json();
     } catch (err) {
       toast.error('An error occurred while trying to verify your eligibility. Please try again.');
       setSubmitting(false);
       return;
     }
 
-    if (resData.eligible) {
+    const data = await res.json();
+
+    if (res.status === 400) {
+      setSubmitting(false);
+
+      toast.error('Some of your submitted data doesn\'t look right. Please correct the following errors and try again.', {
+        autoClose: 15000
+      });
+      for (const [field, errorMessage] of Object.entries(data.errors)) {
+        toast.error(`${startCase(field)} ${errorMessage}.`, {
+          autoClose: 15000
+        });
+      }
+
+      return;
+    }
+
+    if (data.eligible) {
+      // Change view to the form
       setIsPriorityApplicant(true);
       setPriorityApplicantEmail(email);
       toast.success('Congratulations! You are eligible to apply as a priority applicant. Finish filling out the form before general applications open to receive priority consideration for Hack Brooklyn!');
+    } else {
+      // Scroll down to the alert box
+      setTimeout(() => {
+        scrollBy(0, window.innerHeight);
+      }, 100);
     }
 
     setEligibilityChecked(true);
@@ -87,12 +111,19 @@ const PriorityQualificationCheck = (props: PriorityQualificationCheckProps): JSX
             required />
         </Form.Group>
 
-        <StyledSubmitButton type="submit" size="lg" disabled={submitting}>Check Eligibility</StyledSubmitButton>
+        <StyledSubmitButton type="submit" size="lg" disabled={submitting}>
+          {submitting ? 'Checking...' : 'Check Eligibility'}
+        </StyledSubmitButton>
       </form>
 
       {eligibilityChecked && !submitting && !isPriorityApplicant && (
         <Alert variant="warning">
-          Unfortunately, the email you provided is not eligible for priority consideration at this time.
+          <p>
+            Unfortunately, the email you entered is not eligible for priority consideration at this time. However, you
+            can still register your interest to receive priority consideration for the general application!
+          </p>
+
+          <Link to="/apply">Click here to visit the interest form and register your interest.</Link>
         </Alert>
       )}
     </div>
