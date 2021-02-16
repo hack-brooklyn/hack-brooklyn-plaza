@@ -39,13 +39,15 @@ const StyledHeading = styled.h2`
 `;
 
 const DateGrid = styled.div`
-  max-width: 800px;
-  width: 100%;
-  margin: 0 auto;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-  grid-row-gap: 2rem;
+  @media screen and (min-width: 576px) {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-row-gap: 2rem;
+  }
 `;
 
 export default ImportantDates;
