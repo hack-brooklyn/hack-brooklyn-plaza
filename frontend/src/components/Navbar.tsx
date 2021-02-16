@@ -13,7 +13,6 @@ const Navbar = (): JSX.Element => {
           <span className="logo-text">plaza</span>
         </Logo>
         <NavLinks>
-          <Link to="/login">Log In</Link>
           <LinkButton to="/apply">Apply Now</LinkButton>
         </NavLinks>
       </NavbarContent>
@@ -32,6 +31,7 @@ const NavbarContent = styled.div`
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
+  padding: 0 1rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -42,6 +42,8 @@ const Logo = styled(Link)`
   display: flex;
   flex-direction: row;
   align-items: center;
+  text-decoration: none;
+  font-weight: bold;
 
   .logo-img {
     height: 3rem;
@@ -55,10 +57,33 @@ const Logo = styled(Link)`
 `;
 
 const NavLinks = styled.div`
-  font-family: 'Anonymous Pro', monospace;
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  a {
+    text-decoration: none;
+  }
+
+  a.btn-primary.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+
+    &:hover {
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+
+    &:active {
+      background-color: #0a58ca;
+      border-color: #0a53be;
+    }
+
+    &:focus {
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+  }
 
   *:not(:first-child) {
     margin-left: 1.5rem;
