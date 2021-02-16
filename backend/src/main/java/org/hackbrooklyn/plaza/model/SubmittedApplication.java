@@ -2,25 +2,24 @@ package org.hackbrooklyn.plaza.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
+/**
+ * Represents a submitted application for the hackathon.
+ */
 @Entity
 @Data
 @Table(name = "applications")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ApplicationForm {
+public class SubmittedApplication {
 
     // Internal data
     @Id
@@ -29,11 +28,6 @@ public class ApplicationForm {
     @JsonIgnore
     private int applicationNumber;
 
-    @Column(name = "user_id")
-    @NotNull
-    @JsonIgnore
-    private UUID userId;
-
     @Column(name = "application_timestamp")
     @CreationTimestamp
     @JsonIgnore
@@ -41,15 +35,16 @@ public class ApplicationForm {
 
     // Part 1
     @Column(name = "first_name")
-    @NotEmpty
+    @NotBlank
     private String firstName;
 
     @Column(name = "last_name")
-    @NotEmpty
+    @NotBlank
     private String lastName;
 
     @Column(name = "email")
-    @NotEmpty
+    @NotBlank
+    @Email
     private String email;
 
     @Column(name = "country")
@@ -72,15 +67,16 @@ public class ApplicationForm {
     private boolean isFirstHackathon;
 
     @Column(name = "number_hackathons_attended")
+    @Min(0)
     private int numberHackathonsAttended;
 
     // Part 2
     @Column(name = "school")
-    @NotEmpty
+    @NotBlank
     private String school;
 
     @Column(name = "level_of_study")
-    @NotEmpty
+    @NotBlank
     private String levelOfStudy;
 
     @Column(name = "graduation_year")
@@ -93,33 +89,25 @@ public class ApplicationForm {
 
     // Part 3
     @Column(name = "github_url")
+    @URL(message = "must be a valid URL starting with http:// or https://")
     private String githubUrl;
 
     @Column(name = "linkedin_url")
+    @URL(message = "must be a valid URL starting with http:// or https://")
     private String linkedinUrl;
 
     @Column(name = "website_url")
+    @URL(message = "must be a valid URL starting with http:// or https://")
     private String websiteUrl;
 
-    // Resume data used depends on the current context
-    // Uploaded resume file for the application form only
+    // Uploaded resume file is for the application form only
     // The resume file itself is not saved in the database
     @Transient
-    @JsonInclude
     private MultipartFile resumeFile;
-
-    // Resume data on AWS S3
-    @Column(name = "resume_file_name_s3")
-    @JsonIgnore
-    private String resumeFileNameS3;
 
     @Column(name = "resume_key_s3")
     @JsonIgnore
     private String resumeKeyS3;
-
-    @Column(name = "resume_url_s3")
-    @JsonIgnore
-    private String resumeUrlS3;
 
     // Part 4
     @Column(name = "short_response_one")
@@ -132,11 +120,37 @@ public class ApplicationForm {
     private String shortResponseThree;
 
     // Agreements
-    @Column(name = "accept_toc_and_coc")
+    // We don't store whether or not the user accepted the terms/code of conduct since they would have to
+    // accept it to submit the application in the first place.
+    @Transient
     @NotNull
     @AssertTrue
     private boolean acceptTocAndCoc;
 
     @Column(name = "share_resume_with_sponsors")
     private boolean shareResumeWithSponsors;
+
+    @Column(name = "priority_applicant")
+    @NotNull
+    @JsonIgnore
+    private boolean priorityApplicant;
+
+    @Column(name = "priority_applicant_email")
+    @Email
+    private String priorityApplicantEmail;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "previous_application_id", referencedColumnName = "id")
+    @JsonIgnore
+    private PreviousSubmittedApplication previousApplication;
+
+    @Column(name = "registered_interest")
+    @NotNull
+    @JsonIgnore
+    private boolean registeredInterest;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "registered_interest_applicant_id", referencedColumnName = "id")
+    @JsonIgnore
+    private RegisteredInterestApplicant registeredInterestApplicant;
 }

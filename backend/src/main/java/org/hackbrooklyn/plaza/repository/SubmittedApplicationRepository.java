@@ -1,10 +1,10 @@
 package org.hackbrooklyn.plaza.repository;
 
-import org.hackbrooklyn.plaza.model.ApplicationForm;
+import org.hackbrooklyn.plaza.model.SubmittedApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ApplicationFormRepository extends JpaRepository<ApplicationForm, Integer> {
+public interface SubmittedApplicationRepository extends JpaRepository<SubmittedApplication, Integer> {
 
 }
