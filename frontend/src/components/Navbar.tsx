@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import logo from 'assets/logo.png';
 import LinkButton from 'components/LinkButton';
+import { NavLink } from 'react-bootstrap';
 
 const Navbar = (): JSX.Element => {
   return (
@@ -13,7 +14,10 @@ const Navbar = (): JSX.Element => {
           <span className="logo-text">plaza</span>
         </Logo>
         <NavLinks>
-          <LinkButton to="/apply">Apply Now</LinkButton>
+          <StyledNavLink href="mailto:contact@hackbrooklyn.org">
+            Contact&nbsp;Us
+          </StyledNavLink>
+          <LinkButton to="/apply">Apply</LinkButton>
         </NavLinks>
       </NavbarContent>
     </StyledNavbar>
@@ -92,8 +96,13 @@ const NavLinks = styled.div`
   }
 
   *:not(:first-child) {
-    margin-left: 1.5rem;
+    margin-left: 0.5rem;
   }
+`;
+
+const StyledNavLink = styled(NavLink)`
+  padding-left: 0;
+  padding-right: 1rem;
 `;
 
 export default Navbar;
