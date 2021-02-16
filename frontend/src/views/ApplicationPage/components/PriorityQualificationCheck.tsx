@@ -7,7 +7,6 @@ import styled from 'styled-components/macro';
 import { API_ROOT } from 'index';
 import { Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import startCase from 'lodash.startcase';
 import { toastValidationErrors } from 'util/toastValidationErrors';
 
 interface PriorityQualificationCheckProps {

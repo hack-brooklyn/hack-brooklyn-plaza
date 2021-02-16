@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Landing, ImportantDates } from './components';
+import { ImportantDates, Landing } from './components';
 
 const ApplicationLanding = (): JSX.Element => {
   return (

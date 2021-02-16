@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components/macro';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import cloneDeep from 'lodash.clonedeep';
-import startCase from 'lodash.startcase';
 import { toast } from 'react-toastify';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';

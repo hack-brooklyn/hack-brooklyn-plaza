@@ -4,7 +4,6 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import styled from 'styled-components/macro';
 import { toast } from 'react-toastify';
-import startCase from 'lodash.startcase';
 import { MonoHeading } from 'commonStyles';
 import { API_ROOT } from 'index';
 import { toastValidationErrors } from 'util/toastValidationErrors';
