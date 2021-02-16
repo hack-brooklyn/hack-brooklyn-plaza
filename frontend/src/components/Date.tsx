@@ -19,7 +19,11 @@ const Date = (props: DateProps): JSX.Element => {
 };
 
 const DateContainer = styled.div`
-  margin: 0 auto;
+  margin-bottom: 2rem;
+  
+  @media screen and (min-width: 576px) {
+    margin: 0 auto;
+  }
 `;
 
 const CalendarDate = styled.img`
@@ -28,7 +32,7 @@ const CalendarDate = styled.img`
 `;
 
 const Description = styled.p`
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   font-weight: bold;
   font-size: 1.5rem;
   text-align: center;
