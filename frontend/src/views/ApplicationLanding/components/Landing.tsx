@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import startCase from 'lodash.startcase';
 import { MonoHeading } from 'commonStyles';
 import { API_ROOT } from 'index';
+import { toastValidationErrors } from 'util/toastValidationErrors';
 
 const Landing = (): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');
@@ -41,24 +42,23 @@ const Landing = (): JSX.Element => {
       return;
     }
 
-    if (res.status === 400) {
-      setSubmitting(false);
-      const data = await res.json();
-
-      toast.error('Some of your submitted data doesn\'t look right. Please correct the following errors and try again.', {
-        autoClose: 15000
-      });
-      for (const [field, errorMessage] of Object.entries(data.errors)) {
-        toast.error(`${startCase(field)} ${errorMessage}.`, {
-          autoClose: 15000
-        });
-      }
-
-      return;
-    }
-
     setSubmitting(false);
-    toast.success('Thank you for registering your interest! You will receive an email from us once registration opens to the public.');
+    if (res.status === 200) {
+      // 200 OK
+      // The user has been successfully subscribed and their interest registered
+      toast.success('Thank you for registering your interest! You will receive an email from us once registration opens to the public.');
+    } else if (res.status === 409) {
+      // 409 Conflict
+      // The user's interest has already been registered
+      toast.success('You have already registered your interest! You will receive an email from us once registration opens to the public.');
+    } else if (res.status === 400) {
+      // 400 Bad Request
+      // The submitted data failed validation
+      const data = await res.json();
+      toastValidationErrors(data.errors);
+    } else {
+      toast.error('An error occurred while signing you up for the newsletter. Please try again.');
+    }
   };
 
   return (

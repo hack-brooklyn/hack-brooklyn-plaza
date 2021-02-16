@@ -8,6 +8,7 @@ import { API_ROOT } from 'index';
 import { Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import startCase from 'lodash.startcase';
+import { toastValidationErrors } from 'util/toastValidationErrors';
 
 interface PriorityQualificationCheckProps {
   isPriorityApplicant: boolean;
@@ -48,35 +49,31 @@ const PriorityQualificationCheck = (props: PriorityQualificationCheckProps): JSX
 
     const data = await res.json();
 
-    if (res.status === 400) {
-      setSubmitting(false);
+    setSubmitting(false);
+    if (res.status === 200) {
+      // 200 OK
+      // Does not necessarily mean the user is eligible, just that the user's eligibility was successfully returned.
+      if (data.eligible) {
+        // User is eligible, transition to application form
+        setPriorityApplicantEmail(email);
+        setIsPriorityApplicant(true);
 
-      toast.error('Some of your submitted data doesn\'t look right. Please correct the following errors and try again.', {
-        autoClose: 15000
-      });
-      for (const [field, errorMessage] of Object.entries(data.errors)) {
-        toast.error(`${startCase(field)} ${errorMessage}.`, {
-          autoClose: 15000
-        });
+        toast.success('Congratulations! You are eligible to apply as a priority applicant. Finish filling out the form before general applications open to receive priority consideration for Hack Brooklyn.');
+      } else {
+        // User is ineligible, scroll down to the ineligibility message
+        setTimeout(() => {
+          scrollBy(0, window.innerHeight);
+        }, 100);
       }
 
-      return;
-    }
-
-    if (data.eligible) {
-      // Change view to the form
-      setIsPriorityApplicant(true);
-      setPriorityApplicantEmail(email);
-      toast.success('Congratulations! You are eligible to apply as a priority applicant. Finish filling out the form before general applications open to receive priority consideration for Hack Brooklyn!');
+      setEligibilityChecked(true);
+    } else if (res.status === 400) {
+      // 400 Bad Request
+      // The submitted data failed validation
+      toastValidationErrors(data.errors);
     } else {
-      // Scroll down to the alert box
-      setTimeout(() => {
-        scrollBy(0, window.innerHeight);
-      }, 100);
+      toast.error('An error occurred while trying to verify your eligibility. Please try again.');
     }
-
-    setEligibilityChecked(true);
-    setSubmitting(false);
   };
 
   return (

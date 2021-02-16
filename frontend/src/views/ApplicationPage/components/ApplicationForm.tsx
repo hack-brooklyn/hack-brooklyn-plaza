@@ -12,6 +12,7 @@ import { ApplicationFormValues } from 'types';
 import countries from 'assets/data/countries.json';
 import { API_ROOT } from 'index';
 import { PRIORITY_APPLICATIONS_ACTIVE } from 'views/ApplicationPage/ApplicationPage';
+import { toastValidationErrors } from 'util/toastValidationErrors';
 
 export interface FormPartProps {
   formik: FormikProps<ApplicationFormValues>;
@@ -99,25 +100,24 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
         return;
       }
 
-      if (res.status === 400) {
-        setSubmitting(false);
-        const data = await res.json();
-
-        toast.error('Some of your submitted data doesn\'t look right. Please correct the following errors and try again.', {
-          autoClose: 15000
-        });
-        for (const [field, errorMessage] of Object.entries(data.errors)) {
-          toast.error(`${startCase(field)} ${errorMessage}.`, {
-            autoClose: 15000
-          });
-        }
-
-        return;
-      }
-
-      toast.success('Application submitted successfully!');
       setSubmitting(false);
-      setApplicationSubmitted(true);
+      if (res.status === 200) {
+        // 200 OK
+        // Application submitted successfully
+        setApplicationSubmitted(true);
+        toast.success('Application submitted successfully!');
+      } else if (res.status === 400) {
+        // 400 Bad Request
+        // The submitted data failed validation
+        const data = await res.json();
+        toastValidationErrors(data.errors);
+      } else if (res.status === 409) {
+        // 409 Conflict
+        toast.error('An application has already been submitted with the email address you provided.');
+      } else {
+        // Some other error happened
+        toast.error('There was an error submitting your application! Please try again.');
+      }
     };
 
     return <Formik
