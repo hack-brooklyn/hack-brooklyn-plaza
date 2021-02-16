@@ -240,6 +240,7 @@ public class NewsletterController {
         @NotBlank
         private String lastName;
 
+        @NotBlank
         @Email
         private String email;
     }
@@ -254,11 +255,12 @@ public class NewsletterController {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class MailchimpMember {
 
+        @NotBlank
         @Email
         @JsonProperty("email_address")
         private String emailAddress;
 
-        @NonNull
+        @NotBlank
         private String status;
 
         @NonNull

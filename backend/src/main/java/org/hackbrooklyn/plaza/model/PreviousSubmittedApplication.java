@@ -32,6 +32,7 @@ public class PreviousSubmittedApplication {
     private String lastName;
 
     @Column(name = "email", unique = true)
+    @NotBlank
     @Email
     private String email;
 

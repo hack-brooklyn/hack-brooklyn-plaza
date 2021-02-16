@@ -82,6 +82,7 @@ public class ApplyController {
 
     @Data
     private static class CheckPriorityEligibilityRequest {
+        @NotBlank
         @Email
         private String email;
     }
