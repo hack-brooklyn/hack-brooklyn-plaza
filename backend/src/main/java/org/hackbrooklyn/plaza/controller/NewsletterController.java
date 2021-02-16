@@ -1,12 +1,16 @@
-package org.hackbrooklyn.plaza.api;
+package org.hackbrooklyn.plaza.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.validator.routines.EmailValidator;
-import org.hackbrooklyn.plaza.PlazaApplication;
-import org.hackbrooklyn.plaza.model.MailchimpMember;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hackbrooklyn.plaza.model.RegisteredInterestApplicant;
+import org.hackbrooklyn.plaza.repository.RegisteredInterestApplicantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -15,19 +19,21 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @CrossOrigin
 @RequestMapping("/newsletter")
 public class NewsletterController {
 
-    // Mailchimp params
     @Value("${MAILCHIMP_API_KEY}")
     private String MAILCHIMP_API_KEY;
 
@@ -37,24 +43,25 @@ public class NewsletterController {
     @Value("${MAILCHIMP_LIST_ID}")
     private String MAILCHIMP_LIST_ID;
 
-    @Value("${GENERAL_APPLICATION_DEADLINE}")
-    private String GENERAL_APPLICATION_DEADLINE;
+    @Value("${PRIORITY_APPLICATIONS_ACTIVE}")
+    private boolean PRIORITY_APPLICATIONS_ACTIVE;
 
-    // Mailchimp API routes
-    private String mcApiRoot;
-    private String mcMembersEndpoint;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    static final Logger logger = LoggerFactory.getLogger(PlazaApplication.class);
+    private final RegisteredInterestApplicantRepository registeredInterestApplicantRepository;
     private final RestTemplate restTemplate;
 
-    public NewsletterController(RestTemplate restTemplate) {
+    private String mcMembersEndpoint;
+
+    public NewsletterController(RegisteredInterestApplicantRepository registeredInterestApplicantRepository, RestTemplate restTemplate) {
+        this.registeredInterestApplicantRepository = registeredInterestApplicantRepository;
         this.restTemplate = restTemplate;
     }
 
-    // Format API root after getting Mailchimp server from environment variable
+    // Format Mailchimp API endpoint after getting Mailchimp server from environment variable
     @Autowired
-    public void initMailchimpApiRoot() {
-        mcApiRoot = String.format("https://%s.api.mailchimp.com/3.0", MAILCHIMP_SERVER);
+    public void initMailchimpApi() {
+        String mcApiRoot = String.format("https://%s.api.mailchimp.com/3.0", MAILCHIMP_SERVER);
         mcMembersEndpoint = String.format("%s/lists/%s/members", mcApiRoot, MAILCHIMP_LIST_ID);
     }
 
@@ -64,20 +71,21 @@ public class NewsletterController {
      * @param request The request body.
      */
     @PostMapping(path = "subscribe")
-    public ResponseEntity<Void> subscribeUser(@RequestBody MemberSubscriptionRequest request) {
+    public ResponseEntity<Void> subscribeUser(@RequestBody @Valid MemberSubscriptionRequest request) throws JsonProcessingException {
         final String firstName = request.getFirstName();
         final String lastName = request.getLastName();
         final String email = request.getEmail();
-        logger.info(String.format("Attempting to subscribe member %s %s with email %s", firstName, lastName, email));
 
-        // Validate email address before starting
-        if (!EmailValidator.getInstance().isValid(email)) {
-            logger.error("Invalid email address detected!");
-            return ResponseEntity.badRequest().build();
-        }
+        // Save member to registered interest applicants table
+        RegisteredInterestApplicant applicant = new RegisteredInterestApplicant();
+        applicant.setFirstName(firstName);
+        applicant.setLastName(lastName);
+        applicant.setEmail(email);
+        registeredInterestApplicantRepository.save(applicant);
+
+        log.info(String.format("Attempting to subscribe member %s %s with email %s", firstName, lastName, email));
 
         // Before subscribing the member, we need to check if the member is already subscribed.
-
         // Mailchimp requires the MD5 hash of a member's email to get their info.
         // We first need to compute the email's hash
         // https://stackoverflow.com/a/62778168
@@ -95,9 +103,9 @@ public class NewsletterController {
         // Now, we can proceed to do the check
 
         // Build the endpoint with the member's email hash
-        String mcGetMemberInfoEndpoint = String.format("%s/%s", mcMembersEndpoint, emailHash);
-        String mcGetMemberInfoEndpointWithQuery = UriComponentsBuilder.fromHttpUrl(mcGetMemberInfoEndpoint)
-                .queryParam("fields", "email_address,status,tags")
+        String mcSpecificMemberEndpoint = String.format("%s/%s", mcMembersEndpoint, emailHash);
+        String mcSpecificMemberEndpointWithQuery = UriComponentsBuilder.fromHttpUrl(mcSpecificMemberEndpoint)
+                .queryParam("fields", "email_address,status")
                 .toUriString();
 
         // Perform the check
@@ -111,7 +119,7 @@ public class NewsletterController {
         try {
             HttpEntity<MailchimpMember> memberInfoRequestBody = new HttpEntity<>(buildHeaders());
             ResponseEntity<MailchimpMember> memberInfoResponse = restTemplate.exchange(
-                    mcGetMemberInfoEndpointWithQuery,
+                    mcSpecificMemberEndpointWithQuery,
                     HttpMethod.GET,
                     memberInfoRequestBody,
                     MailchimpMember.class);
@@ -123,7 +131,7 @@ public class NewsletterController {
                 MailchimpMember member = memberInfoResponse.getBody();
                 assert member != null;  // Not null since we checked for 200 OK
                 if (member.getStatus().equals("subscribed")) {
-                    logger.info("The member is already subscribed!");
+                    log.info("The member is already subscribed!");
                     return ResponseEntity.status(HttpStatus.CONFLICT).build();
                 }
             }
@@ -148,47 +156,49 @@ public class NewsletterController {
 
         // Populate merge tags with first and last name
         Map<String, String> mergeTags = new HashMap<>();
-        mergeTags.put("First Name", firstName);
-        mergeTags.put("Last Name", lastName);
+        mergeTags.put("FNAME", firstName);
+        mergeTags.put("LNAME", lastName);
 
         // Populate the member's tags
         // Tag the member as a priority member if the current date is before the general app deadline.
-        logger.info(ZonedDateTime.now().toString());
-        ZonedDateTime appDeadline = ZonedDateTime.parse(GENERAL_APPLICATION_DEADLINE);
         String[] memberTags;
-        if (ZonedDateTime.now().isBefore(appDeadline)) {
-            logger.info("Tagging member as a priority applicant for the general application!");
-            memberTags = new String[]{"2021 General Application Priority"};
+        if (PRIORITY_APPLICATIONS_ACTIVE) {
+            memberTags = new String[]{"Registered Interest"};
         } else {
             memberTags = new String[0];
         }
 
-        // Add the member
-        MailchimpMember memberToAdd = new MailchimpMember(email, "subscribed", mergeTags, memberTags);
+        // Serialize and add the member
+        ObjectWriter writer = objectMapper.writer();
 
-        HttpEntity<MailchimpMember> addMemberRequestBody = new HttpEntity<>(memberToAdd, buildHeaders());
-        logger.info(addMemberRequestBody.toString());
+        MailchimpMember memberToAdd = new MailchimpMember(email, "subscribed", mergeTags, memberTags);
+        String serializedMemberToAdd = writer.writeValueAsString(memberToAdd);
+        HttpEntity<String> addMemberRequestBody = new HttpEntity<>(serializedMemberToAdd, buildHeaders());
 
         switch (subscriptionAction) {
             case SUBSCRIBE_NEW:
-                // Subscribe the member
-                ResponseEntity<MailchimpMember> addMemberResponse = restTemplate.postForEntity(
-                        mcMembersEndpoint,
-                        addMemberRequestBody,
-                        MailchimpMember.class
-                );
+                ResponseEntity<String> addMemberResponse;
+                try {
+                    addMemberResponse = restTemplate.postForEntity(
+                            mcMembersEndpoint,
+                            addMemberRequestBody,
+                            String.class
+                    );
+                } catch (HttpClientErrorException e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
+                }
 
                 if (addMemberResponse.getStatusCode() == HttpStatus.OK) {
-                    logger.info("New member successfully subscribed!");
+                    log.info("New member successfully subscribed!");
                     return ResponseEntity.ok().build();
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
                 }
             case RESUBSCRIBE:
-                // Resubscribe the member
                 try {
-                    restTemplate.put(mcMembersEndpoint, addMemberRequestBody);
-                    logger.info("Member successfully resubscribed!");
+                    restTemplate.put(mcSpecificMemberEndpoint, addMemberRequestBody);
+                    log.info("Member successfully resubscribed!");
                     return ResponseEntity.ok().build();
                 } catch (HttpClientErrorException e) {
                     e.printStackTrace();
@@ -221,10 +231,42 @@ public class NewsletterController {
      * The newsletter subscription's request body.
      */
     @RequiredArgsConstructor
-    @Getter
+    @Data
     private static class MemberSubscriptionRequest {
-        private final String firstName;
-        private final String lastName;
-        private final String email;
+
+        @NotBlank
+        private String firstName;
+
+        @NotBlank
+        private String lastName;
+
+        @Email
+        private String email;
+    }
+
+    /**
+     * Represents the parts that we need from Mailchimp's "List Member" object from their API.
+     */
+    @Data
+    @NoArgsConstructor
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private static class MailchimpMember {
+
+        @Email
+        @JsonProperty("email_address")
+        private String emailAddress;
+
+        @NonNull
+        private String status;
+
+        @NonNull
+        @JsonSerialize
+        @JsonProperty("merge_fields")
+        private Map<String, String> mergeFields;
+
+        @NonNull
+        private String[] tags;
     }
 }
