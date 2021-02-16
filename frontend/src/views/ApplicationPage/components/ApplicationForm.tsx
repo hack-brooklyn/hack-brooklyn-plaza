@@ -78,7 +78,6 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
         processedFormValues.priorityApplicantEmail = priorityApplicantEmail;
       }
 
-
       // Create form data with the resume file + the submitted data as JSON
       const formData = new FormData();
       formData.append('formDataJson', JSON.stringify(processedFormValues));
@@ -116,9 +115,9 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
         return;
       }
 
-      toast('Application submitted successfully!');
+      toast.success('Application submitted successfully!');
       setSubmitting(false);
-      setApplicationSubmitted(false);
+      setApplicationSubmitted(true);
     };
 
     return <Formik
@@ -130,9 +129,11 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
           <PartOne formik={formik} countryOptions={countryOptions} />
           <PartTwo formik={formik} />
           <PartThree formik={formik} />
-          <PartFour />
-          <Agreements />
-          <StyledSubmitButton type="submit" size="lg">Submit Application</StyledSubmitButton>
+          <PartFour formik={formik} />
+          <Agreements formik={formik} />
+          <StyledSubmitButton type="submit" size="lg" disabled={formik.isSubmitting}>
+            {formik.isSubmitting ? 'Submitting...' : 'Submit Application'}
+          </StyledSubmitButton>
         </Form>
       )}
     </Formik>;

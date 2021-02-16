@@ -20,6 +20,7 @@ const PartTwo = (props: FormPartProps): JSX.Element => {
           <FastField as={Form.Control}
                      name="school"
                      type="text"
+                     disabled={formik.isSubmitting}
                      required
           />
         </Form.Group>
@@ -28,6 +29,7 @@ const PartTwo = (props: FormPartProps): JSX.Element => {
           <RequiredFormLabel>Level of Study</RequiredFormLabel>
           <Select options={levelsOfStudyOptions}
                   onChange={(option) => option && formik.setFieldValue('levelOfStudy', option.value)}
+                  isDisabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -38,6 +40,7 @@ const PartTwo = (props: FormPartProps): JSX.Element => {
                      type="number"
                      min="1900"
                      max="2100"
+                     disabled={formik.isSubmitting}
                      required />
         </Form.Group>
 
@@ -46,6 +49,7 @@ const PartTwo = (props: FormPartProps): JSX.Element => {
           <FastField as={Form.Control}
                      name="major"
                      type="text"
+                     disabled={formik.isSubmitting}
           />
         </Form.Group>
       </ApplicationFormFields>

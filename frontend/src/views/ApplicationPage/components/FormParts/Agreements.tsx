@@ -4,8 +4,11 @@ import Form from 'react-bootstrap/Form';
 
 import RequiredAsterisk from 'components/RequiredAsterisk';
 import { StyledFieldset } from 'views/ApplicationPage/styles';
+import { FormPartProps } from 'views/ApplicationPage/components/ApplicationForm';
 
-const Agreements = (): JSX.Element => {
+const Agreements = (props: FormPartProps): JSX.Element => {
+  const { formik } = props;
+
   return (
     <StyledFieldset>
       <Form.Check>
@@ -13,6 +16,7 @@ const Agreements = (): JSX.Element => {
           as={Form.Check.Input}
           name="acceptTocAndCoc"
           id="applicationTocAndCoc"
+          disabled={formik.isSubmitting}
           required
         />
         <Form.Check.Label htmlFor="applicationTocAndCoc">
@@ -25,6 +29,7 @@ const Agreements = (): JSX.Element => {
         type="checkbox"
         name="shareResumeWithSponsors"
         id="applicationShareResume"
+        disabled={formik.isSubmitting}
         style={{ marginTop: '0.5rem' }}
       />
     </StyledFieldset>

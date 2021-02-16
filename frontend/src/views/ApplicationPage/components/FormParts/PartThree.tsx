@@ -20,6 +20,7 @@ const PartThree = (props: FormPartProps): JSX.Element => {
           <FastField as={Form.Control}
                      name="githubUrl"
                      type="text"
+                     disabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -28,6 +29,7 @@ const PartThree = (props: FormPartProps): JSX.Element => {
           <FastField as={Form.Control}
                      name="linkedinUrl"
                      type="text"
+                     disabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -36,6 +38,7 @@ const PartThree = (props: FormPartProps): JSX.Element => {
           <FastField as={Form.Control}
                      name="websiteUrl"
                      type="text"
+                     disabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -58,6 +61,7 @@ const PartThree = (props: FormPartProps): JSX.Element => {
                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                    formik.setFieldValue('resumeFile', event.currentTarget.files !== null && event.currentTarget.files[0]);
                  }}
+                 disabled={formik.isSubmitting}
           />
         </Form.Group>
       </ApplicationFormFields>

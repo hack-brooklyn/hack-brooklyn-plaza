@@ -15,6 +15,7 @@ interface PartOneProps extends FormPartProps {
 
 const PartOne = (props: PartOneProps): JSX.Element => {
   const { formik, countryOptions } = props;
+
   return (
     <StyledFieldset>
       <StyledTitleLegend>Part 1: General Info</StyledTitleLegend>
@@ -24,6 +25,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
           <FastField as={Form.Control}
                      name="firstName"
                      type="text"
+                     disabled={formik.isSubmitting}
                      required />
         </Form.Group>
 
@@ -32,6 +34,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
           <FastField as={Form.Control}
                      name="lastName"
                      type="text"
+                     disabled={formik.isSubmitting}
                      required />
         </Form.Group>
 
@@ -40,6 +43,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
           <FastField as={Form.Control}
                      name="email"
                      type="email"
+                     disabled={formik.isSubmitting}
                      required />
         </Form.Group>
 
@@ -47,6 +51,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
           <RequiredFormLabel>Country</RequiredFormLabel>
           <Select options={countryOptions}
                   onChange={(option) => option && formik.setFieldValue('country', option.value)}
+                  isDisabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -54,6 +59,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
           <StyledFormLabel>Gender</StyledFormLabel>
           <Select options={genderOptions}
                   onChange={(option) => option && formik.setFieldValue('gender', option.value)}
+                  isDisabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -61,6 +67,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
           <StyledFormLabel>Pronouns</StyledFormLabel>
           <Select options={pronounOptions}
                   onChange={(option) => option && formik.setFieldValue('pronouns', option.value)}
+                  isDisabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -68,6 +75,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
           <StyledFormLabel>Ethnicity</StyledFormLabel>
           <Select options={ethnicityOptions}
                   onChange={(option) => option && formik.setFieldValue('ethnicity', option.value)}
+                  isDisabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -75,6 +83,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
           <StyledFormLabel>Shirt Size</StyledFormLabel>
           <Select options={shirtSizeOptions}
                   onChange={(option) => option && formik.setFieldValue('shirtSize', option.value)}
+                  isDisabled={formik.isSubmitting}
           />
         </Form.Group>
 
@@ -89,6 +98,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
                 id="applicationIsFirstHackathonYes"
                 label="Yes"
                 value="Yes"
+                disabled={formik.isSubmitting}
                 inline
               />
             </span>
@@ -101,6 +111,7 @@ const PartOne = (props: PartOneProps): JSX.Element => {
                 id="applicationIsFirstHackathonNo"
                 label="No"
                 value="No"
+                disabled={formik.isSubmitting}
                 inline
               />
             </span>
@@ -110,7 +121,8 @@ const PartOne = (props: PartOneProps): JSX.Element => {
         {formik.values.isFirstHackathon === 'No' && (
           <Form.Group controlId="applicationNumberHackathonsAttended">
             <StyledFormLabel>Number of Hackathons Attended</StyledFormLabel>
-            <Form.Control type="number" min="1" {...formik.getFieldProps('numberHackathonsAttended')} />
+            <Form.Control type="number" min="1"
+                          disabled={formik.isSubmitting} {...formik.getFieldProps('numberHackathonsAttended')} />
           </Form.Group>
         )}
       </ApplicationFormFields>
