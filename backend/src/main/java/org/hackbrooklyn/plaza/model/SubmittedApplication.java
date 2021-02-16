@@ -110,13 +110,13 @@ public class SubmittedApplication {
     private String resumeKeyS3;
 
     // Part 4
-    @Column(name = "short_response_one")
+    @Column(name = "short_response_one", columnDefinition = "TEXT")
     private String shortResponseOne;
 
-    @Column(name = "short_response_two")
+    @Column(name = "short_response_two", columnDefinition = "TEXT")
     private String shortResponseTwo;
 
-    @Column(name = "short_response_three")
+    @Column(name = "short_response_three", columnDefinition = "TEXT")
     private String shortResponseThree;
 
     // Agreements
