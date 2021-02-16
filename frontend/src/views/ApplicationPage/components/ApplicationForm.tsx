@@ -104,7 +104,7 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
         setSubmitting(false);
         const data = await res.json();
 
-        toast.error(`Some of your submitted data doesn't look right. Please correct the following errors and try again.`, {
+        toast.error('Some of your submitted data doesn\'t look right. Please correct the following errors and try again.', {
           autoClose: 15000
         });
         for (const [field, errorMessage] of Object.entries(data.errors)) {
