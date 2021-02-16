@@ -4,8 +4,11 @@ import styled from 'styled-components/macro';
 import Container from 'react-bootstrap/Container';
 import Routes from './Routes';
 import Navbar from 'components/Navbar';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = (): JSX.Element => {
+
   return (
     <Router>
       <header>
@@ -16,6 +19,7 @@ const App = (): JSX.Element => {
         <Container>
           <Routes />
         </Container>
+        <ToastContainer />
       </StyledMain>
     </Router>
   );
