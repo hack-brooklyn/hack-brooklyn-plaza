@@ -14,8 +14,8 @@ const ApplicationSuccess = (): JSX.Element => {
       <Text className="ApplicationSuccess-text">
         <StyledParagraph>
           Thank you for applying to Hack Brooklyn! We have received your application and look forward to reviewing it.
-          As a priority applicant, expect to hear back by <strong>February 1, 2021.</strong> In the meantime, be sure to
-          spread the word about Hack Brooklyn and encourage your friends to apply as well!
+          As a priority applicant, expect to hear back by <strong>March 29, 2021.</strong> In the meantime, be sure to
+          spread the word about Hack Brooklyn and encourage your friends to apply as well.
         </StyledParagraph>
 
         <StyledParagraph>See you soon!</StyledParagraph>
