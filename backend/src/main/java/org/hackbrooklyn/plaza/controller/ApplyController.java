@@ -63,7 +63,7 @@ public class ApplyController {
     @PostMapping("/checkPriorityEligibility")
     public ResponseEntity<CheckPriorityEligibilityResponse> checkPriorityEligibility(
             @RequestBody @Valid CheckPriorityEligibilityRequest request) {
-        String email = request.getEmail();
+        final String email = request.getEmail();
 
         CheckPriorityEligibilityResponse response = new CheckPriorityEligibilityResponse();
         response.setEligible(applyService.checkPriorityEligibility(email));
