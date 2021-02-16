@@ -64,6 +64,7 @@ public class ApplyController {
     public ResponseEntity<CheckPriorityEligibilityResponse> checkPriorityEligibility(
             @RequestBody @Valid CheckPriorityEligibilityRequest request) {
         final String email = request.getEmail();
+        log.info(String.format("Checking priority applicant eligibility for email %s", email));
 
         CheckPriorityEligibilityResponse response = new CheckPriorityEligibilityResponse();
         response.setEligible(applyService.checkPriorityEligibility(email));

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.hackbrooklyn.plaza.model.RegisteredInterestApplicant;
 import org.hackbrooklyn.plaza.repository.RegisteredInterestApplicantRepository;
+import org.hackbrooklyn.plaza.service.FoundDataConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -75,6 +76,13 @@ public class NewsletterController {
         final String firstName = request.getFirstName();
         final String lastName = request.getLastName();
         final String email = request.getEmail();
+        log.info(String.format("Processing subscription from %s %s with email %s", firstName, lastName, email));
+
+        // Check if the member has already registered their interest
+        RegisteredInterestApplicant existingRegisteredInterestApplicant = registeredInterestApplicantRepository.findFirstByEmail(email);
+        if (existingRegisteredInterestApplicant != null) {
+            throw new FoundDataConflictException();
+        }
 
         // Save member to registered interest applicants table
         RegisteredInterestApplicant applicant = new RegisteredInterestApplicant();

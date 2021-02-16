@@ -1,6 +1,7 @@
 package org.hackbrooklyn.plaza.controller;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import org.hackbrooklyn.plaza.service.FoundDataConflictException;
 import org.hackbrooklyn.plaza.service.PriorityApplicantIneligibleException;
 import org.hackbrooklyn.plaza.service.RejectedFileTypeException;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,9 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Triggered when an applicant tries to apply during the priority application period, but is ineligible to do so.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(PriorityApplicantIneligibleException.class)
     public ResponseEntity<Map<String, String>> handlePriorityApplicantIneligibleException() {
@@ -71,5 +75,14 @@ public class RestControllerExceptionHandler {
         body.put("message", "The submitted priority applicant email is not eligible for priority consideration at this time.");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(FoundDataConflictException.class)
+    public ResponseEntity<Map<String, String>> handleFoundDataConflictException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "There is conflicting data found in the database.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 }

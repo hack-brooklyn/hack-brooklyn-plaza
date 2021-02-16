@@ -64,12 +64,23 @@ public class ApplyServiceImpl implements ApplyService {
     @Override
     @Transactional
     public void processApplication(SubmittedApplication parsedApplication, MultipartFile resumeFile) throws Exception {
+        final String firstName = parsedApplication.getFirstName();
+        final String lastName = parsedApplication.getLastName();
+        final String email = parsedApplication.getEmail();
+        log.info(String.format("Processing application from %s %s with email %s", firstName, lastName, email));
+
+        // Check if an application was already submitted with the applicant's submitted email.
+        SubmittedApplication existingApplication = submittedApplicationRepository.findFirstByEmailOrPriorityApplicantEmail(email, email);
+        if (existingApplication != null) {
+            throw new FoundDataConflictException();
+        }
+
+        // Clone application and prepare the data to be saved
         SubmittedApplication processedApplication = new SubmittedApplication();
         BeanUtils.copyProperties(parsedApplication, processedApplication);
 
         // Upload resume to AWS S3 if one was submitted and retrieve file URL
         if (resumeFile != null) {
-            log.info("Uploading resume to S3");
             // Validate the uploaded file before uploading
             if (!ALLOWED_RESUME_CONTENT_TYPES.contains(resumeFile.getContentType())) {
                 throw new RejectedFileTypeException();
@@ -78,8 +89,6 @@ public class ApplyServiceImpl implements ApplyService {
             // Upload resume to S3 and save the key
             String resumeKey = awsS3Utils.uploadFormFileToAwsS3(resumeFile, AWS_S3_RESUME_DEST);
             processedApplication.setResumeKeyS3(resumeKey);
-
-            log.info("Upload successful.");
         }
 
         if (PRIORITY_APPLICATIONS_ACTIVE) {
@@ -98,16 +107,19 @@ public class ApplyServiceImpl implements ApplyService {
             } else {
                 throw new PriorityApplicantIneligibleException();
             }
+        } else {
+            processedApplication.setPriorityApplicant(false);
         }
 
         // Check if the applicant registered their interest early on
-        String email = processedApplication.getEmail();
         RegisteredInterestApplicant foundInterestedApplicant =
                 registeredInterestApplicantRepository.findFirstByEmail(email);
 
         if (foundInterestedApplicant != null) {
             processedApplication.setRegisteredInterest(true);
             processedApplication.setRegisteredInterestApplicant(foundInterestedApplicant);
+        } else {
+            processedApplication.setRegisteredInterest(false);
         }
 
         // Save the processed application in the database

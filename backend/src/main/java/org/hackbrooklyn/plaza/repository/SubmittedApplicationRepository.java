@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SubmittedApplicationRepository extends JpaRepository<SubmittedApplication, Integer> {
-
+    SubmittedApplication findFirstByEmailOrPriorityApplicantEmail(String email, String priorityApplicantEmail);
 }
