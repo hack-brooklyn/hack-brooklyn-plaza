@@ -124,7 +124,7 @@ const Landing = (): JSX.Element => {
           />
         </Form.Group>
         <StyledSubmitButton type="submit" variant="info" disabled={submitting}>
-          Register Interest
+          {submitting ? 'Registering...' : 'Register Interest'}
         </StyledSubmitButton>
       </StyledForm>
     </ApplyContainer>
