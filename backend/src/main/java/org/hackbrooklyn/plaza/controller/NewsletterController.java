@@ -15,7 +15,10 @@ import org.hackbrooklyn.plaza.service.FoundDataConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,7 +34,6 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@CrossOrigin
 @RequestMapping("/newsletter")
 public class NewsletterController {
 
