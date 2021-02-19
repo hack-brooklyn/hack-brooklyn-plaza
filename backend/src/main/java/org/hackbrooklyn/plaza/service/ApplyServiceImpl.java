@@ -79,18 +79,6 @@ public class ApplyServiceImpl implements ApplyService {
         SubmittedApplication processedApplication = new SubmittedApplication();
         BeanUtils.copyProperties(parsedApplication, processedApplication);
 
-        // Upload resume to AWS S3 if one was submitted and retrieve file URL
-        if (resumeFile != null) {
-            // Validate the uploaded file before uploading
-            if (!ALLOWED_RESUME_CONTENT_TYPES.contains(resumeFile.getContentType())) {
-                throw new RejectedFileTypeException();
-            }
-
-            // Upload resume to S3 and save the key
-            String resumeKey = awsS3Utils.uploadFormFileToAwsS3(resumeFile, AWS_S3_RESUME_DEST);
-            processedApplication.setResumeKeyS3(resumeKey);
-        }
-
         if (PRIORITY_APPLICATIONS_ACTIVE) {
             // Check if priority applicant email is eligible
             String priorityApplicantEmail = processedApplication.getPriorityApplicantEmail();
@@ -120,6 +108,18 @@ public class ApplyServiceImpl implements ApplyService {
             processedApplication.setRegisteredInterestApplicant(foundInterestedApplicant);
         } else {
             processedApplication.setRegisteredInterest(false);
+        }
+
+        // Upload resume to AWS S3 if one was submitted and retrieve file URL
+        if (resumeFile != null) {
+            // Validate the uploaded file before uploading
+            if (!ALLOWED_RESUME_CONTENT_TYPES.contains(resumeFile.getContentType())) {
+                throw new RejectedFileTypeException();
+            }
+
+            // Upload resume to S3 and save the key
+            String resumeKey = awsS3Utils.uploadFormFileToAwsS3(resumeFile, AWS_S3_RESUME_DEST);
+            processedApplication.setResumeKeyS3(resumeKey);
         }
 
         // Save the processed application in the database
