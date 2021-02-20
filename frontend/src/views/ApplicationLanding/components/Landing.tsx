@@ -36,7 +36,7 @@ const Landing = (): JSX.Element => {
       );
     } catch (err) {
       setSubmitting(false);
-      toast.error('An error occurred while signing you up for the newsletter. Please try again.');
+      toastErrorMessage();
       console.error(err);
       return;
     }
@@ -56,8 +56,17 @@ const Landing = (): JSX.Element => {
       const data = await res.json();
       toastValidationErrors(data.errors);
     } else {
-      toast.error('An error occurred while signing you up for the newsletter. Please try again.');
+      toastErrorMessage();
     }
+  };
+
+  const toastErrorMessage = () => {
+    toast.error('There was an error while signing you up for the newsletter! Please try again. If this error continues to happen, please send us an email at contact@hackbrooklyn.org for further assistance. You can also click this message or click "Contact Us" on the header to send us an email.', {
+      autoClose: 30000,
+      onClick: () => {
+        window.open('mailto:contact@hackbrooklyn.org');
+      }
+    });
   };
 
   return (
