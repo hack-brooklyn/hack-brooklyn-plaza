@@ -1,5 +1,6 @@
 package org.hackbrooklyn.plaza.service;
 
+import com.sun.istack.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.model.PreviousSubmittedApplication;
 import org.hackbrooklyn.plaza.model.RegisteredInterestApplicant;
@@ -70,9 +71,19 @@ public class ApplyServiceImpl implements ApplyService {
         log.info(String.format("Processing application from %s %s with email %s", firstName, lastName, email));
 
         // Check if an application was already submitted with the applicant's submitted email.
-        SubmittedApplication existingApplication = submittedApplicationRepository.findFirstByEmailOrPriorityApplicantEmail(email, email);
-        if (existingApplication != null) {
+        // Check email submitted in the form itself first
+        SubmittedApplication existingApplicationEmail = submittedApplicationRepository.findFirstByEmailOrPriorityApplicantEmail(email, email);
+        if (existingApplicationEmail != null) {
             throw new FoundDataConflictException();
+        }
+
+        // Then check the email used to verify priority applicant eligibility if
+        final String priorityApplicantEmail = parsedApplication.getPriorityApplicantEmail();
+        if (PRIORITY_APPLICATIONS_ACTIVE) {
+            SubmittedApplication existingApplicationPriorityApplicantEmail = submittedApplicationRepository.findFirstByEmailOrPriorityApplicantEmail(priorityApplicantEmail, priorityApplicantEmail);
+            if (existingApplicationPriorityApplicantEmail != null) {
+                throw new FoundDataConflictException();
+            }
         }
 
         // Clone submitted application data to prepare the data to be saved
@@ -87,7 +98,6 @@ public class ApplyServiceImpl implements ApplyService {
 
         if (PRIORITY_APPLICATIONS_ACTIVE) {
             // Check if priority applicant email is eligible
-            String priorityApplicantEmail = processedApplication.getPriorityApplicantEmail();
             if (checkPriorityEligibility(priorityApplicantEmail)) {
                 processedApplication.setPriorityApplicant(true);
 
