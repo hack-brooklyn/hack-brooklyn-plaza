@@ -75,9 +75,15 @@ public class ApplyServiceImpl implements ApplyService {
             throw new FoundDataConflictException();
         }
 
-        // Clone application and prepare the data to be saved
+        // Clone submitted application data to prepare the data to be saved
         SubmittedApplication processedApplication = new SubmittedApplication();
         BeanUtils.copyProperties(parsedApplication, processedApplication);
+
+        // Nullify number of hackathons attended if the applicant stated that it's their first hackathon
+        Boolean isFirstHackathon = parsedApplication.getIsFirstHackathon();
+        if (isFirstHackathon != null && isFirstHackathon) {
+            processedApplication.setNumberHackathonsAttended(null);
+        }
 
         if (PRIORITY_APPLICATIONS_ACTIVE) {
             // Check if priority applicant email is eligible
