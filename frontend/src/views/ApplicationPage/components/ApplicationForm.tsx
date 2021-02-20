@@ -58,16 +58,18 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
       // Copy application to process necessary fields and remove resumeFile (we're sending it separately)
       const processedFormValues: ApplicationFormValues = cloneDeep(submittedApplication);
 
-      // Convert isFirstHackathon boolean from "Yes"/"No" to boolean
+      // Convert isFirstHackathon boolean from "Yes"/"No" to boolean and nullify number of hackathons attended accordingly
       switch (processedFormValues.isFirstHackathon) {
         case 'Yes':
           processedFormValues.isFirstHackathon = true;
+          processedFormValues.numberHackathonsAttended = null;
           break;
         case 'No':
           processedFormValues.isFirstHackathon = false;
           break;
         default:
-          processedFormValues.isFirstHackathon = undefined;
+          processedFormValues.isFirstHackathon = null;
+          processedFormValues.numberHackathonsAttended = null;
       }
 
       // Remove the resume from the JSON data

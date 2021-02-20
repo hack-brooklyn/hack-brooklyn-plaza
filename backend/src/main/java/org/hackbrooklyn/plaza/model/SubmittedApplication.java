@@ -64,11 +64,11 @@ public class SubmittedApplication {
     private String shirtSize;
 
     @Column(name = "is_first_hackathon")
-    private boolean isFirstHackathon;
+    private Boolean isFirstHackathon;
 
     @Column(name = "number_hackathons_attended")
     @Min(0)
-    private int numberHackathonsAttended;
+    private Integer numberHackathonsAttended;
 
     // Part 2
     @Column(name = "school")

@@ -16,8 +16,8 @@ export interface ApplicationFormValues {
   pronouns?: string;
   ethnicity?: string;
   shirtSize?: string;
-  isFirstHackathon?: 'Yes' | 'No' | boolean;  // Converted to boolean during submission
-  numberHackathonsAttended?: number;
+  isFirstHackathon?: 'Yes' | 'No' | boolean | null;  // Converted to boolean during submission
+  numberHackathonsAttended?: number | null;
 
   // Part 2
   school: string;
