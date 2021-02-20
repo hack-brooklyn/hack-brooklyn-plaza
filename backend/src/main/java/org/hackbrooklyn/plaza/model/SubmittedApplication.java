@@ -67,7 +67,7 @@ public class SubmittedApplication {
     private Boolean isFirstHackathon;
 
     @Column(name = "number_hackathons_attended")
-    @Min(0)
+    @Min(1)
     private Integer numberHackathonsAttended;
 
     // Part 2
