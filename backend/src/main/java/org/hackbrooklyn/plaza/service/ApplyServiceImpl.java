@@ -1,6 +1,5 @@
 package org.hackbrooklyn.plaza.service;
 
-import com.sun.istack.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.model.PreviousSubmittedApplication;
 import org.hackbrooklyn.plaza.model.RegisteredInterestApplicant;
