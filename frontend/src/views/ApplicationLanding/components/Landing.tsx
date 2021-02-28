@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import styled from 'styled-components/macro';
 import { toast } from 'react-toastify';
 import { MonoHeading } from 'commonStyles';
-import { API_ROOT } from 'index';
+import { API_ROOT, PRIORITY_APPLICATIONS_ACTIVE } from 'index';
 import { toastValidationErrors } from 'util/toastValidationErrors';
 
 const Landing = (): JSX.Element => {

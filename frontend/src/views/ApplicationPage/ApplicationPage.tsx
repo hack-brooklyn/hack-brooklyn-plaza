@@ -4,8 +4,7 @@ import styled from 'styled-components/macro';
 import { ApplicationForm, ApplicationSuccess } from 'views/ApplicationPage/components';
 import PriorityQualificationCheck from 'views/ApplicationPage/components/PriorityQualificationCheck';
 import { MonoHeading } from 'commonStyles';
-
-export const PRIORITY_APPLICATIONS_ACTIVE = true;
+import { PRIORITY_APPLICATIONS_ACTIVE } from 'index';
 
 const ApplicationPage = (): JSX.Element => {
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);

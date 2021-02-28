@@ -9,8 +9,7 @@ import Button from 'react-bootstrap/Button';
 import { Agreements, PartFour, PartOne, PartThree, PartTwo } from './FormParts';
 import { ApplicationFormValues } from 'types';
 import countries from 'assets/data/countries.json';
-import { API_ROOT } from 'index';
-import { PRIORITY_APPLICATIONS_ACTIVE } from 'views/ApplicationPage/ApplicationPage';
+import { API_ROOT, PRIORITY_APPLICATIONS_ACTIVE } from 'index';
 import { toastValidationErrors } from 'util/toastValidationErrors';
 
 export interface FormPartProps {

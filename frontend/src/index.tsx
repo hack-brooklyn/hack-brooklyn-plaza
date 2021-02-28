@@ -12,7 +12,8 @@ import 'typeface-anonymous-pro';
 import 'normalize.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export const API_ROOT = 'https://api.hackbrooklyn.org';
+export const API_ROOT = process.env.REACT_APP_API_ROOT;
+export const PRIORITY_APPLICATIONS_ACTIVE = (process.env.REACT_APP_PRIORITY_APPLICATIONS_ACTIVE === 'true');
 
 ReactDOM.render(
   <React.StrictMode>
