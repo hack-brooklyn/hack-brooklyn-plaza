@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyledFieldset, StyledTitleLegend } from 'views/ApplicationPage/styles';
-import { FastField } from 'formik';
-import { StyledFormLabel } from 'commonStyles';
 import styled from 'styled-components/macro';
+import { FastField } from 'formik';
+
+import { StyledFieldset, StyledTitleLegend } from 'views/ApplicationPage/styles';
+import { StyledFormLabel } from 'commonStyles';
 import { FormPartProps } from 'views/ApplicationPage/components/ApplicationForm';
 
 const PartFour = (props: FormPartProps): JSX.Element => {

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import LinkButton from '../../../components/LinkButton';
+import styled from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import styled from 'styled-components/macro';
 import { toast } from 'react-toastify';
+
+import { LinkButton } from 'components';
+import { toastValidationErrors } from 'util/toastValidationErrors';
 import { MonoHeading } from 'commonStyles';
 import { API_ROOT, PRIORITY_APPLICATIONS_ACTIVE } from 'index';
-import { toastValidationErrors } from 'util/toastValidationErrors';
 
 const Landing = (): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');

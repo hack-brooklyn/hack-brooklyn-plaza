@@ -2,13 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import Container from 'react-bootstrap/Container';
-import Routes from './Routes';
-import Navbar from 'components/Navbar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const App = (): JSX.Element => {
+import { Navbar } from 'components';
+import Routes from './Routes';
 
+const App = (): JSX.Element => {
   return (
     <Router>
       <header>

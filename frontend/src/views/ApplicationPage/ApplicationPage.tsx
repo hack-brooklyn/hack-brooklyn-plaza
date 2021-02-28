@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 
-import { ApplicationForm, ApplicationSuccess } from 'views/ApplicationPage/components';
-import PriorityQualificationCheck from 'views/ApplicationPage/components/PriorityQualificationCheck';
+import { ApplicationForm, ApplicationSuccess, PriorityQualificationCheck } from 'views/ApplicationPage/components';
 import { MonoHeading } from 'commonStyles';
 import { PRIORITY_APPLICATIONS_ACTIVE } from 'index';
 

@@ -7,10 +7,10 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import { Agreements, PartFour, PartOne, PartThree, PartTwo } from './FormParts';
+import { toastValidationErrors } from 'util/toastValidationErrors';
 import { ApplicationFormValues } from 'types';
 import countries from 'assets/data/countries.json';
 import { API_ROOT, PRIORITY_APPLICATIONS_ACTIVE } from 'index';
-import { toastValidationErrors } from 'util/toastValidationErrors';
 
 export interface FormPartProps {
   formik: FormikProps<ApplicationFormValues>;

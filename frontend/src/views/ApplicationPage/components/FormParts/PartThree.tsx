@@ -1,10 +1,11 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form';
-import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/ApplicationPage/styles';
+import styled from 'styled-components/macro';
 import { FastField } from 'formik';
+import Form from 'react-bootstrap/Form';
+
+import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/ApplicationPage/styles';
 import { StyledFormLabel } from 'commonStyles';
 import { FormPartProps } from 'views/ApplicationPage/components/ApplicationForm';
-import styled from 'styled-components/macro';
 
 const PartThree = (props: FormPartProps): JSX.Element => {
   const { formik } = props;

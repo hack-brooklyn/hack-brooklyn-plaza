@@ -2,7 +2,7 @@ import React from 'react';
 import { FastField } from 'formik';
 import Form from 'react-bootstrap/Form';
 
-import RequiredAsterisk from 'components/RequiredAsterisk';
+import { RequiredAsterisk } from 'components';
 import { StyledFieldset } from 'views/ApplicationPage/styles';
 import { FormPartProps } from 'views/ApplicationPage/components/ApplicationForm';
 

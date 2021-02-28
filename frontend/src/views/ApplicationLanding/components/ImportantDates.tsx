@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import Date from 'components/Date';
+
+import { Date } from 'components';
 import PriorityAppDate from 'assets/apply/priority-apps.svg';
 import GeneralAppDate from 'assets/apply/general-apps.svg';
 import ApplicationDeadlineDate from 'assets/apply/application-deadline.svg';
