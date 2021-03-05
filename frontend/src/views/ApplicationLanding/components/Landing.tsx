@@ -76,18 +76,18 @@ const Landing = (): JSX.Element => {
       <StyledParagraph>
         <span role="text">
           Hack Brooklyn is back again for another 48 hours of innovation on <strong>April 23,
-          2021.</strong> This year, we’re excited to announce that we will be accepting students from all schools!
+          2021</strong>. This year, we’re excited to announce that we will be accepting students from all schools!
         </span>
       </StyledParagraph>
       <StyledParagraph>
         {PRIORITY_APPLICATIONS_ACTIVE ? (
           <span role="text">
             Priority applications are now open! If you applied to Hack Brooklyn last year and/or are a
-            Brooklyn College student, apply now to hear back by <strong>March 29, 2021.</strong>
+            Brooklyn College student, apply now to hear back by <strong>March 29, 2021</strong>.
           </span>
         ) : (
           <span role="text">
-            Applications are now open to the public! Submit your application now to hear back by <strong>March 29, 2021.</strong>
+            Applications are now open to the public! Apply now to hear back starting on <strong>March 29, 2021</strong>.
           </span>
         )}
       </StyledParagraph>

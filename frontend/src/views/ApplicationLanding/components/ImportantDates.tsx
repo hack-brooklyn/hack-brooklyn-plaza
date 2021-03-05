@@ -19,7 +19,7 @@ const ImportantDates = (): JSX.Element => {
           General Applications Open
         </Date>
         <Date src={AcceptanceReleaseDate} alt="March 29, 2021">
-          Acceptances Begin Releasing
+          Decisions Begin Releasing
         </Date>
         <Date src={ApplicationDeadlineDate} alt="April 16, 2021">
           Last Day to Apply
