@@ -67,6 +67,7 @@ public class ApplyServiceImpl implements ApplyService {
         final String firstName = parsedApplication.getFirstName();
         final String lastName = parsedApplication.getLastName();
         final String email = parsedApplication.getEmail();
+        final String priorityApplicantEmail = parsedApplication.getPriorityApplicantEmail();
         log.info(String.format("Processing application from %s %s with email %s", firstName, lastName, email));
 
         // Check if an application was already submitted with the applicant's submitted email.
@@ -76,8 +77,7 @@ public class ApplyServiceImpl implements ApplyService {
             throw new FoundDataConflictException();
         }
 
-        // Then check the email used to verify priority applicant eligibility if
-        final String priorityApplicantEmail = parsedApplication.getPriorityApplicantEmail();
+        // Then check the email used to verify priority applicant eligibility if priority applications are open
         if (PRIORITY_APPLICATIONS_ACTIVE) {
             SubmittedApplication existingApplicationPriorityApplicantEmail = submittedApplicationRepository.findFirstByEmailOrPriorityApplicantEmail(priorityApplicantEmail, priorityApplicantEmail);
             if (existingApplicationPriorityApplicantEmail != null) {
@@ -85,9 +85,22 @@ public class ApplyServiceImpl implements ApplyService {
             }
         }
 
+
         // Clone submitted application data to prepare the data to be saved
         SubmittedApplication processedApplication = new SubmittedApplication();
         BeanUtils.copyProperties(parsedApplication, processedApplication);
+
+        if (PRIORITY_APPLICATIONS_ACTIVE) {
+            // Check if applicant is eligible to apply during the priority application period
+            if (checkPriorityEligibility(priorityApplicantEmail)) {
+                processedApplication.setPriorityApplicant(true);
+            } else {
+                // The member is not eligible to apply at this time, stop the application process
+                throw new PriorityApplicantIneligibleException();
+            }
+        } else {
+            processedApplication.setPriorityApplicant(false);
+        }
 
         // Nullify number of hackathons attended if the applicant stated that it's their first hackathon
         Boolean isFirstHackathon = parsedApplication.getIsFirstHackathon();
@@ -95,34 +108,31 @@ public class ApplyServiceImpl implements ApplyService {
             processedApplication.setNumberHackathonsAttended(null);
         }
 
-        if (PRIORITY_APPLICATIONS_ACTIVE) {
-            // Check if priority applicant email is eligible
-            if (checkPriorityEligibility(priorityApplicantEmail)) {
-                processedApplication.setPriorityApplicant(true);
-
-                // Try to find a previous applicant with the email to get its application id
-                // May not exist if the applicant has a Brooklyn College email but didn't apply previously
-                PreviousSubmittedApplication foundApplication =
-                        previousSubmittedApplicationRepository.findFirstByEmailOrSchoolEmail(priorityApplicantEmail, priorityApplicantEmail);
-                if (foundApplication != null) {
-                    processedApplication.setPreviousApplication(foundApplication);
-                }
-            } else {
-                throw new PriorityApplicantIneligibleException();
-            }
-        } else {
-            processedApplication.setPriorityApplicant(false);
-        }
-
         // Check if the applicant registered their interest early on
         RegisteredInterestApplicant foundInterestedApplicant =
                 registeredInterestApplicantRepository.findFirstByEmail(email);
-
         if (foundInterestedApplicant != null) {
             processedApplication.setRegisteredInterest(true);
             processedApplication.setRegisteredInterestApplicant(foundInterestedApplicant);
         } else {
             processedApplication.setRegisteredInterest(false);
+        }
+
+        // Try to find a previous applicant with the email to get its application id
+        // May not exist if the applicant has a Brooklyn College email but didn't apply previously
+        PreviousSubmittedApplication foundApplication =
+                previousSubmittedApplicationRepository.findFirstByEmailOrSchoolEmail(email, email);
+        if (foundApplication != null) {
+            processedApplication.setPreviousApplication(foundApplication);
+        }
+
+        // Check priority applicant email only during priority application phase
+        if (PRIORITY_APPLICATIONS_ACTIVE && foundApplication == null) {
+            PreviousSubmittedApplication foundApplicationPriority =
+                    previousSubmittedApplicationRepository.findFirstByEmailOrSchoolEmail(priorityApplicantEmail, priorityApplicantEmail);
+            if (foundApplicationPriority != null) {
+                processedApplication.setPreviousApplication(foundApplicationPriority);
+            }
         }
 
         // Upload resume to AWS S3 if one was submitted and retrieve file URL
