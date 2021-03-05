@@ -16,7 +16,7 @@ const ImportantDates = (): JSX.Element => {
           Priority Applications Open
         </Date>
         <Date src={GeneralAppDate} alt="March 5, 2021">
-          General Applications Open (Tentative)
+          General Applications Open
         </Date>
         <Date src={AcceptanceReleaseDate} alt="March 29, 2021">
           Acceptances Begin Releasing
