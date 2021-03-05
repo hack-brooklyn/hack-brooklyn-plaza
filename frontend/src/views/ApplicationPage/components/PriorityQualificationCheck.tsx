@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import RequiredFormLabel from 'components/RequiredFormLabel';
-import Form from 'react-bootstrap/Form';
-import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
-import { toast } from 'react-toastify';
-import styled from 'styled-components/macro';
-import { API_ROOT } from 'index';
-import { Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components/macro';
+import Form from 'react-bootstrap/Form';
+import Alert from 'react-bootstrap/Alert';
+import { toast } from 'react-toastify';
+
+import { RequiredFormLabel } from 'components';
 import { toastValidationErrors } from 'util/toastValidationErrors';
+import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
+import { API_ROOT } from 'index';
 
 interface PriorityQualificationCheckProps {
   isPriorityApplicant: boolean;

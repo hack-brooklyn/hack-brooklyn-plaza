@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import LinkButton from '../../../components/LinkButton';
+import styled from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import styled from 'styled-components/macro';
 import { toast } from 'react-toastify';
-import { MonoHeading } from 'commonStyles';
-import { API_ROOT } from 'index';
+
+import { LinkButton } from 'components';
 import { toastValidationErrors } from 'util/toastValidationErrors';
+import { MonoHeading } from 'commonStyles';
+import { API_ROOT, PRIORITY_APPLICATIONS_ACTIVE } from 'index';
 
 const Landing = (): JSX.Element => {
   const [firstName, setFirstName] = useState<string>('');
@@ -79,63 +80,73 @@ const Landing = (): JSX.Element => {
         </span>
       </StyledParagraph>
       <StyledParagraph>
-        <span role="text">
-          Priority applications are now open! If you applied to Hack Brooklyn last year and/or are a
-          Brooklyn College student, apply now to hear back by <strong>March 29, 2021.</strong>
-        </span>
+        {PRIORITY_APPLICATIONS_ACTIVE ? (
+          <span role="text">
+            Priority applications are now open! If you applied to Hack Brooklyn last year and/or are a
+            Brooklyn College student, apply now to hear back by <strong>March 29, 2021.</strong>
+          </span>
+        ) : (
+          <span role="text">
+            Applications are now open to the public! Submit your application now to hear back by <strong>March 29, 2021.</strong>
+          </span>
+        )}
       </StyledParagraph>
 
       <ApplyTextAndButton>
         <StyledParagraph center>Ready to begin your adventure? Apply now!</StyledParagraph>
         <ButtonContainer>
           <LinkButton to="/apply/form" size="lg">
-            Start Priority Application
+            Start {PRIORITY_APPLICATIONS_ACTIVE && 'Priority '}Application
           </LinkButton>
         </ButtonContainer>
       </ApplyTextAndButton>
 
-      <StyledParagraph>
-        Not a priority applicant? No problem! Enter your info below to join our mailing list and we’ll send you an
-        email when applications go live to the public. <strong>You’ll also receive priority consideration for the
-        general application!</strong>
-      </StyledParagraph>
+      {PRIORITY_APPLICATIONS_ACTIVE && (
+        <>
+          <StyledParagraph>
+            Not a priority applicant? No problem! Enter your info below to join our mailing list and we’ll send you an
+            email when applications go live to the public. <strong>You’ll also receive priority consideration for the
+            general application!</strong>
+          </StyledParagraph>
 
-      <StyledForm onSubmit={handleSubmit}>
-        <NameFormContainer>
-          <Form.Group controlId="interestFormFirstName">
-            <Form.Label>First Name</Form.Label>
-            <Form.Control type="text"
-                          value={firstName}
-                          onChange={(event) => setFirstName(event.target.value)}
-                          disabled={submitting}
-                          required
-            />
-          </Form.Group>
+          <StyledForm onSubmit={handleSubmit}>
+            <NameFormContainer>
+              <Form.Group controlId="interestFormFirstName">
+                <Form.Label>First Name</Form.Label>
+                <Form.Control type="text"
+                              value={firstName}
+                              onChange={(event) => setFirstName(event.target.value)}
+                              disabled={submitting}
+                              required
+                />
+              </Form.Group>
 
-          <Form.Group controlId="interestFormLastName">
-            <Form.Label>Last Name</Form.Label>
-            <Form.Control type="text"
-                          value={lastName}
-                          onChange={(event) => setLastName(event.target.value)}
-                          disabled={submitting}
-                          required
-            />
-          </Form.Group>
-        </NameFormContainer>
+              <Form.Group controlId="interestFormLastName">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control type="text"
+                              value={lastName}
+                              onChange={(event) => setLastName(event.target.value)}
+                              disabled={submitting}
+                              required
+                />
+              </Form.Group>
+            </NameFormContainer>
 
-        <Form.Group controlId="interestFormEmail">
-          <Form.Label>Email Address</Form.Label>
-          <Form.Control type="email"
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                        disabled={submitting}
-                        required
-          />
-        </Form.Group>
-        <StyledSubmitButton type="submit" variant="info" disabled={submitting}>
-          {submitting ? 'Registering...' : 'Register Interest'}
-        </StyledSubmitButton>
-      </StyledForm>
+            <Form.Group controlId="interestFormEmail">
+              <Form.Label>Email Address</Form.Label>
+              <Form.Control type="email"
+                            value={email}
+                            onChange={(event) => setEmail(event.target.value)}
+                            disabled={submitting}
+                            required
+              />
+            </Form.Group>
+            <StyledSubmitButton type="submit" variant="info" disabled={submitting}>
+              {submitting ? 'Registering...' : 'Register Interest'}
+            </StyledSubmitButton>
+          </StyledForm>
+        </>
+      )}
     </ApplyContainer>
   );
 };

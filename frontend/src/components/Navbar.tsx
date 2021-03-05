@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
+import NavLink from 'react-bootstrap/NavLink';
+
+import { LinkButton } from 'components';
 import logo from 'assets/logo.png';
-import LinkButton from 'components/LinkButton';
-import { NavLink } from 'react-bootstrap';
 
 const Navbar = (): JSX.Element => {
   return (

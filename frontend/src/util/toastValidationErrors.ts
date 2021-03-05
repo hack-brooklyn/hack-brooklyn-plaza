@@ -1,5 +1,5 @@
-import { toast } from 'react-toastify';
 import startCase from 'lodash.startcase';
+import { toast } from 'react-toastify';
 
 interface Errors {
   field: string;

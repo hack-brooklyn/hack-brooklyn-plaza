@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import Date from 'components/Date';
+
+import { Date } from 'components';
 import PriorityAppDate from 'assets/apply/priority-apps.svg';
 import GeneralAppDate from 'assets/apply/general-apps.svg';
 import ApplicationDeadlineDate from 'assets/apply/application-deadline.svg';
@@ -15,7 +16,7 @@ const ImportantDates = (): JSX.Element => {
           Priority Applications Open
         </Date>
         <Date src={GeneralAppDate} alt="March 5, 2021">
-          General Applications Open (Tentative)
+          General Applications Open
         </Date>
         <Date src={AcceptanceReleaseDate} alt="March 29, 2021">
           Acceptances Begin Releasing

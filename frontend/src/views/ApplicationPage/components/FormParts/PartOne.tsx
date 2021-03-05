@@ -1,13 +1,14 @@
 import React from 'react';
-import Select from 'react-select/creatable';
 import { FastField, Field } from 'formik';
+import Select from 'react-select/creatable';
 import Form from 'react-bootstrap/Form';
-import RequiredFormLabel from 'components/RequiredFormLabel';
-import { Option } from 'types';
+
+import { RequiredFormLabel } from 'components';
 import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'views/ApplicationPage/styles';
 import { StyledFormLabel, StyledFormLabelLegend } from 'commonStyles';
-import { FormPartProps } from 'views/ApplicationPage/components/ApplicationForm';
 import { ethnicityOptions, genderOptions, pronounOptions, shirtSizeOptions } from 'common/applicationFormOptions';
+import { FormPartProps } from 'views/ApplicationPage/components/ApplicationForm';
+import { Option } from 'types';
 
 interface PartOneProps extends FormPartProps {
   countryOptions: Option[] | undefined;
