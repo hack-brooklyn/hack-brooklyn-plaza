@@ -1,7 +1,6 @@
 package org.hackbrooklyn.plaza.controller;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.hackbrooklyn.plaza.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
