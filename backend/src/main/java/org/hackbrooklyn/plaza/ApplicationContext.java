@@ -37,7 +37,7 @@ public class ApplicationContext {
             public void addCorsMappings(CorsRegistry registry) {
                 // @Value does not inject in time for the bean to read the environment variable
                 // Use environment.getProperty here instead
-                registry.addMapping("/**").allowedOrigins(environment.getProperty("APP_DOMAIN"));
+                registry.addMapping("/**").allowedOrigins(environment.getProperty("FRONTEND_DOMAIN"));
             }
         };
     }

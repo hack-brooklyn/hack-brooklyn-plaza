@@ -130,6 +130,7 @@ public class SubmittedApplication {
     @Column(name = "share_resume_with_sponsors")
     private boolean shareResumeWithSponsors;
 
+    // Additional internal fields
     @Column(name = "priority_applicant")
     @NotNull
     @JsonIgnore
@@ -153,4 +154,9 @@ public class SubmittedApplication {
     @JoinColumn(name = "registered_interest_applicant_id", referencedColumnName = "id")
     @JsonIgnore
     private RegisteredInterestApplicant registeredInterestApplicant;
+
+    @Column(name = "decision")
+    @NotEmpty
+    @JsonIgnore
+    private String decision;
 }
