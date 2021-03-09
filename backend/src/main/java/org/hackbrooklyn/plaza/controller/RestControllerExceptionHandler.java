@@ -1,11 +1,11 @@
 package org.hackbrooklyn.plaza.controller;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import org.hackbrooklyn.plaza.service.FoundDataConflictException;
-import org.hackbrooklyn.plaza.service.PriorityApplicantIneligibleException;
-import org.hackbrooklyn.plaza.service.RejectedFileTypeException;
+import io.jsonwebtoken.ExpiredJwtException;
+import org.hackbrooklyn.plaza.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -84,5 +84,41 @@ public class RestControllerExceptionHandler {
         body.put("message", "There is conflicting data found in the database.");
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ApplicationNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleApplicationNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No application was found with the email provided.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ApplicantNotAcceptedException.class)
+    public ResponseEntity<Map<String, String>> handleApplicantNotAcceptedException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The applicant with this email has not been accepted to Hack Brooklyn.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(AccountAlreadyActivatedException.class)
+    public ResponseEntity<Map<String, String>> handleAccountAlreadyActivatedException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "An account has already been activated with the email provided.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Map<String, String>> handleBadCredentialsException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The email or password provided is incorrect. Please try again.");
+
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
 }
