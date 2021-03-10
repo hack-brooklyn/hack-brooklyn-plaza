@@ -8,4 +8,6 @@ public interface UsersService {
     User logInUser(String email, String password) throws BadCredentialsException;
 
     User activateUser(String email, String password);
+
+    void requestActivation(String email);
 }

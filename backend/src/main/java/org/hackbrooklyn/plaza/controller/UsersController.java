@@ -1,7 +1,6 @@
 package org.hackbrooklyn.plaza.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.UsersService;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class UsersController {
      * Logs a user in and generates a refresh token and an access token.
      */
     @PostMapping("login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid AuthRequest request, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginRequest request, HttpServletResponse response) {
         User loggedInUser = usersService.logInUser(request.getEmail(), request.getPassword());
 
         response.addCookie(generateJwtRefreshTokenCookie(loggedInUser));
@@ -54,13 +55,20 @@ public class UsersController {
      * Activates a user's account and generates a refresh token and an access token.
      */
     @PostMapping("activate")
-    public ResponseEntity<Map<String, String>> activate(@RequestBody @Valid AuthRequest request, HttpServletResponse response) {
-        User activatedUser = usersService.activateUser(request.getEmail(), request.getPassword());
+    public ResponseEntity<Map<String, String>> activate(@RequestBody @Valid AccountActivationRequest request, HttpServletResponse response) {
+        User activatedUser = usersService.activateUser(request.getKey(), request.getPassword());
 
         response.addCookie(generateJwtRefreshTokenCookie(activatedUser));
         Map<String, String> resBody = generateJwtAccessTokenResponseBody(activatedUser);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    @PostMapping("activate/request")
+    public ResponseEntity<Void> requestActivation(@RequestBody @Valid RequestAccountActivationRequest request) {
+        usersService.requestActivation(request.getEmail());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -89,10 +97,32 @@ public class UsersController {
         return resBody;
     }
 
-    @Getter
-    @AllArgsConstructor
-    private static class AuthRequest {
-        private final String email;
-        private final String password;
+    @Data
+    private static class RequestAccountActivationRequest {
+
+        @Email
+        @NotBlank
+        private String email;
+    }
+
+    @Data
+    private static class AccountActivationRequest {
+
+        @NotBlank
+        private String key;
+
+        @NotBlank
+        private String password;
+    }
+
+    @Data
+    private static class LoginRequest {
+
+        @Email
+        @NotBlank
+        private String email;
+
+        @NotBlank
+        private String password;
     }
 }
