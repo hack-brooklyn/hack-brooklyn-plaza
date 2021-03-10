@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Data
-@Table(name = "applicant_activations")
+@Table(name = "user_activations")
 public class UserActivation {
 
     @Id
@@ -25,9 +25,9 @@ public class UserActivation {
     private String activationKey;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "activating_application_number", referencedColumnName = "application_number")
+    @JoinColumn(name = "activating_application", referencedColumnName = "application_number")
     @NotNull
-    private SubmittedApplication activatingApplicationNumber;
+    private SubmittedApplication activatingApplication;
 
     @Column(name = "key_expiry_timestamp")
     @NotNull
