@@ -7,7 +7,11 @@ public interface UsersService {
 
     User logInUser(String email, String password) throws BadCredentialsException;
 
-    User activateUser(String email, String password);
+    User activateUser(String key, String password);
 
     void requestActivation(String email);
+
+    User resetPassword(String key, String password);
+
+    void requestPasswordReset(String email);
 }

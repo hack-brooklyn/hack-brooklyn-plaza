@@ -138,4 +138,13 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No user was found. Please try again.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
 }
