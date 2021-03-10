@@ -120,4 +120,22 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
+
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ExceptionHandler(SendGridException.class)
+    public ResponseEntity<Map<String, String>> handleSendGridException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "An error occurred while sending an email. Please try again.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_GATEWAY);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidKeyException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidKeyException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The key provided is invalid. Please try again.");
+
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
 }

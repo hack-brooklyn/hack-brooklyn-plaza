@@ -1,5 +1,6 @@
 package org.hackbrooklyn.plaza;
 
+import com.sendgrid.SendGrid;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.util.AwsS3Utils;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -28,6 +29,11 @@ public class ApplicationContext {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
+    }
+
+    @Bean
+    SendGrid sendGrid() {
+        return new SendGrid(environment.getProperty("SENDGRID_API_KEY"));
     }
 
     @Bean
