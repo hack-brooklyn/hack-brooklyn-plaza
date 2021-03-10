@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,6 +112,7 @@ public class UsersController {
         @NotBlank
         private String key;
 
+        @Size(min = 12)
         @NotBlank
         private String password;
     }
@@ -122,6 +124,7 @@ public class UsersController {
         @NotBlank
         private String email;
 
+        @Size(min = 12)
         @NotBlank
         private String password;
     }
