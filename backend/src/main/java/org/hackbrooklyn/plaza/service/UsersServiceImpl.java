@@ -8,13 +8,16 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import lombok.extern.slf4j.Slf4j;
+import org.hackbrooklyn.plaza.model.PasswordReset;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.model.UserActivation;
+import org.hackbrooklyn.plaza.repository.PasswordResetRepository;
 import org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository;
 import org.hackbrooklyn.plaza.repository.UserActivationRepository;
 import org.hackbrooklyn.plaza.repository.UserRepository;
 import org.hackbrooklyn.plaza.security.Roles;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,6 +26,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManagerFactory;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -35,6 +40,9 @@ public class UsersServiceImpl implements UsersService {
     @Value("${USER_ACTIVATION_KEY_EXPIRATION_TIME_MS}")
     private long USER_ACTIVATION_KEY_EXPIRATION_TIME_MS;
 
+    @Value("${USER_PASSWORD_RESET_KEY_EXPIRATION_TIME_MS}")
+    private long USER_PASSWORD_RESET_KEY_EXPIRATION_TIME_MS;
+
     @Value("${FRONTEND_DOMAIN}")
     private String FRONTEND_DOMAIN;
 
@@ -44,27 +52,36 @@ public class UsersServiceImpl implements UsersService {
     @Value("${SENDGRID_ACTIVATE_ACCOUNT_TEMPLATE_ID}")
     private String SENDGRID_ACTIVATE_ACCOUNT_TEMPLATE_ID;
 
+    @Value("${SENDGRID_RESET_PASSWORD_TEMPLATE_ID}")
+    private String SENDGRID_RESET_PASSWORD_TEMPLATE_ID;
+
     private final PasswordEncoder passwordEncoder;
+    private final EntityManagerFactory entityManagerFactory;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final SubmittedApplicationRepository submittedApplicationRepository;
     private final UserActivationRepository userActivationRepository;
+    private final PasswordResetRepository passwordResetRepository;
     private final SendGrid sendGrid;
 
-    public UsersServiceImpl(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, UserRepository userRepository, SubmittedApplicationRepository submittedApplicationRepository, UserActivationRepository userActivationRepository, SendGrid sendGrid) {
+    public UsersServiceImpl(PasswordEncoder passwordEncoder, EntityManagerFactory entityManagerFactory, AuthenticationManager authenticationManager, UserRepository userRepository, SubmittedApplicationRepository submittedApplicationRepository, UserActivationRepository userActivationRepository, PasswordResetRepository passwordResetRepository, SendGrid sendGrid) {
         this.passwordEncoder = passwordEncoder;
+        this.entityManagerFactory = entityManagerFactory;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.submittedApplicationRepository = submittedApplicationRepository;
         this.userActivationRepository = userActivationRepository;
+        this.passwordResetRepository = passwordResetRepository;
         this.sendGrid = sendGrid;
     }
 
+    @Override
     public User logInUser(String email, String password) throws BadCredentialsException {
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         return (User) auth.getPrincipal();
     }
 
+    @Override
     public User activateUser(String activationKey, String password) {
         // Find the application via activation key
         UserActivation userActivation = userActivationRepository
@@ -99,12 +116,11 @@ public class UsersServiceImpl implements UsersService {
         return activatedUser;
     }
 
+    @Override
     public void requestActivation(String activatingUserEmail) {
         // Check if the applicant was accepted
-        SubmittedApplication foundApplication = submittedApplicationRepository.findFirstByEmail(activatingUserEmail);
-        if (foundApplication == null) {
-            throw new ApplicationNotFoundException();
-        }
+        SubmittedApplication foundApplication = submittedApplicationRepository.findFirstByEmail(activatingUserEmail)
+                .orElseThrow(() -> new ApplicationNotFoundException());
 
         if (foundApplication.getDecision() == null || !foundApplication.getDecision().equals("Accepted")) {
             throw new ApplicantNotAcceptedException();
@@ -117,7 +133,7 @@ public class UsersServiceImpl implements UsersService {
 
         // Applicant is accepted and is not already activated, generate activation key and send to user
         String activationKey = UUID.randomUUID().toString();
-        String activationLink = String.format("%s/activate/%s", FRONTEND_DOMAIN, activationKey);
+        String activationLink = String.format("%s/activate?key=%s", FRONTEND_DOMAIN, activationKey);
         long expiryTimeMs = System.currentTimeMillis() + USER_ACTIVATION_KEY_EXPIRATION_TIME_MS;
         LocalDateTime expiryLocalDateTime = Instant.ofEpochMilli(expiryTimeMs).atZone(ZoneId.of("UTC")).toLocalDateTime();
 
@@ -128,31 +144,96 @@ public class UsersServiceImpl implements UsersService {
         userActivationRepository.save(userActivation);
 
         // Send activation email to user via SendGrid dynamic template
+        Personalization activationEmailPersonalization = new Personalization();
+        activationEmailPersonalization.addDynamicTemplateData("firstName", foundApplication.getFirstName());
+        activationEmailPersonalization.addDynamicTemplateData("activationLink", activationLink);
+        activationEmailPersonalization.addTo(new Email(activatingUserEmail));
+
+        try {
+            sendDynamicTemplateEmailUsingSendGrid(SENDGRID_ACTIVATE_ACCOUNT_TEMPLATE_ID, activationEmailPersonalization);
+        } catch (Exception e) {
+            throw new SendGridException();
+        }
+    }
+
+    @Override
+    public User resetPassword(String passwordResetKey, String password) {
+        // Find the user via password reset key
+        PasswordReset passwordReset = passwordResetRepository.findFirstByPasswordResetKey(passwordResetKey)
+                .orElseThrow(() -> new InvalidKeyException());
+
+        // Check if the activation key is still valid
+        long keyExpiryTimeMs =
+                passwordReset.getKeyExpiryTimestamp().atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
+        if (keyExpiryTimeMs < System.currentTimeMillis()) {
+            throw new InvalidKeyException();
+        }
+
+        User resettingUser = passwordReset.getResettingUser();
+
+        // Password reset key is valid, proceed to hash and reset the user's password
+        // Hash and set password
+        String newHashedPassword = passwordEncoder.encode(password);
+        resettingUser.setHashedPassword(newHashedPassword);
+
+        // Save updated hash in database
+        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
+        session.update(resettingUser);
+        session.close();
+
+        // Destroy all password reset keys from the activating user
+        passwordResetRepository.deleteAllByResettingUser(resettingUser);
+
+        return resettingUser;
+    }
+
+    @Override
+    public void requestPasswordReset(String resettingUserEmail) {
+        // Check if a user with the email exists
+        User resettingPasswordUser = userRepository.findByEmail(resettingUserEmail)
+                .orElseThrow(() -> new UserNotFoundException());
+
+        // User exists, generate password reset key and send to user
+        String passwordResetKey = UUID.randomUUID().toString();
+        String passwordResetLink = String.format("%s/resetPassword?key=%s", FRONTEND_DOMAIN, passwordResetKey);
+        long expiryTimeMs = System.currentTimeMillis() + USER_PASSWORD_RESET_KEY_EXPIRATION_TIME_MS;
+        LocalDateTime expiryLocalDateTime = Instant.ofEpochMilli(expiryTimeMs).atZone(ZoneId.of("UTC")).toLocalDateTime();
+
+        PasswordReset passwordReset = new PasswordReset();
+        passwordReset.setPasswordResetKey(passwordResetKey);
+        passwordReset.setResettingUser(resettingPasswordUser);
+        passwordReset.setKeyExpiryTimestamp(expiryLocalDateTime);
+        passwordResetRepository.save(passwordReset);
+
+        // Send password reset email to user via SendGrid dynamic template
+        Personalization passwordResetEmailPersonalization = new Personalization();
+        passwordResetEmailPersonalization.addDynamicTemplateData("firstName", resettingPasswordUser.getFirstName());
+        passwordResetEmailPersonalization.addDynamicTemplateData("passwordResetLink", passwordResetLink);
+        passwordResetEmailPersonalization.addTo(new Email(resettingPasswordUser.getEmail()));
+
+        try {
+            sendDynamicTemplateEmailUsingSendGrid(SENDGRID_RESET_PASSWORD_TEMPLATE_ID, passwordResetEmailPersonalization);
+        } catch (Exception e) {
+            throw new SendGridException();
+        }
+    }
+
+    private void sendDynamicTemplateEmailUsingSendGrid(String templateId, Personalization personalization) throws IOException {
         Email fromEmail = new Email(SENDGRID_FROM_EMAIL);
-        Email toEmail = new Email(activatingUserEmail);
 
         Mail mail = new Mail();
         mail.setFrom(fromEmail);
-        mail.setTemplateId(SENDGRID_ACTIVATE_ACCOUNT_TEMPLATE_ID);
-
-        Personalization personalization = new Personalization();
-        personalization.addDynamicTemplateData("firstName", foundApplication.getFirstName());
-        personalization.addDynamicTemplateData("activationLink", activationLink);
-        personalization.addTo(toEmail);
+        mail.setTemplateId(templateId);
         mail.addPersonalization(personalization);
 
-        try {
-            Request sendGridRequest = new Request();
-            sendGridRequest.setMethod(Method.POST);
-            sendGridRequest.setEndpoint("mail/send");
-            sendGridRequest.setBody(mail.build());
+        Request sendGridRequest = new Request();
+        sendGridRequest.setMethod(Method.POST);
+        sendGridRequest.setEndpoint("mail/send");
+        sendGridRequest.setBody(mail.build());
 
-            Response sendGridResponse = sendGrid.api(sendGridRequest);
+        Response sendGridResponse = sendGrid.api(sendGridRequest);
 
-            if (sendGridResponse.getStatusCode() != 202) {
-                throw new SendGridException();
-            }
-        } catch (Exception e) {
+        if (sendGridResponse.getStatusCode() != 202) {
             throw new SendGridException();
         }
     }

@@ -43,7 +43,7 @@ public class UsersController {
      * Logs a user in and generates a refresh token and an access token.
      */
     @PostMapping("login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid AuthRequest request, HttpServletResponse response) {
         User loggedInUser = usersService.logInUser(request.getEmail(), request.getPassword());
 
         response.addCookie(generateJwtRefreshTokenCookie(loggedInUser));
@@ -56,7 +56,7 @@ public class UsersController {
      * Activates a user's account and generates a refresh token and an access token.
      */
     @PostMapping("activate")
-    public ResponseEntity<Map<String, String>> activate(@RequestBody @Valid AccountActivationRequest request, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> activate(@RequestBody @Valid KeyPasswordBodyRequest request, HttpServletResponse response) {
         User activatedUser = usersService.activateUser(request.getKey(), request.getPassword());
 
         response.addCookie(generateJwtRefreshTokenCookie(activatedUser));
@@ -66,8 +66,28 @@ public class UsersController {
     }
 
     @PostMapping("activate/request")
-    public ResponseEntity<Void> requestActivation(@RequestBody @Valid RequestAccountActivationRequest request) {
+    public ResponseEntity<Void> requestActivation(@RequestBody @Valid EmailBodyRequest request) {
         usersService.requestActivation(request.getEmail());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Resets a user's password given a password reset key and generates a refresh token and an access token.
+     */
+    @PostMapping("resetPassword")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody @Valid KeyPasswordBodyRequest request, HttpServletResponse response) {
+        User resetUser = usersService.resetPassword(request.getKey(), request.getPassword());
+
+        response.addCookie(generateJwtRefreshTokenCookie(resetUser));
+        Map<String, String> resBody = generateJwtAccessTokenResponseBody(resetUser);
+
+        return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    @PostMapping("resetPassword/request")
+    public ResponseEntity<Void> requestPasswordReset(@RequestBody @Valid EmailBodyRequest request) {
+        usersService.requestPasswordReset(request.getEmail());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -99,7 +119,7 @@ public class UsersController {
     }
 
     @Data
-    private static class RequestAccountActivationRequest {
+    private static class EmailBodyRequest {
 
         @Email
         @NotBlank
@@ -107,7 +127,7 @@ public class UsersController {
     }
 
     @Data
-    private static class AccountActivationRequest {
+    private static class KeyPasswordBodyRequest {
 
         @NotBlank
         private String key;
@@ -118,7 +138,7 @@ public class UsersController {
     }
 
     @Data
-    private static class LoginRequest {
+    private static class AuthRequest {
 
         @Email
         @NotBlank
