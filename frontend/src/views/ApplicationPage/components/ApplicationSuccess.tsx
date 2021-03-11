@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/macro';
 
 import { PRIORITY_APPLICATIONS_ACTIVE } from 'index';
-import checkmark from 'assets/checkmark.svg';
+import checkmark from 'assets/icons/checkmark.svg';
 
 const ApplicationSuccess = (): JSX.Element => {
   return (
