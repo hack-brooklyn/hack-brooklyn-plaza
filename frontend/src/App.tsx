@@ -5,6 +5,8 @@ import styled from 'styled-components/macro';
 import Container from 'react-bootstrap/Container';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import logo from 'assets/logo.png';
+import loadingIcon from 'assets/icons/loading.svg';
 
 import { Navbar } from './components';
 import Routes from './Routes';
@@ -63,7 +65,16 @@ const MainContent = () => {
           <Routes />
         </Container>
       </StyledMain>
-    </Router>
+    </>
+  );
+};
+
+const LoadingContent = () => {
+  return (
+    <LoadingSection>
+      <LoadingLogoImg src={logo} alt="Hack Brooklyn" />
+      <LoadingSpinnerImg src={loadingIcon} alt="Loading..." />
+    </LoadingSection>
   );
 };
 
@@ -73,6 +84,24 @@ const StyledMain = styled.main`
   @media screen and (min-width: 992px) {
     margin: 7rem auto;
   }
+`;
+
+const LoadingSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10rem auto;
+`;
+
+const LoadingLogoImg = styled.img`
+  height: 12rem;
+  width: 12rem;
+  margin-bottom: 2rem;
+`;
+
+const LoadingSpinnerImg = styled.img`
+  height: 4rem;
+  width: 4rem;
 `;
 
 export default App;
