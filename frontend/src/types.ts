@@ -1,3 +1,32 @@
+import { LOG_IN, LOG_OUT, SET_JWT_ACCESS_TOKEN } from './constants';
+
+// Redux state
+// Auth
+export interface AuthState {
+  isLoggedIn: boolean;
+  jwtAccessToken: string | null;
+}
+
+interface LogInAction {
+  type: typeof LOG_IN;
+}
+
+interface LogOutAction {
+  type: typeof LOG_OUT;
+}
+
+interface SetJwtAccessTokenAction {
+  type: typeof SET_JWT_ACCESS_TOKEN;
+  payload: string | null;
+}
+
+export type AuthActionTypes = LogInAction | LogOutAction | SetJwtAccessTokenAction;
+
+// Common responses
+export interface AuthResponse {
+  token: string;
+}
+
 // The react-select option.
 export interface Option {
   value: string;
