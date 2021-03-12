@@ -17,8 +17,11 @@ import org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository;
 import org.hackbrooklyn.plaza.repository.UserActivationRepository;
 import org.hackbrooklyn.plaza.repository.UserRepository;
 import org.hackbrooklyn.plaza.security.Roles;
+import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,6 +58,9 @@ public class UsersServiceImpl implements UsersService {
     @Value("${SENDGRID_RESET_PASSWORD_TEMPLATE_ID}")
     private String SENDGRID_RESET_PASSWORD_TEMPLATE_ID;
 
+    @Value("${REDIS_REFRESH_TOKEN_NAMESPACE}")
+    private String REDIS_REFRESH_TOKEN_NAMESPACE;
+
     private final PasswordEncoder passwordEncoder;
     private final EntityManagerFactory entityManagerFactory;
     private final AuthenticationManager authenticationManager;
@@ -62,9 +68,12 @@ public class UsersServiceImpl implements UsersService {
     private final SubmittedApplicationRepository submittedApplicationRepository;
     private final UserActivationRepository userActivationRepository;
     private final PasswordResetRepository passwordResetRepository;
+    private final RedisTemplate<String, String> refreshTokenBlocklistRedisTemplate;
     private final SendGrid sendGrid;
+    private final JwtUtils jwtUtils;
 
-    public UsersServiceImpl(PasswordEncoder passwordEncoder, EntityManagerFactory entityManagerFactory, AuthenticationManager authenticationManager, UserRepository userRepository, SubmittedApplicationRepository submittedApplicationRepository, UserActivationRepository userActivationRepository, PasswordResetRepository passwordResetRepository, SendGrid sendGrid) {
+    @Autowired
+    public UsersServiceImpl(PasswordEncoder passwordEncoder, EntityManagerFactory entityManagerFactory, AuthenticationManager authenticationManager, UserRepository userRepository, SubmittedApplicationRepository submittedApplicationRepository, UserActivationRepository userActivationRepository, PasswordResetRepository passwordResetRepository, RedisTemplate<String, String> refreshTokenBlocklistRedisTemplate, SendGrid sendGrid, JwtUtils jwtUtils) {
         this.passwordEncoder = passwordEncoder;
         this.entityManagerFactory = entityManagerFactory;
         this.authenticationManager = authenticationManager;
@@ -72,7 +81,9 @@ public class UsersServiceImpl implements UsersService {
         this.submittedApplicationRepository = submittedApplicationRepository;
         this.userActivationRepository = userActivationRepository;
         this.passwordResetRepository = passwordResetRepository;
+        this.refreshTokenBlocklistRedisTemplate = refreshTokenBlocklistRedisTemplate;
         this.sendGrid = sendGrid;
+        this.jwtUtils = jwtUtils;
     }
 
     @Override
@@ -82,11 +93,20 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public void addRefreshTokenToBlocklist(String refreshToken) {
+        String keyName = String.format("%s:%s", REDIS_REFRESH_TOKEN_NAMESPACE, refreshToken);
+
+        // Add key to Redis blocklist and set the key to expire when the JWT also expires
+        refreshTokenBlocklistRedisTemplate.opsForValue().set(keyName, "");
+        refreshTokenBlocklistRedisTemplate.expireAt(keyName, jwtUtils.getExpirationFromJwt(refreshToken));
+    }
+
+    @Override
     public User activateUser(String activationKey, String password) {
         // Find the application via activation key
         UserActivation userActivation = userActivationRepository
                 .findFirstByActivationKey(activationKey)
-                .orElseThrow(() -> new InvalidKeyException());
+                .orElseThrow(InvalidKeyException::new);
 
         // Check if the activation key is still valid
         long keyExpiryTimeMs =
@@ -120,7 +140,7 @@ public class UsersServiceImpl implements UsersService {
     public void requestActivation(String activatingUserEmail) {
         // Check if the applicant was accepted
         SubmittedApplication foundApplication = submittedApplicationRepository.findFirstByEmail(activatingUserEmail)
-                .orElseThrow(() -> new ApplicationNotFoundException());
+                .orElseThrow(ApplicationNotFoundException::new);
 
         if (foundApplication.getDecision() == null || !foundApplication.getDecision().equals("Accepted")) {
             throw new ApplicantNotAcceptedException();
@@ -160,7 +180,7 @@ public class UsersServiceImpl implements UsersService {
     public User resetPassword(String passwordResetKey, String password) {
         // Find the user via password reset key
         PasswordReset passwordReset = passwordResetRepository.findFirstByPasswordResetKey(passwordResetKey)
-                .orElseThrow(() -> new InvalidKeyException());
+                .orElseThrow(InvalidKeyException::new);
 
         // Check if the activation key is still valid
         long keyExpiryTimeMs =
@@ -191,7 +211,7 @@ public class UsersServiceImpl implements UsersService {
     public void requestPasswordReset(String resettingUserEmail) {
         // Check if a user with the email exists
         User resettingPasswordUser = userRepository.findByEmail(resettingUserEmail)
-                .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(UserNotFoundException::new);
 
         // User exists, generate password reset key and send to user
         String passwordResetKey = UUID.randomUUID().toString();
@@ -216,6 +236,15 @@ public class UsersServiceImpl implements UsersService {
         } catch (Exception e) {
             throw new SendGridException();
         }
+    }
+
+    @Override
+    public void checkRefreshTokenInBlocklist(String refreshToken) {
+        String keyName = String.format("%s:%s", REDIS_REFRESH_TOKEN_NAMESPACE, refreshToken);
+
+        // Throw exception and send 401 Unauthorized if the key is in the blocklist
+        Boolean isKeyInBlocklist = refreshTokenBlocklistRedisTemplate.hasKey(keyName);
+        if (isKeyInBlocklist != null && isKeyInBlocklist) throw new InvalidTokenException();
     }
 
     private void sendDynamicTemplateEmailUsingSendGrid(String templateId, Personalization personalization) throws IOException {

@@ -7,6 +7,8 @@ public interface UsersService {
 
     User logInUser(String email, String password) throws BadCredentialsException;
 
+    void addRefreshTokenToBlocklist(String refreshToken);
+
     User activateUser(String key, String password);
 
     void requestActivation(String email);
@@ -14,4 +16,6 @@ public interface UsersService {
     User resetPassword(String key, String password);
 
     void requestPasswordReset(String email);
+
+    void checkRefreshTokenInBlocklist(String refreshToken);
 }
