@@ -20,7 +20,7 @@ const Date = (props: DateProps): JSX.Element => {
 
 const DateContainer = styled.div`
   margin-bottom: 2rem;
-  
+
   @media screen and (min-width: 576px) {
     margin: 0 auto;
   }
