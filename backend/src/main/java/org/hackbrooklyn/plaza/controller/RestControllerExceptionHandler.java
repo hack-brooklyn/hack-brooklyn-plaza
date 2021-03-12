@@ -139,6 +139,15 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidTokenException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The token provided is invalid and/or has expired. Please try again.");
+
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleUserNotFoundException() {
