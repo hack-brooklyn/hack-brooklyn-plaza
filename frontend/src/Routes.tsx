@@ -1,11 +1,17 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { Home, ApplicationLanding, ApplicationPage } from 'views';
+import { ApplicationLanding, ApplicationPage, Landing, Login } from 'views';
+
 
 const Routes = (): JSX.Element => {
+
   return (
     <Switch>
+      <Route path="/login" exact>
+        <Login />
+      </Route>
+
       <Route path="/apply/form">
         <ApplicationPage />
       </Route>
@@ -15,7 +21,7 @@ const Routes = (): JSX.Element => {
       </Route>
 
       <Route path="/" exact>
-        <Home />
+        <Landing />
       </Route>
     </Switch>
   );
