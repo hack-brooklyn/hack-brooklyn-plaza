@@ -128,7 +128,13 @@ public class UsersController {
      * Accepts a refresh token in the cookie for authentication.
      */
     @PostMapping("refreshAccessToken")
-    public ResponseEntity<Map<String, String>> refreshAccessToken(@AuthenticationPrincipal User user) {
+    public ResponseEntity<Map<String, String>> refreshAccessToken(@AuthenticationPrincipal User user, Authentication authentication) {
+        // Check if the refresh token is in the blocklist
+        // Will throw an exception and return 401 Unauthorized if it is
+        String refreshToken = (String) authentication.getCredentials();
+        usersService.checkRefreshTokenInBlocklist(refreshToken);
+
+        // Token is valid, generate new access token and return to user
         Map<String, String> resBody = generateJwtAccessTokenResponseBody(user);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
