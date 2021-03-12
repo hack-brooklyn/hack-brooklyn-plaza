@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.POST, "/newsletter/subscribe").permitAll()
                 .mvcMatchers(HttpMethod.POST,
                         "/users/login",
+                        "/users/logout",
                         "/users/activate",
                         "/users/activate/request",
                         "/users/resetPassword",

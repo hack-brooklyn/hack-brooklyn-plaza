@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -31,9 +34,13 @@ public class UsersController {
     @Value("${JWT_COOKIE_NAME}")
     private String JWT_COOKIE_NAME;
 
+    @Value("${JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS}")
+    private long JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS;
+
     private final JwtUtils jwtUtils;
     private final UsersService usersService;
 
+    @Autowired
     public UsersController(JwtUtils jwtUtils, UsersService usersService) {
         this.jwtUtils = jwtUtils;
         this.usersService = usersService;
@@ -50,6 +57,30 @@ public class UsersController {
         Map<String, String> resBody = generateJwtAccessTokenResponseBody(loggedInUser);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        // Add the refresh token to the blocklist if one was provided
+        final Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(JWT_COOKIE_NAME)) {
+                    usersService.addRefreshTokenToBlocklist(cookie.getValue());
+                    break;
+                }
+            }
+        }
+
+        // Remove the refresh token cookie from the client by generating
+        // and sending an instantly expiring cookie
+        Cookie expiredJwtCookie = new Cookie(JWT_COOKIE_NAME, "");
+        expiredJwtCookie.setPath("/users/refreshAccessToken");
+        expiredJwtCookie.setMaxAge(0);
+        expiredJwtCookie.setHttpOnly(true);
+        response.addCookie(expiredJwtCookie);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -97,7 +128,13 @@ public class UsersController {
      * Accepts a refresh token in the cookie for authentication.
      */
     @PostMapping("refreshAccessToken")
-    public ResponseEntity<Map<String, String>> refreshAccessToken(@AuthenticationPrincipal User user) {
+    public ResponseEntity<Map<String, String>> refreshAccessToken(@AuthenticationPrincipal User user, Authentication authentication) {
+        // Check if the refresh token is in the blocklist
+        // Will throw an exception and return 401 Unauthorized if it is
+        String refreshToken = (String) authentication.getCredentials();
+        usersService.checkRefreshTokenInBlocklist(refreshToken);
+
+        // Token is valid, generate new access token and return to user
         Map<String, String> resBody = generateJwtAccessTokenResponseBody(user);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
@@ -106,6 +143,7 @@ public class UsersController {
     private Cookie generateJwtRefreshTokenCookie(User user) {
         Cookie jwtCookie = new Cookie(JWT_COOKIE_NAME, jwtUtils.generateJwt(user, JwtUtils.JwtTypes.REFRESH));
         jwtCookie.setPath("/users/refreshAccessToken");
+        jwtCookie.setMaxAge((int) (JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS / 1000));  // Convert milliseconds to seconds
         jwtCookie.setHttpOnly(true);
 
         return jwtCookie;
