@@ -77,6 +77,14 @@ public class JwtUtils {
         return Integer.parseInt(claims.getSubject().split(",")[0]);
     }
 
+    public Date getExpirationFromJwt(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(JWT_SECRET).build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
