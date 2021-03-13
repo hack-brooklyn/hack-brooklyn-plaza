@@ -92,6 +92,9 @@ const setUserLoggedOut = () => {
   store.dispatch(setJwtAccessToken(null));
 };
 
+/**
+ * Thrown when the server could not be reached.
+ */
 class ConnectionError extends Error {
   constructor() {
     super();
@@ -100,6 +103,9 @@ class ConnectionError extends Error {
   }
 }
 
+/**
+ * Thrown when any method of authentication fails.
+ */
 class AuthenticationError extends Error {
   constructor() {
     super();
@@ -108,6 +114,9 @@ class AuthenticationError extends Error {
   }
 }
 
+/**
+ * Thrown when the user's credentials were not accepted by the server.
+ */
 class InvalidCredentialsError extends Error {
   constructor() {
     super();
@@ -116,6 +125,9 @@ class InvalidCredentialsError extends Error {
   }
 }
 
+/**
+ * Thrown when an access token or a refresh token has expired.
+ */
 class TokenExpiredError extends Error {
   constructor() {
     super();
