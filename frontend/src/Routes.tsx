@@ -1,13 +1,17 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { ApplicationLanding, ApplicationPage, Landing, Login } from 'views';
+import { ApplicationLanding, ApplicationPage, Landing, Login, Dashboard } from 'views';
 
 
 const Routes = (): JSX.Element => {
 
   return (
     <Switch>
+      <Route path="/dashboard" exact>
+        <Dashboard />
+      </Route>
+
       <Route path="/login" exact>
         <Login />
       </Route>
