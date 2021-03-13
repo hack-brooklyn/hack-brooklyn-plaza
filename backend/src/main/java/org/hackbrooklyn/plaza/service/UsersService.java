@@ -18,4 +18,6 @@ public interface UsersService {
     void requestPasswordReset(String email);
 
     TokenDTO refreshAccessToken(String refreshToken, User refreshingUser);
+
+    UserDataResponse getUserData(User user);
 }

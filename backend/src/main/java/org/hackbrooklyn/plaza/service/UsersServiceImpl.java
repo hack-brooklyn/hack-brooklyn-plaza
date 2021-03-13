@@ -250,6 +250,17 @@ public class UsersServiceImpl implements UsersService {
         return jwtUtils.generateAccessTokenDTO(refreshingUser);
     }
 
+    @Override
+    public UserDataResponse getUserData(User user) {
+        return new UserDataResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole()
+        );
+    }
+
     private void sendDynamicTemplateEmailUsingSendGrid(String templateId, Personalization personalization) throws IOException {
         Email fromEmail = new Email(SENDGRID_FROM_EMAIL);
 
