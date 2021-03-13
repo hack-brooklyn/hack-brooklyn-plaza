@@ -114,9 +114,9 @@ export interface ApplicationFormValues {
 }
 
 export enum Roles {
-  Admin = 'ADMIN',
-  Volunteer = 'VOLUNTEER',
-  Participant = 'PARTICIPANT'
+  Admin = 'ROLE_ADMIN',
+  Volunteer = 'ROLE_VOLUNTEER',
+  Participant = 'ROLE_PARTICIPANT'
 }
 
 export enum Breakpoints {
