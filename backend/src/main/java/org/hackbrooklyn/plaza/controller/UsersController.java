@@ -34,9 +34,6 @@ public class UsersController {
     @Value("${JWT_COOKIE_NAME}")
     private String JWT_COOKIE_NAME;
 
-    @Value("${JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS}")
-    private long JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS;
-
     private final JwtUtils jwtUtils;
     private final UsersService usersService;
 
@@ -140,21 +137,6 @@ public class UsersController {
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
 
-    private Cookie generateJwtRefreshTokenCookie(User user) {
-        Cookie jwtCookie = new Cookie(JWT_COOKIE_NAME, jwtUtils.generateJwt(user, JwtUtils.JwtTypes.REFRESH));
-        jwtCookie.setPath("/users/refreshAccessToken");
-        jwtCookie.setMaxAge((int) (JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS / 1000));  // Convert milliseconds to seconds
-        jwtCookie.setHttpOnly(true);
-
-        return jwtCookie;
-    }
-
-    private Map<String, String> generateJwtAccessTokenResponseBody(User user) {
-        Map<String, String> resBody = new HashMap<>(1);
-        resBody.put("token", jwtUtils.generateJwt(user, JwtUtils.JwtTypes.ACCESS));
-
-        return resBody;
-    }
 
     @Data
     private static class EmailBodyRequest {

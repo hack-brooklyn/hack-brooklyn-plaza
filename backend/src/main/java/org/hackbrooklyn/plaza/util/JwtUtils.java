@@ -6,9 +6,11 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.model.User;
+import org.hackbrooklyn.plaza.service.TokenDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import java.security.Key;
 import java.util.Date;
 
@@ -18,6 +20,9 @@ public class JwtUtils {
 
     @Value("${JWT_SECRET}")
     private String JWT_SECRET;
+
+    @Value("${JWT_COOKIE_NAME}")
+    private String JWT_COOKIE_NAME;
 
     @Value("${JWT_ACCESS_TOKEN_EXPIRATION_TIME_MS}")
     private long JWT_ACCESS_TOKEN_EXPIRATION_TIME_MS;
@@ -88,6 +93,20 @@ public class JwtUtils {
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public TokenDTO generateAccessTokenDTO(User user) {
+        String generatedToken = generateJwt(user, JwtUtils.JwtTypes.ACCESS);
+        return new TokenDTO(generatedToken);
+    }
+
+    public Cookie generateRefreshTokenCookie(User user) {
+        Cookie jwtCookie = new Cookie(JWT_COOKIE_NAME, generateJwt(user, JwtUtils.JwtTypes.REFRESH));
+        jwtCookie.setPath("/users/refreshAccessToken");
+        jwtCookie.setMaxAge((int) (JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS / 1000));  // Convert milliseconds to seconds
+        jwtCookie.setHttpOnly(true);
+
+        return jwtCookie;
     }
 
     public enum JwtTypes {
