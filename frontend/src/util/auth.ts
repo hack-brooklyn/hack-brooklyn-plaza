@@ -33,8 +33,8 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
 
     // Set login data across stores
     localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
-    store.dispatch(logIn());
     store.dispatch(setJwtAccessToken(resBody.token));
+    store.dispatch(logIn());
 
     // Retrieve user data and save to Redux store
     await refreshUserData();
@@ -62,9 +62,9 @@ export const logOutUser = async (): Promise<void> => {
 
   if (res.status === 200) {
     localStorage.setItem('isUserLoggedIn', JSON.stringify(false));
-    store.dispatch(logOut());
     store.dispatch(setJwtAccessToken(null));
     store.dispatch(setUserData(initialUserState));
+    store.dispatch(logOut());
   } else {
     throw new AuthenticationError();
   }
@@ -89,6 +89,7 @@ export const refreshAccessToken = async (history: History<LocationState>): Promi
     // Get token from response body and save in Redux store
     const resBody: AuthResponse = await res.json();
     store.dispatch(setJwtAccessToken(resBody.token));
+    store.dispatch(logIn());
   } else if (res.status === 401) {
     history.push('/');
     throw new TokenExpiredError();
