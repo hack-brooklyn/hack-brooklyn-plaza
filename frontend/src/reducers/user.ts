@@ -1,6 +1,6 @@
 import { UserActionTypes, UserState } from 'types';
 
-const initialState: UserState = {
+export const initialUserState: UserState = {
   email: '',
   firstName: '',
   lastName: '',
@@ -8,7 +8,7 @@ const initialState: UserState = {
   userId: -1
 };
 
-const userReducer = (state = initialState, action: UserActionTypes): UserState => {
+const userReducer = (state = initialUserState, action: UserActionTypes): UserState => {
   switch (action.type) {
     case 'SET_USER_DATA':
       return {
