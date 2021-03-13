@@ -102,7 +102,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public User activateUser(String activationKey, String password) {
+    public TokenDTO activateUser(String activationKey, String password) {
         // Find the application via activation key
         UserActivation userActivation = userActivationRepository
                 .findFirstByActivationKey(activationKey)
@@ -133,7 +133,7 @@ public class UsersServiceImpl implements UsersService {
         // Destroy all activation keys from the activating user
         userActivationRepository.deleteAllByActivatingApplication(activatedUserApplication);
 
-        return activatedUser;
+        return jwtUtils.generateAccessTokenDTO(activatedUser);
     }
 
     @Override
@@ -177,7 +177,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public User resetPassword(String passwordResetKey, String password) {
+    public TokenDTO resetPassword(String passwordResetKey, String password) {
         // Find the user via password reset key
         PasswordReset passwordReset = passwordResetRepository.findFirstByPasswordResetKey(passwordResetKey)
                 .orElseThrow(InvalidKeyException::new);
@@ -204,7 +204,7 @@ public class UsersServiceImpl implements UsersService {
         // Destroy all password reset keys from the activating user
         passwordResetRepository.deleteAllByResettingUser(resettingUser);
 
-        return resettingUser;
+        return jwtUtils.generateAccessTokenDTO(resettingUser);
     }
 
     @Override
@@ -239,12 +239,15 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public void checkRefreshTokenInBlocklist(String refreshToken) {
+    public TokenDTO refreshAccessToken(String refreshToken, User refreshingUser) {
         String keyName = String.format("%s:%s", REDIS_REFRESH_TOKEN_NAMESPACE, refreshToken);
 
         // Throw exception and send 401 Unauthorized if the key is in the blocklist
         Boolean isKeyInBlocklist = refreshTokenBlocklistRedisTemplate.hasKey(keyName);
         if (isKeyInBlocklist != null && isKeyInBlocklist) throw new InvalidTokenException();
+
+        // Generate new access token and corresponding DTO
+        return jwtUtils.generateAccessTokenDTO(refreshingUser);
     }
 
     private void sendDynamicTemplateEmailUsingSendGrid(String templateId, Personalization personalization) throws IOException {

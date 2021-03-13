@@ -3,6 +3,7 @@ package org.hackbrooklyn.plaza.controller;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.model.User;
+import org.hackbrooklyn.plaza.service.TokenDTO;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +21,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -33,9 +29,6 @@ public class UsersController {
 
     @Value("${JWT_COOKIE_NAME}")
     private String JWT_COOKIE_NAME;
-
-    @Value("${JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS}")
-    private long JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS;
 
     private final JwtUtils jwtUtils;
     private final UsersService usersService;
@@ -50,11 +43,14 @@ public class UsersController {
      * Logs a user in and generates a refresh token and an access token.
      */
     @PostMapping("login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid AuthRequest request, HttpServletResponse response) {
-        User loggedInUser = usersService.logInUser(request.getEmail(), request.getPassword());
+    public ResponseEntity<TokenDTO> login(@RequestBody @Valid AuthRequest reqBody, HttpServletResponse response) {
+        // Check user credentials and get authenticating user
+        User authenticatingUser = usersService.logInUser(reqBody.getEmail(), reqBody.getPassword());
 
-        response.addCookie(generateJwtRefreshTokenCookie(loggedInUser));
-        Map<String, String> resBody = generateJwtAccessTokenResponseBody(loggedInUser);
+        // Generate access and refresh tokens for the response
+        TokenDTO resBody = jwtUtils.generateAccessTokenDTO(authenticatingUser);
+        Cookie jwtCookie = jwtUtils.generateRefreshTokenCookie(authenticatingUser);
+        response.addCookie(jwtCookie);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
@@ -87,18 +83,15 @@ public class UsersController {
      * Activates a user's account and generates a refresh token and an access token.
      */
     @PostMapping("activate")
-    public ResponseEntity<Map<String, String>> activate(@RequestBody @Valid KeyPasswordBodyRequest request, HttpServletResponse response) {
-        User activatedUser = usersService.activateUser(request.getKey(), request.getPassword());
-
-        response.addCookie(generateJwtRefreshTokenCookie(activatedUser));
-        Map<String, String> resBody = generateJwtAccessTokenResponseBody(activatedUser);
+    public ResponseEntity<TokenDTO> activate(@RequestBody @Valid KeyPasswordBodyRequest reqBody, HttpServletResponse response) {
+        TokenDTO resBody = usersService.activateUser(reqBody.getKey(), reqBody.getPassword());
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
 
     @PostMapping("activate/request")
-    public ResponseEntity<Void> requestActivation(@RequestBody @Valid EmailBodyRequest request) {
-        usersService.requestActivation(request.getEmail());
+    public ResponseEntity<Void> requestActivation(@RequestBody @Valid EmailBodyRequest reqBody) {
+        usersService.requestActivation(reqBody.getEmail());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -107,18 +100,15 @@ public class UsersController {
      * Resets a user's password given a password reset key and generates a refresh token and an access token.
      */
     @PostMapping("resetPassword")
-    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody @Valid KeyPasswordBodyRequest request, HttpServletResponse response) {
-        User resetUser = usersService.resetPassword(request.getKey(), request.getPassword());
-
-        response.addCookie(generateJwtRefreshTokenCookie(resetUser));
-        Map<String, String> resBody = generateJwtAccessTokenResponseBody(resetUser);
+    public ResponseEntity<TokenDTO> resetPassword(@RequestBody @Valid KeyPasswordBodyRequest reqBody, HttpServletResponse response) {
+        TokenDTO resBody = usersService.resetPassword(reqBody.getKey(), reqBody.getPassword());
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
 
     @PostMapping("resetPassword/request")
-    public ResponseEntity<Void> requestPasswordReset(@RequestBody @Valid EmailBodyRequest request) {
-        usersService.requestPasswordReset(request.getEmail());
+    public ResponseEntity<Void> requestPasswordReset(@RequestBody @Valid EmailBodyRequest reqBody) {
+        usersService.requestPasswordReset(reqBody.getEmail());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -128,33 +118,15 @@ public class UsersController {
      * Accepts a refresh token in the cookie for authentication.
      */
     @PostMapping("refreshAccessToken")
-    public ResponseEntity<Map<String, String>> refreshAccessToken(@AuthenticationPrincipal User user, Authentication authentication) {
+    public ResponseEntity<TokenDTO> refreshAccessToken(@AuthenticationPrincipal User refreshingUser, Authentication authentication) {
         // Check if the refresh token is in the blocklist
-        // Will throw an exception and return 401 Unauthorized if it is
+        // Will throw an exception and respond with 401 Unauthorized if it is
         String refreshToken = (String) authentication.getCredentials();
-        usersService.checkRefreshTokenInBlocklist(refreshToken);
-
-        // Token is valid, generate new access token and return to user
-        Map<String, String> resBody = generateJwtAccessTokenResponseBody(user);
+        TokenDTO resBody = usersService.refreshAccessToken(refreshToken, refreshingUser);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
 
-    private Cookie generateJwtRefreshTokenCookie(User user) {
-        Cookie jwtCookie = new Cookie(JWT_COOKIE_NAME, jwtUtils.generateJwt(user, JwtUtils.JwtTypes.REFRESH));
-        jwtCookie.setPath("/users/refreshAccessToken");
-        jwtCookie.setMaxAge((int) (JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS / 1000));  // Convert milliseconds to seconds
-        jwtCookie.setHttpOnly(true);
-
-        return jwtCookie;
-    }
-
-    private Map<String, String> generateJwtAccessTokenResponseBody(User user) {
-        Map<String, String> resBody = new HashMap<>(1);
-        resBody.put("token", jwtUtils.generateJwt(user, JwtUtils.JwtTypes.ACCESS));
-
-        return resBody;
-    }
 
     @Data
     private static class EmailBodyRequest {
