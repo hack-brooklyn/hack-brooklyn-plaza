@@ -2,8 +2,10 @@ import { History, LocationState } from 'history';
 
 import store from 'store';
 import { logIn, logOut, setJwtAccessToken } from 'actions/auth';
-import { AuthResponse } from 'types';
+import { AuthResponse, UserState } from 'types';
 import { API_ROOT } from 'index';
+import { setUserData } from 'actions/user';
+import { initialUserState } from 'reducers/user';
 
 export interface LoginData {
   email: string;
@@ -28,7 +30,14 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
   if (res.status === 200) {
     // Get access token from response
     const resBody: AuthResponse = await res.json();
-    setUserLoggedIn(resBody.token);
+
+    // Set login data across stores
+    localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
+    store.dispatch(logIn());
+    store.dispatch(setJwtAccessToken(resBody.token));
+
+    // Retrieve user data and save to Redux store
+    await refreshUserData();
   } else if (res.status === 401 || res.status === 400) {
     throw new InvalidCredentialsError();
   } else {
@@ -36,6 +45,10 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
   }
 };
 
+/**
+ * Logs a user out by removing the refresh token, user data, and other relevant
+ * user data from the browser.
+ */
 export const logOutUser = async (): Promise<void> => {
   let res;
   try {
@@ -48,14 +61,18 @@ export const logOutUser = async (): Promise<void> => {
   }
 
   if (res.status === 200) {
-    setUserLoggedOut();
+    localStorage.setItem('isUserLoggedIn', JSON.stringify(false));
+    store.dispatch(logOut());
+    store.dispatch(setJwtAccessToken(null));
+    store.dispatch(setUserData(initialUserState));
   } else {
     throw new AuthenticationError();
   }
 };
 
 /**
- * Refreshes the user's access token using their refresh token.
+ * Refreshes the user's access token using their refresh token and saves the new
+ * access token in the Redux store.
  */
 export const refreshAccessToken = async (history: History<LocationState>): Promise<void> => {
   let res;
@@ -71,25 +88,44 @@ export const refreshAccessToken = async (history: History<LocationState>): Promi
   if (res.status === 200) {
     // Get token from response body and save in Redux store
     const resBody: AuthResponse = await res.json();
-    setUserLoggedIn(resBody.token);
+    store.dispatch(setJwtAccessToken(resBody.token));
   } else if (res.status === 401) {
-    history.push('/login');
+    history.push('/');
     throw new TokenExpiredError();
   } else {
     throw new AuthenticationError();
   }
 };
 
-const setUserLoggedIn = (token: string) => {
-  localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
-  store.dispatch(logIn());
-  store.dispatch(setJwtAccessToken(token));
-};
+/**
+ * Refreshes the user's data from the server and saves it in the Redux store.
+ */
+export const refreshUserData = async (): Promise<void> => {
+  const state = store.getState();
+  const accessToken = state.auth.jwtAccessToken;
 
-const setUserLoggedOut = () => {
-  localStorage.setItem('isUserLoggedIn', JSON.stringify(false));
-  store.dispatch(logOut());
-  store.dispatch(setJwtAccessToken(null));
+  let res;
+  try {
+    res = await fetch(`${API_ROOT}/users/data`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  } catch (err) {
+    throw new ConnectionError();
+  }
+
+  if (res.status === 200) {
+    // Get user data from response body and save in Redux store
+    const resBody: UserState = await res.json();
+    store.dispatch(setUserData(resBody));
+  } else if (res.status === 401) {
+    throw new TokenExpiredError();
+  } else {
+    throw new AuthenticationError();
+  }
 };
 
 /**

@@ -11,7 +11,7 @@ import loadingIcon from 'assets/icons/loading.svg';
 import { Navbar } from './components';
 import Routes from './Routes';
 import store from './store';
-import { refreshAccessToken } from 'util/auth';
+import { refreshAccessToken, refreshUserData } from 'util/auth';
 import { setWindowWidth } from 'actions/app';
 
 const App = (): JSX.Element => {
@@ -43,6 +43,7 @@ const AppContent = () => {
       const authenticateWithToken = async () => {
         try {
           await refreshAccessToken(history);
+          await refreshUserData();
         } catch (err) {
           console.error(err);
           toast.error(err.message);
