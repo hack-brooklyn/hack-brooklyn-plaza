@@ -42,7 +42,7 @@ const Login = (): JSX.Element => {
           onSubmit={submitLogin}
         >
           {formik => (
-            <Form onSubmit={formik.handleSubmit}>
+            <StyledForm onSubmit={formik.handleSubmit}>
               <Form.Group controlId="loginEmail">
                 <RequiredFormLabel>Email</RequiredFormLabel>
                 <FastField as={Form.Control}
@@ -64,7 +64,7 @@ const Login = (): JSX.Element => {
               <StyledSubmitButton type="submit" size="lg" disabled={formik.isSubmitting}>
                 Log In
               </StyledSubmitButton>
-            </Form>
+            </StyledForm>
           )}
         </Formik>
       </>
@@ -81,11 +81,6 @@ const StyledH1 = styled.h1`
 const StyledForm = styled(Form)`
   margin: 0 auto;
   max-width: 400px;
-`;
-
-const StyledButton = styled(Button)`
-  margin: 0 auto;
-  text-align: center
 `;
 
 export default Login;
