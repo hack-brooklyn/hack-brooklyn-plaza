@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import Container from 'react-bootstrap/Container';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import logo from 'assets/logo.png';
 import loadingIcon from 'assets/icons/loading.svg';
@@ -12,6 +12,7 @@ import { Navbar } from './components';
 import Routes from './Routes';
 import store from './store';
 import { refreshAccessToken } from 'util/auth';
+import { setWindowWidth } from 'actions/app';
 
 const App = (): JSX.Element => {
   return (
@@ -29,8 +30,14 @@ const AppContent = () => {
   const [appReady, setAppReady] = useState(false);
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    // Add window width event listener
+    const handleWindowResize = () => dispatch(setWindowWidth(window.innerWidth));
+    window.addEventListener('resize', handleWindowResize);
+
+    // Attempt to refresh login token only if the user logged in before
     const isUserLoggedIn = localStorage.getItem('isUserLoggedIn');
     if (isUserLoggedIn !== null && JSON.parse(isUserLoggedIn)) {
       const authenticateWithToken = async () => {
@@ -38,6 +45,7 @@ const AppContent = () => {
           await refreshAccessToken(history);
         } catch (err) {
           console.error(err);
+          toast.error(err.message);
         } finally {
           setAppReady(true);
         }
@@ -48,6 +56,10 @@ const AppContent = () => {
       localStorage.setItem('isUserLoggedIn', JSON.stringify(false));
       setAppReady(true);
     }
+    return () => {
+      // Clean up event listeners
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, []);
 
   return appReady ? <MainContent /> : <LoadingContent />;
@@ -56,9 +68,11 @@ const AppContent = () => {
 const MainContent = () => {
   return (
     <>
-      <header>
-        <Navbar />
-      </header>
+      <StyledHeader>
+        <Container>
+          <Navbar />
+        </Container>
+      </StyledHeader>
 
       <StyledMain>
         <Container>
@@ -77,6 +91,19 @@ const LoadingContent = () => {
     </LoadingSection>
   );
 };
+
+const StyledHeader = styled.header`
+  height: 4rem;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+
+  position: fixed;
+  background-color: white;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+`;
 
 const StyledMain = styled.main`
   margin: 7rem 1rem;

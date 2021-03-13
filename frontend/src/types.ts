@@ -1,6 +1,25 @@
-import { LOG_IN, LOG_OUT, SET_JWT_ACCESS_TOKEN } from './constants';
+import { LOG_IN, LOG_OUT, SET_JWT_ACCESS_TOKEN, SET_USER_DATA, SET_WINDOW_WIDTH } from './constants';
 
-// Redux state
+// Redux
+// Root state
+export interface RootState {
+  app: AppState;
+  auth: AuthState;
+  user: UserState;
+}
+
+// General app state
+export interface AppState {
+  windowWidth: number;
+}
+
+interface SetWindowWidthAction {
+  type: typeof SET_WINDOW_WIDTH;
+  payload: number;
+}
+
+export type AppActionTypes = SetWindowWidthAction;
+
 // Auth
 export interface AuthState {
   isLoggedIn: boolean;
@@ -21,6 +40,30 @@ interface SetJwtAccessTokenAction {
 }
 
 export type AuthActionTypes = LogInAction | LogOutAction | SetJwtAccessTokenAction;
+
+// User Data
+export interface UserState {
+  userId: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: Roles | null;
+}
+
+export interface SetUserData {
+  userId?: number;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: Roles | null;
+}
+
+interface SetUserDataAction {
+  type: typeof SET_USER_DATA;
+  payload: SetUserData;
+}
+
+export type UserActionTypes = SetUserDataAction;
 
 // Common responses
 export interface AuthResponse {
@@ -68,4 +111,18 @@ export interface ApplicationFormValues {
   // Agreements
   acceptTocAndCoc: boolean;
   shareResumeWithSponsors?: boolean;
+}
+
+export enum Roles {
+  Admin = 'ADMIN',
+  Volunteer = 'VOLUNTEER',
+  Participant = 'PARTICIPANT'
+}
+
+export enum Breakpoints {
+  Small = 576,
+  Medium = 768,
+  Large = 992,
+  ExtraLarge = 1200,
+  ExtraExtraLarge = 1400
 }
