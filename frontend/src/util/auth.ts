@@ -103,7 +103,7 @@ class ConnectionError extends Error {
 class AuthenticationError extends Error {
   constructor() {
     super();
-    this.name = 'ConnectionError';
+    this.name = 'AuthenticationError';
     this.message = 'An error occurred while trying to authenticate your account. Please refresh the page or log out and in and try again.';
   }
 }
