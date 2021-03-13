@@ -9,13 +9,13 @@ public interface UsersService {
 
     void addRefreshTokenToBlocklist(String refreshToken);
 
-    User activateUser(String key, String password);
+    TokenDTO activateUser(String key, String password);
 
     void requestActivation(String email);
 
-    User resetPassword(String key, String password);
+    TokenDTO resetPassword(String key, String password);
 
     void requestPasswordReset(String email);
 
-    void checkRefreshTokenInBlocklist(String refreshToken);
+    TokenDTO refreshAccessToken(String refreshToken, User refreshingUser);
 }
