@@ -1,12 +1,12 @@
 import React, { CSSProperties } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { LinkContainer } from 'react-router-bootstrap';
-import { toast } from 'react-toastify';
 
-import { logOutUser } from 'util/auth';
+import { handleLogOut } from 'util/auth';
 import { RootState } from 'types';
 import profileImage from 'assets/icons/profile.svg';
 import dropdownArrowImage from 'assets/icons/dropdown-arrow.svg';
@@ -23,17 +23,8 @@ interface ProfileMenuArgs {
 }
 
 const ProfileDropdownMenu = (): JSX.Element => {
+  const history = useHistory();
   const userData = useSelector((state: RootState) => state.user);
-
-  const handleLogOut = async () => {
-    try {
-      await logOutUser();
-      toast.success('You have been logged out of Hack Brooklyn Plaza.');
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message);
-    }
-  };
 
   return (
     <Dropdown>
@@ -51,7 +42,7 @@ const ProfileDropdownMenu = (): JSX.Element => {
           Contact Us
         </StyledDropdownItem>
         <LogOutButtonContainer>
-          <Button variant="danger" onClick={handleLogOut}>Log Out</Button>
+          <Button variant="danger" onClick={() => handleLogOut(history)}>Log Out</Button>
         </LogOutButtonContainer>
       </Dropdown.Menu>
     </Dropdown>

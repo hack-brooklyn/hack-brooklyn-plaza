@@ -6,6 +6,7 @@ import { AuthResponse, UserState } from 'types';
 import { API_ROOT } from 'index';
 import { setUserData } from 'actions/user';
 import { initialUserState } from 'reducers/user';
+import { toast } from 'react-toastify';
 
 export interface LoginData {
   email: string;
@@ -126,6 +127,17 @@ export const refreshUserData = async (): Promise<void> => {
     throw new TokenExpiredError();
   } else {
     throw new AuthenticationError();
+  }
+};
+
+export const handleLogOut = async (history: History<LocationState>): Promise<void> => {
+  try {
+    await logOutUser();
+    history.push('/');
+    toast.success('You have been logged out of Hack Brooklyn Plaza.');
+  } catch (err) {
+    console.error(err);
+    toast.error(err.message);
   }
 };
 

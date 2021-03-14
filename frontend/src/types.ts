@@ -6,6 +6,7 @@ export interface RootState {
   app: AppState;
   auth: AuthState;
   user: UserState;
+  burgerMenu: { isOpen: boolean }
 }
 
 // General app state
