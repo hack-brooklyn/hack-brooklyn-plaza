@@ -71,9 +71,9 @@ const BurgerMenu = (): JSX.Element => {
                 </LoggedInMenuContainer>
               </>
             ) : (
-              <LoggedOutMenuContainer>
+              <LoggedOutMenuList>
                 <LoggedOutNavItems />
-              </LoggedOutMenuContainer>
+              </LoggedOutMenuList>
             )}
           </MenuItems>
         </BurgerMenuNavLinks>
@@ -102,7 +102,7 @@ const MenuContainer = styled.div`
     padding: 1rem;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   }
-  
+
   .bm-overlay {
     // Ensure overlay is over the header
     z-index: 1002 !important;
@@ -119,8 +119,7 @@ const CloseBurgerMenuButton = styled.button`
   border: none;
 `;
 
-const BurgerMenuNavLinks = styled.li`
-  list-style: none;
+const BurgerMenuNavLinks = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -148,11 +147,13 @@ const LoggedInMenuContainer = styled.div`
   flex-direction: column;
 `;
 
-const LoggedOutMenuContainer = styled.div`
+const LoggedOutMenuList = styled.ul`
+  list-style: none;
   display: flex;
   flex-direction: column-reverse;
   width: 100%;
-  margin-top: 1rem;
+  padding: 0;
+  margin: 1rem 0 0;
 
   a {
     text-align: center;
