@@ -6,7 +6,7 @@ import Countdown, { CountdownRenderProps } from 'react-countdown';
 import Button from 'react-bootstrap/Button';
 
 import { HeadingButton } from 'components';
-import { H1Styled, StyledH2, StyledH3 } from 'commonStyles';
+import { StyledH1, StyledH2, StyledH3 } from 'commonStyles';
 import { Breakpoints, Roles, RootState } from 'types';
 import listIcon from 'assets/icons/list.svg';
 import announcementIcon from 'assets/icons/announcement.svg';
@@ -28,7 +28,7 @@ const Dashboard = (): JSX.Element => {
   return (
     <>
       <HeadingSection>
-        <H1Styled>My Hack Brooklyn</H1Styled>
+        <StyledH1>My Hack Brooklyn</StyledH1>
 
         {userRole === Roles.Admin && windowWidth >= Breakpoints.Large && (
           <HeadingButtons>
@@ -156,6 +156,7 @@ const CountdownSection = styled.section`
   margin-bottom: 2rem;
 
   @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-top: 4rem;
     margin-bottom: 4rem;
   }
 `;
