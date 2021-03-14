@@ -114,6 +114,14 @@ export interface ApplicationFormValues {
   shareResumeWithSponsors?: boolean;
 }
 
+export interface MenuAction {
+  type: 'anchor' | 'link' | 'button';
+  text: string;
+  link?: string;
+  onClick?: () => void;
+  icon: string;
+}
+
 export enum Roles {
   Admin = 'ROLE_ADMIN',
   Volunteer = 'ROLE_VOLUNTEER',
