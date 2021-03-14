@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
-import { ApplicationLanding, ApplicationPage, Landing, Login, Dashboard } from 'views';
+import { ApplicationLanding, ApplicationPage, Dashboard, Landing, Login } from 'views';
 import { RootState } from 'types';
 
 
