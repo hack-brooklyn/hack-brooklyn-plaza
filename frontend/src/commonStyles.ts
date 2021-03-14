@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
 import { Breakpoints } from 'types';
 
-export const H1Styled = styled.h1`
+export const StyledH1 = styled.h1`
   font-size: 2.5rem;
   text-align: center;
 
