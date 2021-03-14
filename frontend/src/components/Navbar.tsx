@@ -1,29 +1,88 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components/macro';
 import NavLink from 'react-bootstrap/NavLink';
+import { LinkContainer } from 'react-router-bootstrap';
+import styled from 'styled-components/macro';
 
-import { LinkButton } from 'components';
+import { LinkButton, ProfileDropdownMenu } from 'components';
+import { Breakpoints, RootState } from 'types';
+import { APPLICATIONS_ACTIVE, HACKATHON_ACTIVE } from 'index';
 import logo from 'assets/logo.png';
-import Button from 'react-bootstrap/Button';
-import { logOutUser } from 'util/auth';
+
+interface NavLinkContainerProps {
+  to: string;
+  children: React.ReactNode;
+}
 
 const Navbar = (): JSX.Element => {
+  const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
+  const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
   return (
     <StyledNavbar>
       <Logo to="/">
-        <img className="logo-img" src={logo} alt="Hack Brooklyn Logo" />
+        <img className="logo-img" src={logo} alt="Hack Brooklyn" />
         <span className="logo-text">plaza</span>
       </Logo>
 
-      <NavLinks>
-        <StyledNavLink href="mailto:contact@hackbrooklyn.org">
-          Contact&nbsp;Us
-        </StyledNavLink>
-        <LinkButton to="/apply">Apply</LinkButton>
-        <Button variant="danger" onClick={() => logOutUser()}>Log Out</Button>
-      </NavLinks>
+      {windowWidth >= Breakpoints.Large && (
+        <NavLinks>
+          {userIsLoggedIn ? <LoggedInNavItems /> : <LoggedOutNavItems />}
+        </NavLinks>
+      )}
     </StyledNavbar>
+  );
+};
+
+const LoggedInNavItems = () => {
+  return (
+    <>
+      <NavLinkContainer to="/">
+        Dashboard
+      </NavLinkContainer>
+      <NavLinkContainer to="/announcements">
+        Announcements
+      </NavLinkContainer>
+      <NavLinkContainer to="/teams">
+        Team Formation
+      </NavLinkContainer>
+      <NavLinkContainer to="/schedule">
+        Schedule Builder
+      </NavLinkContainer>
+      {HACKATHON_ACTIVE && (
+        <NavLinkContainer to="/mentorship">
+          Mentor Matcher
+        </NavLinkContainer>
+      )}
+
+      <ProfileDropdownMenu />
+    </>
+  );
+};
+
+const LoggedOutNavItems = () => {
+  return (
+    <>
+      <StyledNavLink href="mailto:contact@hackbrooklyn.org">
+        Contact&nbsp;Us
+      </StyledNavLink>
+
+      <LinkButton variant="outline-primary" to="/activate">Activate Account</LinkButton>
+      <LinkButton variant="primary" to="/login">Log In</LinkButton>
+      {APPLICATIONS_ACTIVE && <LinkButton variant="success" to="/apply">Apply Now</LinkButton>}
+    </>
+  );
+};
+
+const NavLinkContainer = (props: NavLinkContainerProps) => {
+  const { to, children } = props;
+  return (
+    <LinkContainer to={to}>
+      <StyledNavLink>
+        {children}
+      </StyledNavLink>
+    </LinkContainer>
   );
 };
 
@@ -55,20 +114,22 @@ const Logo = styled(Link)`
   }
 `;
 
+const StyledNavLink = styled(NavLink)`
+  padding: 0;
+  margin-right: 1rem;
+`;
+
 const NavLinks = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
 
-  a {
-    text-decoration: none;
-  }
-
   a.btn-primary.active {
     background-color: #0d6efd;
     border-color: #0d6efd;
 
-    &:hover {
+    &:hover,
+    &:focus {
       background-color: #0b5ed7;
       border-color: #0a58ca;
     }
@@ -77,21 +138,39 @@ const NavLinks = styled.div`
       background-color: #0a58ca;
       border-color: #0a53be;
     }
+  }
 
-    &:focus {
-      background-color: #0b5ed7;
-      border-color: #0a58ca;
+  a.btn-outline-primary.active {
+    color: #0d6efd;
+    background-color: transparent;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: #fff;
+      background-color: #0d6efd;
     }
   }
 
-  *:not(:first-child) {
+  a.btn-success.active {
+    background-color: #198754;
+    border-color: #198754;
+
+    &:hover,
+    &:focus {
+      background-color: #157347;
+      border-color: #146c43;
+    }
+
+    &:active {
+      background-color: #146c43;
+      border-color: #13653f;
+    }
+  }
+
+  ${StyledNavLink}:not(:first-child), .btn {
     margin-left: 0.5rem;
   }
-`;
-
-const StyledNavLink = styled(NavLink)`
-  padding-left: 0;
-  padding-right: 1rem;
 `;
 
 export default Navbar;
