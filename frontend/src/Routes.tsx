@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
-import { ApplicationLanding, ApplicationPage, Dashboard, Landing, Login } from 'views';
+import { Activate, ApplicationLanding, ApplicationPage, Dashboard, Landing, Login } from 'views';
 import { RootState } from 'types';
 
 
@@ -21,6 +21,10 @@ const Routes = (): JSX.Element => {
 
       <Route path="/apply">
         <ApplicationLanding />
+      </Route>
+
+      <Route path="/activate">
+        <Activate />
       </Route>
 
       <Route path="/" exact>
