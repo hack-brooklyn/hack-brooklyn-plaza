@@ -1,8 +1,6 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { FastField, Formik, FormikHelpers } from 'formik';
 import styled from 'styled-components/macro';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { RequiredFormLabel } from 'components';
