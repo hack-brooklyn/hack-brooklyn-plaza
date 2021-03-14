@@ -37,9 +37,11 @@ const Navbar = (): JSX.Element => {
           </NavItemsList>
         </NavLinks>
       ) : (
-        <BurgerMenuButton onClick={() => dispatch(toggleMenu(!burgerMenuIsOpen))}>
-          <img src={burgerMenuIcon} alt="Open Menu" />
-        </BurgerMenuButton>
+        <>
+          <BurgerMenuButton onClick={() => dispatch(toggleMenu(!burgerMenuIsOpen))}>
+            <img src={burgerMenuIcon} alt="Open Menu" />
+          </BurgerMenuButton>
+        </>
       )}
     </StyledNavbar>
   );
