@@ -56,7 +56,6 @@ const ProfileMenuToggle = React.forwardRef<HTMLButtonElement>((props: ProfileMen
     <MenuToggleButton
       ref={ref}
       onClick={(e) => {
-        console.log(e);
         e.preventDefault();
         onClick && onClick(e);
       }}
