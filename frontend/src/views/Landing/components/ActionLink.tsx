@@ -45,7 +45,7 @@ const ArrowIcon = styled.img`
 const Description = styled.p`
   margin: 0 auto;
   font-size: 1.1rem;
-  max-width: 80%;
+  max-width: 16rem;
 `;
 
 export default ActionLink;
