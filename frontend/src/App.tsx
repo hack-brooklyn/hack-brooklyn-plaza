@@ -5,20 +5,21 @@ import styled from 'styled-components/macro';
 import Container from 'react-bootstrap/Container';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import logo from 'assets/logo.png';
-import loadingIcon from 'assets/icons/loading.svg';
 
-import { Navbar } from './components';
+import { BurgerMenu, Navbar } from './components';
 import Routes from './Routes';
 import store from './store';
-import { refreshAccessToken, refreshUserData } from 'util/auth';
 import { setWindowWidth } from 'actions/app';
+import { refreshAccessToken, refreshUserData } from 'util/auth';
+import logo from 'assets/logo.png';
+import loadingIcon from 'assets/icons/loading.svg';
 
 const App = (): JSX.Element => {
   return (
     <Provider store={store}>
       <Router>
         <AppContent />
+        <BurgerMenu />
       </Router>
 
       <ToastContainer />
