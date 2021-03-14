@@ -1,5 +1,8 @@
+import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
+import NavLink from 'react-bootstrap/NavLink';
+
 import { Breakpoints } from 'types';
 
 export const StyledH1 = styled.h1`
@@ -10,6 +13,15 @@ export const StyledH1 = styled.h1`
     font-size: 3rem;
     text-align: left;
   }
+`;
+
+export const StyledCenteredH1 = styled(StyledH1)`
+  text-align: center;
+`;
+
+export const StyledCenteredMarginH1 = styled(StyledCenteredH1)`
+  text-align: center;
+  margin-bottom: 2rem;
 `;
 
 export const StyledH2 = styled.h2`
@@ -46,4 +58,27 @@ export const StyledFormLabel = styled(Form.Label)`
 
 export const StyledFormLabelLegend = styled.legend`
   ${FormLabelStyles}
+`;
+
+export const StyledNavLink = styled(NavLink)`
+  padding: 0;
+  margin-right: 1rem;
+`;
+
+export const Logo = styled(Link)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-decoration: none;
+  font-weight: bold;
+
+  .logo-img {
+    height: 3rem;
+  }
+
+  .logo-text {
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+    font-family: 'Major Mono Display', monospace;
+  }
 `;

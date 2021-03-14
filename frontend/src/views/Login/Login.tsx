@@ -1,13 +1,14 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { FastField, Formik, FormikHelpers } from 'formik';
 import styled from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
+import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';
 import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
-import { toast } from 'react-toastify';
 import { LoginData, logInUser } from 'util/auth';
-import { useHistory } from 'react-router-dom';
+import { StyledCenteredMarginH1 } from 'commonStyles';
 
 const Login = (): JSX.Element => {
     const history = useHistory();
@@ -32,7 +33,7 @@ const Login = (): JSX.Element => {
 
     return (
       <>
-        <StyledH1>Log In to Hack Brooklyn Plaza</StyledH1>
+        <StyledCenteredMarginH1>Log In to Hack Brooklyn Plaza</StyledCenteredMarginH1>
 
         <Formik
           initialValues={initialValues}
@@ -68,12 +69,6 @@ const Login = (): JSX.Element => {
     );
   }
 ;
-
-const StyledH1 = styled.h1`
-  text-align: center;
-  font-size: 3rem;
-  margin-bottom: 2rem;
-`;
 
 const StyledForm = styled(Form)`
   margin: 0 auto;
