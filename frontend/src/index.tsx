@@ -14,7 +14,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
 
 export const API_ROOT = process.env.REACT_APP_API_ROOT ? process.env.REACT_APP_API_ROOT : '';
-export const PRIORITY_APPLICATIONS_ACTIVE = (process.env.REACT_APP_PRIORITY_APPLICATIONS_ACTIVE === 'true');
+export const APPLICATIONS_ACTIVE = process.env.REACT_APP_APPLICATIONS_ACTIVE === 'true';
+export const PRIORITY_APPLICATIONS_ACTIVE = process.env.REACT_APP_PRIORITY_APPLICATIONS_ACTIVE === 'true';
+export const HACKATHON_ACTIVE = Date.now() > new Date('April 23, 2021 6:00 PM EDT').getUTCMilliseconds();
 
 ReactDOM.render(
   <React.StrictMode>
