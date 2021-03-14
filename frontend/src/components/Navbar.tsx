@@ -1,23 +1,20 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import NavLink from 'react-bootstrap/NavLink';
-import { LinkContainer } from 'react-router-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
+import { action as toggleMenu } from 'redux-burger-menu';
 
-import { LinkButton, ProfileDropdownMenu } from 'components';
-import { Breakpoints, RootState } from 'types';
+import { LinkButtonNavItem, LinkNavItem, ProfileDropdownMenu } from 'components';
+import { Logo, StyledNavLink } from 'commonStyles';
 import { APPLICATIONS_ACTIVE, HACKATHON_ACTIVE } from 'index';
+import { Breakpoints, RootState } from 'types';
 import logo from 'assets/logo.png';
-
-interface NavLinkContainerProps {
-  to: string;
-  children: React.ReactNode;
-}
+import burgerMenuIcon from 'assets/icons/burger-menu.svg';
 
 const Navbar = (): JSX.Element => {
+  const dispatch = useDispatch();
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
   const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const burgerMenuIsOpen = useSelector((state: RootState) => state.burgerMenu.isOpen);
 
   return (
     <StyledNavbar>
@@ -26,63 +23,73 @@ const Navbar = (): JSX.Element => {
         <span className="logo-text">plaza</span>
       </Logo>
 
-      {windowWidth >= Breakpoints.Large && (
+      {windowWidth >= Breakpoints.Large ? (
         <NavLinks>
-          {userIsLoggedIn ? <LoggedInNavItems /> : <LoggedOutNavItems />}
+          <NavItemsList>
+            {userIsLoggedIn ? (
+              <>
+                <LoggedInNavItems />
+                <ProfileDropdownMenu />
+              </>
+            ) : (
+              <LoggedOutNavItems />
+            )}
+          </NavItemsList>
         </NavLinks>
+      ) : (
+        <BurgerMenuButton onClick={() => dispatch(toggleMenu(!burgerMenuIsOpen))}>
+          <img src={burgerMenuIcon} alt="Open Menu" />
+        </BurgerMenuButton>
       )}
     </StyledNavbar>
   );
 };
 
-const LoggedInNavItems = () => {
+export const LoggedInNavItems = (): JSX.Element => {
   return (
     <>
-      <NavLinkContainer to="/">
+      <LinkNavItem to="/">
         Dashboard
-      </NavLinkContainer>
-      <NavLinkContainer to="/announcements">
+      </LinkNavItem>
+      <LinkNavItem to="/announcements">
         Announcements
-      </NavLinkContainer>
-      <NavLinkContainer to="/teams">
+      </LinkNavItem>
+      <LinkNavItem to="/teams">
         Team Formation
-      </NavLinkContainer>
-      <NavLinkContainer to="/schedule">
+      </LinkNavItem>
+      <LinkNavItem to="/schedule">
         Schedule Builder
-      </NavLinkContainer>
+      </LinkNavItem>
       {HACKATHON_ACTIVE && (
-        <NavLinkContainer to="/mentorship">
+        <LinkNavItem to="/mentorship">
           Mentor Matcher
-        </NavLinkContainer>
+        </LinkNavItem>
       )}
-
-      <ProfileDropdownMenu />
     </>
   );
 };
 
-const LoggedOutNavItems = () => {
+export const LoggedOutNavItems = (): JSX.Element => {
   return (
     <>
-      <StyledNavLink href="mailto:contact@hackbrooklyn.org">
-        Contact&nbsp;Us
-      </StyledNavLink>
+      <li>
+        <StyledNavLink href="mailto:contact@hackbrooklyn.org">
+          Contact&nbsp;Us
+        </StyledNavLink>
+      </li>
 
-      <LinkButton variant="outline-primary" to="/activate">Activate Account</LinkButton>
-      <LinkButton variant="primary" to="/login">Log In</LinkButton>
-      {APPLICATIONS_ACTIVE && <LinkButton variant="success" to="/apply">Apply Now</LinkButton>}
+      <LinkButtonNavItem variant="outline-primary" to="/activate">
+        Activate Account
+      </LinkButtonNavItem>
+      <LinkButtonNavItem variant="primary" to="/login">
+        Log In
+      </LinkButtonNavItem>
+      {APPLICATIONS_ACTIVE && (
+        <LinkButtonNavItem variant="success" to="/apply">
+          Apply Now
+        </LinkButtonNavItem>
+      )}
     </>
-  );
-};
-
-const NavLinkContainer = (props: NavLinkContainerProps) => {
-  const { to, children } = props;
-  return (
-    <LinkContainer to={to}>
-      <StyledNavLink>
-        {children}
-      </StyledNavLink>
-    </LinkContainer>
   );
 };
 
@@ -96,27 +103,18 @@ const StyledNavbar = styled.nav`
   align-items: center;
 `;
 
-const Logo = styled(Link)`
+const BurgerMenuButton = styled.button`
+  background: none;
+  border: none;
+`;
+
+const NavItemsList = styled.ul`
   display: flex;
   flex-direction: row;
   align-items: center;
-  text-decoration: none;
-  font-weight: bold;
-
-  .logo-img {
-    height: 3rem;
-  }
-
-  .logo-text {
-    font-size: 1.5rem;
-    margin-left: 0.5rem;
-    font-family: 'Major Mono Display', monospace;
-  }
-`;
-
-const StyledNavLink = styled(NavLink)`
+  list-style: none;
   padding: 0;
-  margin-right: 1rem;
+  margin: 0;
 `;
 
 const NavLinks = styled.div`
