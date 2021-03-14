@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
+import { Breakpoints } from 'types';
 
 interface ButtonContentProps {
   icon: string;
@@ -8,23 +9,29 @@ interface ButtonContentProps {
 }
 
 interface HeadingButtonProps extends ButtonContentProps {
-  type: 'button' | 'link';
-  linkTo?: string;
-  buttonOnClick?: () => void;
+  type: 'button' | 'link' | 'anchor';
+  link?: string;
+  onClick?: () => void;
 }
 
 const HeadingButton = (props: HeadingButtonProps): JSX.Element | null => {
-  const { type, linkTo, buttonOnClick, icon, text } = props;
+  const { type, link, onClick, icon, text } = props;
 
-  if (type === 'link' && linkTo !== undefined) {
+  if (type === 'link' && link !== undefined) {
     return (
-      <StyledLink to={linkTo}>
+      <StyledLink to={link}>
         <ButtonContent icon={icon} text={text} />
       </StyledLink>
     );
-  } else if (type === 'button' && buttonOnClick !== undefined) {
+  } else if (type === 'anchor' && link !== undefined) {
     return (
-      <button onClick={buttonOnClick}>
+      <StyledAnchor href={link}>
+        <ButtonContent icon={icon} text={text} />
+      </StyledAnchor>
+    );
+  } else if (type === 'button' && onClick !== undefined) {
+    return (
+      <button onClick={onClick}>
         <ButtonContent icon={icon} text={text} />
       </button>
     );
@@ -36,7 +43,7 @@ const HeadingButton = (props: HeadingButtonProps): JSX.Element | null => {
 const ButtonContent = (props: ButtonContentProps) => {
   const { icon, text } = props;
   return (
-    <>
+    <ButtonContainer>
       <IconArea>
         <ButtonIcon src={icon} alt={text} />
       </IconArea>
@@ -44,9 +51,19 @@ const ButtonContent = (props: ButtonContentProps) => {
       <ButtonText>
         {text}
       </ButtonText>
-    </>
+    </ButtonContainer>
   );
 };
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    flex-direction: column;
+  }
+`;
 
 const IconArea = styled.div`
   color: white;
@@ -59,7 +76,7 @@ const IconArea = styled.div`
   justify-content: center;
   align-items: center;
 
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
 
   transition: 0.175s;
   transition-timing-function: ease-in-out;
@@ -69,11 +86,14 @@ const IconArea = styled.div`
     width: 1.75rem;
     height: 1.75rem;
   }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-bottom: 0.5rem;
+  }
 `;
 
-const StyledLink = styled(Link)`
-  margin-left: 1rem;
-  max-width: 6rem;
+const LinkStyles = css`
+  padding: 0.5rem 0;
 
   display: flex;
   flex-direction: column;
@@ -82,7 +102,7 @@ const StyledLink = styled(Link)`
   text-align: center;
   text-decoration: none;
   color: black;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: bold;
 
   transition: 0.175s;
@@ -95,6 +115,21 @@ const StyledLink = styled(Link)`
       background-color: #0a53be;
     }
   }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-left: 1rem;
+    padding: 0;
+    max-width: 6rem;
+    font-size: 0.875rem;
+  }
+`;
+
+const StyledLink = styled(Link)`
+  ${LinkStyles}
+`;
+
+const StyledAnchor = styled.a`
+  ${LinkStyles}
 `;
 
 const ButtonIcon = styled.img`
@@ -102,7 +137,11 @@ const ButtonIcon = styled.img`
 `;
 
 const ButtonText = styled.p`
-  margin: 0;
+  margin: 0 0 0 0.75rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin: 0;
+  }
 `;
 
 export default HeadingButton;

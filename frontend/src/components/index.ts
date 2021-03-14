@@ -1,5 +1,6 @@
 export { default as BurgerMenu } from './BurgerMenu';
 export { default as Date } from './Date';
+export { default as HeadingActions } from './HeadingActions';
 export { default as HeadingButton } from './HeadingButton';
 export { default as LinkButton } from './LinkButton';
 export { default as LinkButtonNavItem } from './LinkButtonNavItem';

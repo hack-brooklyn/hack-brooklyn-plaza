@@ -5,9 +5,9 @@ import styled from 'styled-components/macro';
 import Countdown, { CountdownRenderProps } from 'react-countdown';
 import Button from 'react-bootstrap/Button';
 
-import { HeadingButton } from 'components';
+import { HeadingActions } from 'components';
 import { StyledH1, StyledH2, StyledH3 } from 'commonStyles';
-import { Breakpoints, Roles, RootState } from 'types';
+import { Breakpoints, MenuAction, Roles, RootState } from 'types';
 import listIcon from 'assets/icons/list.svg';
 import announcementIcon from 'assets/icons/announcement.svg';
 import calendarPlusIcon from 'assets/icons/calendar-plus.svg';
@@ -21,22 +21,37 @@ interface ChecklistItemProps {
   children: React.ReactNode;
 }
 
+const dashboardActions: MenuAction[] = [
+  {
+    link: '/admin/applications',
+    text: 'Manage Applications',
+    type: 'link',
+    icon: listIcon
+  },
+  {
+    link: '/announcements/post',
+    text: 'Post New Announcement',
+    type: 'link',
+    icon: announcementIcon
+  },
+  {
+    link: '/events/create',
+    text: 'Create New Event',
+    type: 'link',
+    icon: calendarPlusIcon
+  }
+];
+
 const Dashboard = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
-  const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
   return (
     <>
       <HeadingSection>
         <StyledH1>My Hack Brooklyn</StyledH1>
 
-        {userRole === Roles.Admin && windowWidth >= Breakpoints.Large && (
-          <HeadingButtons>
-            <HeadingButton type="link" linkTo="/admin/applications" text="Manage Applications" icon={listIcon} />
-            <HeadingButton type="link" linkTo="/announcements/post" text="Post New Announcement"
-                           icon={announcementIcon} />
-            <HeadingButton type="link" linkTo="/events/create" text="Create New&nbsp;Event" icon={calendarPlusIcon} />
-          </HeadingButtons>
+        {userRole === Roles.Admin && (
+          <HeadingActions viewName="Dashboard" actions={dashboardActions} />
         )}
       </HeadingSection>
 
@@ -144,10 +159,6 @@ const HeadingSection = styled.section`
     display: flex;
     justify-content: space-between;
   }
-`;
-
-const HeadingButtons = styled.div`
-  display: flex;
 `;
 
 // Countdown
