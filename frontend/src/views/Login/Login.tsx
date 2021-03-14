@@ -17,13 +17,12 @@ const Login = (): JSX.Element => {
       password: ''
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const submitLogin = async (loginFormData: LoginData, { setSubmitting }: FormikHelpers<LoginData>): Promise<void> => {
       setSubmitting(true);
 
       try {
         await logInUser(loginFormData);
-        history.push('/dashboard');
+        history.push('/');
       } catch (err) {
         toast.error(err.message);
       }
