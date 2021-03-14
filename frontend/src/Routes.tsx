@@ -1,18 +1,17 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
 import { ApplicationLanding, ApplicationPage, Landing, Login, Dashboard } from 'views';
+import { RootState } from 'types';
 
 
 const Routes = (): JSX.Element => {
+  const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   return (
     <Switch>
-      <Route path="/dashboard" exact>
-        <Dashboard />
-      </Route>
-
-      <Route path="/login" exact>
+      <Route path="/login">
         <Login />
       </Route>
 
@@ -25,7 +24,7 @@ const Routes = (): JSX.Element => {
       </Route>
 
       <Route path="/" exact>
-        <Landing />
+        {userIsLoggedIn ? <Dashboard /> : <Landing />}
       </Route>
     </Switch>
   );
