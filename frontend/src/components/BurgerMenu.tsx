@@ -102,6 +102,11 @@ const MenuContainer = styled.div`
     padding: 1rem;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
   }
+  
+  .bm-overlay {
+    // Ensure overlay is over the header
+    z-index: 1002 !important;
+  }
 
   // Hide burger menu on large screens
   @media screen and (min-width: ${Breakpoints.Large}px) {
