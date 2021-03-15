@@ -157,6 +157,7 @@ public class SubmittedApplication {
     @JsonIgnore
     private RegisteredInterestApplicant registeredInterestApplicant;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "decision")
     @NotEmpty
     private Decision decision;
