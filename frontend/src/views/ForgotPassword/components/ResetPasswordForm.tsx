@@ -11,12 +11,12 @@ import { RequiredFormLabel } from 'components';
 import { FastField, Formik, FormikHelpers } from 'formik';
 import { API_ROOT } from 'index';
 import { AuthResponse, KeyPasswordData, SetPasswordData } from 'types';
-import { logInAndRefreshUserData, refreshUserData } from 'util/auth';
+import { logInAndRefreshUserData, refreshUserData, validatePassword } from 'util/auth';
 import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
 import { StyledAuthForm } from 'commonStyles';
 import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
-const ActivateForm = (): JSX.Element => {
+const ResetPasswordForm = (): JSX.Element => {
   const history = useHistory();
 
   const initialValues: SetPasswordData = {
@@ -24,43 +24,38 @@ const ActivateForm = (): JSX.Element => {
     confirmPassword: ''
   };
 
-  const activateAccount = async (
-    activateFormData: SetPasswordData,
+  const resetPassword = async (
+    passwordFormData: SetPasswordData,
     { setSubmitting }: FormikHelpers<SetPasswordData>
   ): Promise<void> => {
     setSubmitting(true);
 
-    const password = activateFormData.password;
-
-    if (password !== activateFormData.confirmPassword) {
-      toast.error('Password do not match');
-      setSubmitting(false);
-      return;
-    }
-
-    if (password.length < 12) {
-      toast.error('Password must be at least 12 characters');
+    const password = passwordFormData.password;
+    try {
+      validatePassword(passwordFormData);
+    } catch (err) {
+      toast.error(err.message);
       setSubmitting(false);
       return;
     }
 
     const parsedQuery = queryString.parse(location.search);
-    const activationKey = parsedQuery.key as string;
-    
-    if (!activationKey) {
+    const passwordResetKey = parsedQuery.key as string;
+
+    if (!passwordResetKey) {
       toast.error('Key does not exist');
       setSubmitting(false);
       return;
     }
-    
-    const requestBody:KeyPasswordData = { 
-      key: activationKey,
+
+    const requestBody: KeyPasswordData = { 
+      key: passwordResetKey,
       password: password 
     };
     
     let res;
     try {
-      res = await fetch(`${API_ROOT}/users/activate`, {
+      res = await fetch(`${API_ROOT}/users/resetPassword`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -77,14 +72,12 @@ const ActivateForm = (): JSX.Element => {
 
     if (res.status === 200) {
       const resBody: AuthResponse = await res.json();
-      
+
       logInAndRefreshUserData(resBody.token);
-      toast.success('You have activated your account');
+      toast.success('You have reset your password');
       history.push('/');
     } else if (res.status === 401) {
       toast.error('Key is invalid');
-    } else if (res.status === 409) {
-      toast.error('Account already activated');
     } else {
       console.error(await res.json());
       toast.error('Unknown error');
@@ -94,7 +87,7 @@ const ActivateForm = (): JSX.Element => {
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={activateAccount}>
+    <Formik initialValues={initialValues} onSubmit={resetPassword}>
       {(formik) => (
         <StyledAuthForm onSubmit={formik.handleSubmit}>
           <Form.Group controlId="activatePassword">
@@ -123,7 +116,7 @@ const ActivateForm = (): JSX.Element => {
             size="lg"
             disabled={formik.isSubmitting}
           >
-            Activate Account
+            Set New Password
           </StyledSubmitButton>
         </StyledAuthForm>
       )}
@@ -131,4 +124,4 @@ const ActivateForm = (): JSX.Element => {
   );
 };
 
-export default ActivateForm;
+export default ResetPasswordForm;

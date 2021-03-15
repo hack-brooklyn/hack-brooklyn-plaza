@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import { Activate, ApplicationLanding, ApplicationPage, Dashboard, Landing, Login } from 'views';
 import { RootState } from 'types';
+import ForgotPassword from 'views/ForgotPassword';
 
 
 const Routes = (): JSX.Element => {
@@ -25,6 +26,10 @@ const Routes = (): JSX.Element => {
 
       <Route path="/activate">
         <Activate />
+      </Route>
+
+      <Route path="/resetpassword">
+        <ForgotPassword />
       </Route>
 
       <Route path="/" exact>

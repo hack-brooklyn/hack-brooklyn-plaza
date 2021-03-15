@@ -122,6 +122,20 @@ export interface MenuAction {
   icon: string;
 }
 
+export interface SetPasswordData {
+  password: string;
+  confirmPassword: string;
+}
+
+export interface EmailData {
+  email: string;
+}
+
+export interface KeyPasswordData {
+  key: string;
+  password: string;
+}
+
 export enum Roles {
   Admin = 'ROLE_ADMIN',
   Volunteer = 'ROLE_VOLUNTEER',
