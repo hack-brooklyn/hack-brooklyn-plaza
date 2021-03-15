@@ -10,7 +10,6 @@ import { StyledSubmitButton } from 'views/ApplicationPage/components/Application
 import { EmailData } from 'types';
 import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
-
 const ResetPasswordRequestForm = (): JSX.Element => {
   const initialValues: EmailData = {
     email: ''

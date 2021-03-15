@@ -7,20 +7,18 @@ import { API_ROOT } from 'index';
 import { RequiredFormLabel } from 'components';
 import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
 import { StyledAuthForm } from 'commonStyles';
+import { EmailData } from 'types';
 import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
-interface ActivateRequestData {
-  email: string;
-}
 
 const ActivateRequestForm = (): JSX.Element => {
-  const initialValues: ActivateRequestData = {
+  const initialValues: EmailData = {
     email: ''
   };
 
   const activateEmail = async (
-    activateFormData: ActivateRequestData,
-    { setSubmitting }: FormikHelpers<ActivateRequestData>
+    activateFormData: EmailData,
+    { setSubmitting }: FormikHelpers<EmailData>
   ): Promise<void> => {
     setSubmitting(true);
 
@@ -44,6 +42,8 @@ const ActivateRequestForm = (): JSX.Element => {
       toast.success('Please check your email for an activation link');
     } else if (res.status === 400) {
       toast.error('Please enter a valid email');
+    } else if (res.status === 404) {
+      toast.error('No account with this email could be found.');
     } else if (res.status === 409) {
       toast.error('Account already activated');
     } else {
