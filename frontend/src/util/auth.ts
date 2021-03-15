@@ -2,7 +2,7 @@ import { History, LocationState } from 'history';
 
 import store from 'store';
 import { logIn, logOut, setJwtAccessToken } from 'actions/auth';
-import { AuthResponse, UserState } from 'types';
+import { AuthResponse, SetPasswordData, UserState } from 'types';
 import { API_ROOT } from 'index';
 import { setUserData } from 'actions/user';
 import { initialUserState } from 'reducers/user';
@@ -32,10 +32,8 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
     // Get access token from response
     const resBody: AuthResponse = await res.json();
 
-    // Set login data across stores
-    localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
-    store.dispatch(setJwtAccessToken(resBody.token));
-    store.dispatch(logIn());
+    await logInAndRefreshUserData(resBody.token)
+    
 
     // Retrieve user data and save to Redux store
     await refreshUserData();
@@ -45,6 +43,15 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
     throw new AuthenticationError();
   }
 };
+
+export const logInAndRefreshUserData = async (accessToken: string): Promise<void> => {
+    // Set login data across stores
+    localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
+    store.dispatch(setJwtAccessToken(accessToken));
+    store.dispatch(logIn());
+    // Retrieve user data and save to Redux store
+    await refreshUserData();
+} 
 
 /**
  * Logs a user out by removing the refresh token, user data, and other relevant
@@ -141,6 +148,16 @@ export const handleLogOut = async (history: History<LocationState>): Promise<voi
   }
 };
 
+export const validatePassword = (passwordData: SetPasswordData): void => {
+  const { password, confirmPassword } = passwordData;
+  if (password !== confirmPassword) {
+    throw new MismatchedPasswordError();
+  }
+  if (password.length < 12) {
+    throw new PasswordTooShortError();
+  }
+};
+
 /**
  * Thrown when the server could not be reached.
  */
@@ -182,5 +199,21 @@ class TokenExpiredError extends Error {
     super();
     this.name = 'TokenExpiredError';
     this.message = 'Your token has expired. Please log in again.';
+  }
+}
+
+class MismatchedPasswordError extends Error {
+  constructor() {
+    super();
+    this.name = 'MismatchedPasswordError';
+    this.message = 'Passwords do not match. Please try again.';
+  }
+}
+
+class PasswordTooShortError extends Error {
+  constructor() {
+    super();
+    this.name = 'PasswordTooShortError';
+    this.message = 'Password is too short. Please make it 12 characters or more.';
   }
 }
