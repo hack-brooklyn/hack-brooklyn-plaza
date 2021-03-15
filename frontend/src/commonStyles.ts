@@ -82,3 +82,8 @@ export const Logo = styled(Link)`
     font-family: 'Major Mono Display', monospace;
   }
 `;
+
+export const StyledAuthForm = styled(Form)`
+margin: 0 auto;
+max-width: 400px;
+`;

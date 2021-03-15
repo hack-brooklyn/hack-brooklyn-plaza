@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { FastField, Formik, FormikHelpers } from 'formik';
 import styled from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { RequiredFormLabel } from 'components';
 import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
 import { LoginData, logInUser } from 'util/auth';
-import { StyledCenteredMarginH1 } from 'commonStyles';
+import { StyledCenteredMarginH1, StyledAuthForm } from 'commonStyles';
 
 const Login = (): JSX.Element => {
     const history = useHistory();
@@ -40,7 +40,7 @@ const Login = (): JSX.Element => {
           onSubmit={submitLogin}
         >
           {formik => (
-            <StyledForm onSubmit={formik.handleSubmit}>
+            <StyledAuthForm onSubmit={formik.handleSubmit}>
               <Form.Group controlId="loginEmail">
                 <RequiredFormLabel>Email</RequiredFormLabel>
                 <FastField as={Form.Control}
@@ -59,10 +59,12 @@ const Login = (): JSX.Element => {
                            required />
               </Form.Group>
 
+              <StyledLink to="/resetpassword">Forgot Password?</StyledLink>
+              
               <StyledSubmitButton type="submit" size="lg" disabled={formik.isSubmitting}>
                 Log In
               </StyledSubmitButton>
-            </StyledForm>
+            </StyledAuthForm>
           )}
         </Formik>
       </>
@@ -70,9 +72,10 @@ const Login = (): JSX.Element => {
   }
 ;
 
-const StyledForm = styled(Form)`
-  margin: 0 auto;
-  max-width: 400px;
+const StyledLink = styled(Link)`
+  display: block;
+  text-decoration: none;
+  margin-top: 0.5rem;
 `;
 
 export default Login;
