@@ -149,3 +149,63 @@ export enum Breakpoints {
   ExtraLarge = 1200,
   ExtraExtraLarge = 1400
 }
+
+/**
+ * Thrown when the server could not be reached.
+ */
+export class ConnectionError extends Error {
+  constructor() {
+    super();
+    this.name = 'ConnectionError';
+    this.message = 'An error occurred while connecting to the server. Please check your Internet connection and try again.';
+  }
+}
+
+/**
+ * Thrown when any method of authentication fails.
+ */
+export class AuthenticationError extends Error {
+  constructor() {
+    super();
+    this.name = 'AuthenticationError';
+    this.message = 'An error occurred while trying to authenticate your account. Please refresh the page or log out and in and try again.';
+  }
+}
+
+/**
+ * Thrown when the user's credentials were not accepted by the server.
+ */
+export class InvalidCredentialsError extends Error {
+  constructor() {
+    super();
+    this.name = 'InvalidCredentialsError';
+    this.message = 'The email or password you entered is incorrect. Please try again.';
+  }
+}
+
+/**
+ * Thrown when an access token or a refresh token has expired.
+ */
+export class TokenExpiredError extends Error {
+  constructor() {
+    super();
+    this.name = 'TokenExpiredError';
+    this.message = 'Your token has expired. Please log in again.';
+  }
+}
+
+export class MismatchedPasswordError extends Error {
+  constructor() {
+    super();
+    this.name = 'MismatchedPasswordError';
+    this.message = 'Passwords do not match. Please try again.';
+  }
+}
+
+export class PasswordTooShortError extends Error {
+  constructor() {
+    super();
+    this.name = 'PasswordTooShortError';
+    this.message = 'Password is too short. Please make it 12 characters or more.';
+  }
+}

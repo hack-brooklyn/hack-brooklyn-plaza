@@ -2,7 +2,17 @@ import { History, LocationState } from 'history';
 
 import store from 'store';
 import { logIn, logOut, setJwtAccessToken } from 'actions/auth';
-import { AuthResponse, SetPasswordData, UserState } from 'types';
+import {
+  AuthenticationError,
+  AuthResponse,
+  ConnectionError,
+  InvalidCredentialsError,
+  MismatchedPasswordError,
+  PasswordTooShortError,
+  SetPasswordData,
+  TokenExpiredError,
+  UserState
+} from 'types';
 import { API_ROOT } from 'index';
 import { setUserData } from 'actions/user';
 import { initialUserState } from 'reducers/user';
@@ -158,63 +168,3 @@ export const validatePassword = (passwordData: SetPasswordData): void => {
     throw new PasswordTooShortError();
   }
 };
-
-/**
- * Thrown when the server could not be reached.
- */
-class ConnectionError extends Error {
-  constructor() {
-    super();
-    this.name = 'ConnectionError';
-    this.message = 'An error occurred while connecting to the server. Please check your Internet connection and try again.';
-  }
-}
-
-/**
- * Thrown when any method of authentication fails.
- */
-class AuthenticationError extends Error {
-  constructor() {
-    super();
-    this.name = 'AuthenticationError';
-    this.message = 'An error occurred while trying to authenticate your account. Please refresh the page or log out and in and try again.';
-  }
-}
-
-/**
- * Thrown when the user's credentials were not accepted by the server.
- */
-class InvalidCredentialsError extends Error {
-  constructor() {
-    super();
-    this.name = 'InvalidCredentialsError';
-    this.message = 'The email or password you entered is incorrect. Please try again.';
-  }
-}
-
-/**
- * Thrown when an access token or a refresh token has expired.
- */
-class TokenExpiredError extends Error {
-  constructor() {
-    super();
-    this.name = 'TokenExpiredError';
-    this.message = 'Your token has expired. Please log in again.';
-  }
-}
-
-class MismatchedPasswordError extends Error {
-  constructor() {
-    super();
-    this.name = 'MismatchedPasswordError';
-    this.message = 'Passwords do not match. Please try again.';
-  }
-}
-
-class PasswordTooShortError extends Error {
-  constructor() {
-    super();
-    this.name = 'PasswordTooShortError';
-    this.message = 'Password is too short. Please make it 12 characters or more.';
-  }
-}
