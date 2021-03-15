@@ -7,6 +7,8 @@ import { FastField, Formik, FormikHelpers } from 'formik';
 import { API_ROOT } from 'index';
 import { RequiredFormLabel } from 'components';
 import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
+import { StyledAuthForm } from 'commonStyles';
+import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
 interface ActivateRequestData {
   email: string;
@@ -33,7 +35,8 @@ const ActivateRequestForm = (): JSX.Element => {
         body: JSON.stringify(activateFormData)
       });
     } catch (err) {
-      toast.error(err.message);
+      console.error(err);
+      toast.error(CONNECTION_ERROR_MESSAGE);
       setSubmitting(false);
       return;
     }
@@ -55,7 +58,7 @@ const ActivateRequestForm = (): JSX.Element => {
   return (
     <Formik initialValues={initialValues} onSubmit={activateEmail}>
       {(formik) => (
-        <StyledForm onSubmit={formik.handleSubmit}>
+        <StyledAuthForm onSubmit={formik.handleSubmit}>
           <Form.Group controlId="activateEmail">
             <RequiredFormLabel>Email You Applied With</RequiredFormLabel>
             <FastField
@@ -74,15 +77,10 @@ const ActivateRequestForm = (): JSX.Element => {
           >
             Send Activation Email
           </StyledSubmitButton>
-        </StyledForm>
+        </StyledAuthForm>
       )}
     </Formik>
   );
 };
-
-const StyledForm = styled(Form)`
-  margin: 0 auto;
-  max-width: 400px;
-`;
 
 export default ActivateRequestForm;

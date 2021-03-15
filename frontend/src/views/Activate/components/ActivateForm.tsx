@@ -10,27 +10,23 @@ import { logIn, setJwtAccessToken } from 'actions/auth';
 import { RequiredFormLabel } from 'components';
 import { FastField, Formik, FormikHelpers } from 'formik';
 import { API_ROOT } from 'index';
-import { AuthResponse } from 'types';
-import { refreshUserData } from 'util/auth';
+import { AuthResponse, KeyPasswordData, SetPasswordData } from 'types';
+import { logInAndRefreshUserData, refreshUserData } from 'util/auth';
 import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
-
-interface ActivateData {
-  password: string;
-  confirmPassword: string;
-}
+import { StyledAuthForm } from 'commonStyles';
+import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
 const ActivateForm = (): JSX.Element => {
-  const dispatch = useDispatch();
   const history = useHistory();
 
-  const initialValues: ActivateData = {
+  const initialValues: SetPasswordData = {
     password: '',
     confirmPassword: ''
   };
 
   const activateAccount = async (
-    activateFormData: ActivateData,
-    { setSubmitting }: FormikHelpers<ActivateData>
+    activateFormData: SetPasswordData,
+    { setSubmitting }: FormikHelpers<SetPasswordData>
   ): Promise<void> => {
     setSubmitting(true);
 
@@ -48,15 +44,17 @@ const ActivateForm = (): JSX.Element => {
       return;
     }
 
-    const parsedKey = queryString.parse(location.search).key;
-    if (!parsedKey) {
+    const parsedQuery = queryString.parse(location.search);
+    const activationKey = parsedQuery.key as string;
+    
+    if (!activationKey) {
       toast.error('Key does not exist');
       setSubmitting(false);
       return;
     }
-
-    const requestBody = { 
-      key: parsedKey,
+    
+    const requestBody:KeyPasswordData = { 
+      key: activationKey,
       password: password 
     };
     
@@ -71,17 +69,16 @@ const ActivateForm = (): JSX.Element => {
         body: JSON.stringify(requestBody)
       });
     } catch (err) {
-      toast.error(err.message);
+      console.error(err);
+      toast.error(CONNECTION_ERROR_MESSAGE);
       setSubmitting(false);
       return;
     }
 
     if (res.status === 200) {
       const resBody: AuthResponse = await res.json();
-      localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
-      dispatch(logIn());
-      dispatch(setJwtAccessToken(resBody.token));
-      await refreshUserData();
+      
+      logInAndRefreshUserData(resBody.token);
       toast.success('You have activated your account');
       history.push('/');
     } else if (res.status === 401) {
@@ -99,7 +96,7 @@ const ActivateForm = (): JSX.Element => {
   return (
     <Formik initialValues={initialValues} onSubmit={activateAccount}>
       {(formik) => (
-        <StyledForm onSubmit={formik.handleSubmit}>
+        <StyledAuthForm onSubmit={formik.handleSubmit}>
           <Form.Group controlId="activatePassword">
             <RequiredFormLabel>Password</RequiredFormLabel>
             <FastField
@@ -128,15 +125,10 @@ const ActivateForm = (): JSX.Element => {
           >
             Activate Account
           </StyledSubmitButton>
-        </StyledForm>
+        </StyledAuthForm>
       )}
     </Formik>
   );
 };
-
-const StyledForm = styled(Form)`
-  margin: 0 auto;
-  max-width: 400px;
-`;
 
 export default ActivateForm;
