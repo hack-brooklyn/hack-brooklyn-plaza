@@ -1,3 +1,7 @@
+// Messages
+export const CONNECTION_ERROR_MESSAGE = 'An error occurred while connecting to the server. Please check your Internet connection and try again.';
+
+// Redux
 // App
 export const SET_WINDOW_WIDTH = 'SET_WINDOW_WIDTH';
 
@@ -8,5 +12,3 @@ export const SET_JWT_ACCESS_TOKEN = 'SET_JWT_ACCESS_TOKEN';
 
 // User
 export const SET_USER_DATA = 'SET_USER_DATA';
-
-export const CONNECTION_ERROR_MESSAGE = 'An error occurred while connecting to the server. Please check your Internet connection and try again.'

@@ -1,17 +1,14 @@
 import React from 'react';
 import queryString from 'query-string';
 import { Form } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { toast } from 'react-toastify';
-import styled from 'styled-components/macro';
-
-import { logIn, setJwtAccessToken } from 'actions/auth';
-import { RequiredFormLabel } from 'components';
 import { FastField, Formik, FormikHelpers } from 'formik';
+
+import { RequiredFormLabel } from 'components';
 import { API_ROOT } from 'index';
 import { AuthResponse, KeyPasswordData, SetPasswordData } from 'types';
-import { logInAndRefreshUserData, refreshUserData } from 'util/auth';
+import { logInAndRefreshUserData, validatePassword } from 'util/auth';
 import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
 import { StyledAuthForm } from 'commonStyles';
 import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
@@ -30,34 +27,28 @@ const ActivateForm = (): JSX.Element => {
   ): Promise<void> => {
     setSubmitting(true);
 
-    const password = activateFormData.password;
-
-    if (password !== activateFormData.confirmPassword) {
-      toast.error('Password do not match');
-      setSubmitting(false);
-      return;
-    }
-
-    if (password.length < 12) {
-      toast.error('Password must be at least 12 characters');
+    try {
+      validatePassword(activateFormData);
+    } catch (err) {
+      toast.error(err.message);
       setSubmitting(false);
       return;
     }
 
     const parsedQuery = queryString.parse(location.search);
     const activationKey = parsedQuery.key as string;
-    
+
     if (!activationKey) {
       toast.error('Key does not exist');
       setSubmitting(false);
       return;
     }
-    
-    const requestBody:KeyPasswordData = { 
+
+    const requestBody: KeyPasswordData = {
       key: activationKey,
-      password: password 
+      password: activateFormData.password
     };
-    
+
     let res;
     try {
       res = await fetch(`${API_ROOT}/users/activate`, {
@@ -76,9 +67,11 @@ const ActivateForm = (): JSX.Element => {
     }
 
     if (res.status === 200) {
+      // Fetch and set user data on the client
       const resBody: AuthResponse = await res.json();
-      
-      logInAndRefreshUserData(resBody.token);
+      await logInAndRefreshUserData(resBody.token);
+
+      // Redirect user to their dashboard
       toast.success('You have activated your account');
       history.push('/');
     } else if (res.status === 401) {

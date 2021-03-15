@@ -1,7 +1,6 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import styled from 'styled-components/macro';
 import { FastField, Formik, FormikHelpers } from 'formik';
 
 import { API_ROOT } from 'index';

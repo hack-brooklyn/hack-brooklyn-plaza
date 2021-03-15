@@ -22,5 +22,4 @@ const LinkNavItem = (props: NavLinkContainerProps) => {
 };
 
 
-
 export default LinkNavItem;

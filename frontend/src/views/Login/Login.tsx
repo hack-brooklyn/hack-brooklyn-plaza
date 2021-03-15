@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { RequiredFormLabel } from 'components';
 import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
 import { LoginData, logInUser } from 'util/auth';
-import { StyledCenteredMarginH1, StyledAuthForm } from 'commonStyles';
+import { StyledAuthForm, StyledCenteredMarginH1 } from 'commonStyles';
 
 const Login = (): JSX.Element => {
     const history = useHistory();
@@ -60,7 +60,7 @@ const Login = (): JSX.Element => {
               </Form.Group>
 
               <StyledLink to="/resetpassword">Forgot Password?</StyledLink>
-              
+
               <StyledSubmitButton type="submit" size="lg" disabled={formik.isSubmitting}>
                 Log In
               </StyledSubmitButton>

@@ -84,6 +84,6 @@ export const Logo = styled(Link)`
 `;
 
 export const StyledAuthForm = styled(Form)`
-margin: 0 auto;
-max-width: 400px;
+  margin: 0 auto;
+  max-width: 400px;
 `;

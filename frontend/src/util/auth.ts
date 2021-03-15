@@ -32,8 +32,8 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
     // Get access token from response
     const resBody: AuthResponse = await res.json();
 
-    await logInAndRefreshUserData(resBody.token)
-    
+    await logInAndRefreshUserData(resBody.token);
+
 
     // Retrieve user data and save to Redux store
     await refreshUserData();
@@ -45,13 +45,14 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
 };
 
 export const logInAndRefreshUserData = async (accessToken: string): Promise<void> => {
-    // Set login data across stores
-    localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
-    store.dispatch(setJwtAccessToken(accessToken));
-    store.dispatch(logIn());
-    // Retrieve user data and save to Redux store
-    await refreshUserData();
-} 
+  // Set login data across stores
+  localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
+  store.dispatch(setJwtAccessToken(accessToken));
+  store.dispatch(logIn());
+
+  // Retrieve user data and save to Redux store
+  await refreshUserData();
+};
 
 /**
  * Logs a user out by removing the refresh token, user data, and other relevant

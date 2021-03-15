@@ -1,18 +1,15 @@
 import React from 'react';
 import queryString from 'query-string';
 import { Form } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { toast } from 'react-toastify';
-import styled from 'styled-components/macro';
-
-import { logIn, setJwtAccessToken } from 'actions/auth';
-import { RequiredFormLabel } from 'components';
 import { FastField, Formik, FormikHelpers } from 'formik';
+
+import { RequiredFormLabel } from 'components';
+import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
+import { logInAndRefreshUserData, validatePassword } from 'util/auth';
 import { API_ROOT } from 'index';
 import { AuthResponse, KeyPasswordData, SetPasswordData } from 'types';
-import { logInAndRefreshUserData, refreshUserData, validatePassword } from 'util/auth';
-import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
 import { StyledAuthForm } from 'commonStyles';
 import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
@@ -30,7 +27,6 @@ const ResetPasswordForm = (): JSX.Element => {
   ): Promise<void> => {
     setSubmitting(true);
 
-    const password = passwordFormData.password;
     try {
       validatePassword(passwordFormData);
     } catch (err) {
@@ -48,11 +44,11 @@ const ResetPasswordForm = (): JSX.Element => {
       return;
     }
 
-    const requestBody: KeyPasswordData = { 
+    const requestBody: KeyPasswordData = {
       key: passwordResetKey,
-      password: password 
+      password: passwordFormData.password
     };
-    
+
     let res;
     try {
       res = await fetch(`${API_ROOT}/users/resetPassword`, {
@@ -71,9 +67,11 @@ const ResetPasswordForm = (): JSX.Element => {
     }
 
     if (res.status === 200) {
+      // Fetch and set user data on the client
       const resBody: AuthResponse = await res.json();
+      await logInAndRefreshUserData(resBody.token);
 
-      logInAndRefreshUserData(resBody.token);
+      // Redirect user to their dashboard
       toast.success('You have reset your password');
       history.push('/');
     } else if (res.status === 401) {
