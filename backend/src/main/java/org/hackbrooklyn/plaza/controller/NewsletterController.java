@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.hackbrooklyn.plaza.model.RegisteredInterestApplicant;
 import org.hackbrooklyn.plaza.repository.RegisteredInterestApplicantRepository;
-import org.hackbrooklyn.plaza.service.FoundDataConflictException;
+import org.hackbrooklyn.plaza.exception.FoundDataConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

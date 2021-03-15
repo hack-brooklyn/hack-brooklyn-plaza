@@ -1,6 +1,6 @@
 package org.hackbrooklyn.plaza.security;
 
-import org.hackbrooklyn.plaza.service.PlazaUserDetailsService;
+import org.hackbrooklyn.plaza.service.impl.PlazaUserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -33,11 +33,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${BCRYPT_SALT_ROUNDS}")
     private int BCRYPT_SALT_ROUNDS;
 
-    private final PlazaUserDetailsService userDetailsService;
+    private final PlazaUserDetailsServiceImpl userDetailsService;
     private final JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    public SecurityConfig(PlazaUserDetailsService userDetailsService, JwtTokenFilter jwtTokenFilter) {
+    public SecurityConfig(PlazaUserDetailsServiceImpl userDetailsService, JwtTokenFilter jwtTokenFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtTokenFilter = jwtTokenFilter;
     }

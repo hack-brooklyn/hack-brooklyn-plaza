@@ -1,8 +1,11 @@
 package org.hackbrooklyn.plaza.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
@@ -18,6 +21,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "applications")
+@JsonFilter("GetAllSubmittedApplicationsFilter")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SubmittedApplication {
 
@@ -133,7 +137,6 @@ public class SubmittedApplication {
     // Additional internal fields
     @Column(name = "priority_applicant")
     @NotNull
-    @JsonIgnore
     private boolean priorityApplicant;
 
     @Column(name = "priority_applicant_email")
@@ -147,7 +150,6 @@ public class SubmittedApplication {
 
     @Column(name = "registered_interest")
     @NotNull
-    @JsonIgnore
     private boolean registeredInterest;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -157,6 +159,15 @@ public class SubmittedApplication {
 
     @Column(name = "decision")
     @NotEmpty
-    @JsonIgnore
-    private String decision;
+    private Decision decision;
+
+    @Getter
+    @AllArgsConstructor
+    public enum Decision {
+        ACCEPTED("Accepted"),
+        REJECTED("Rejected"),
+        UNDECIDED("Undecided");
+
+        private final String decision;
+    }
 }

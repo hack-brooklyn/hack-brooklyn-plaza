@@ -1,5 +1,7 @@
 package org.hackbrooklyn.plaza.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hackbrooklyn.plaza.security.Roles;
 import org.hibernate.annotations.CreationTimestamp;
@@ -40,6 +42,7 @@ public class User implements UserDetails {
 
     @Column(name = "hashed_password")
     @NotBlank
+    @JsonIgnore
     private String hashedPassword;
 
     @Column(name = "role")

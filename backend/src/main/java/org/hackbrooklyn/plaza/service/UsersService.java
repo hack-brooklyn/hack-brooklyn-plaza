@@ -1,5 +1,7 @@
 package org.hackbrooklyn.plaza.service;
 
+import org.hackbrooklyn.plaza.dto.TokenDTO;
+import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.model.User;
 import org.springframework.security.authentication.BadCredentialsException;
 
@@ -19,5 +21,5 @@ public interface UsersService {
 
     TokenDTO refreshAccessToken(String refreshToken, User refreshingUser);
 
-    UserDataResponse getUserData(User user);
+    UserDataDTO getUserData(User user);
 }

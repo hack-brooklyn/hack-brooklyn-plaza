@@ -3,8 +3,8 @@ package org.hackbrooklyn.plaza.controller;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.model.User;
-import org.hackbrooklyn.plaza.service.TokenDTO;
-import org.hackbrooklyn.plaza.service.UserDataResponse;
+import org.hackbrooklyn.plaza.dto.TokenDTO;
+import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,8 +132,8 @@ public class UsersController {
      * Gets selected user data for the logged in user.
      */
     @GetMapping("data")
-    public ResponseEntity<UserDataResponse> getUserData(@AuthenticationPrincipal User user) {
-        UserDataResponse resBody = usersService.getUserData(user);
+    public ResponseEntity<UserDataDTO> getUserData(@AuthenticationPrincipal User user) {
+        UserDataDTO resBody = usersService.getUserData(user);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
