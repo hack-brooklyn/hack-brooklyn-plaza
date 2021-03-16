@@ -63,13 +63,13 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         }
 
         int totalPages = applicationsPage.getTotalPages();
-        long totalApplications = applicationsPage.getTotalElements();
+        long totalFoundApplications = applicationsPage.getTotalElements();
         long totalUndecidedApplications = submittedApplicationRepository.countByDecision(SubmittedApplication.Decision.UNDECIDED);
 
         return new MultipleApplicationsResponse(
                 applicationLites,
                 totalPages,
-                totalApplications,
+                totalFoundApplications,
                 totalUndecidedApplications
         );
     }

@@ -11,6 +11,6 @@ public class MultipleApplicationsResponse {
 
     private Collection<ApplicationManagerDTO> applications;
     private int pages;
-    private long totalApplications;
+    private long totalFoundApplications;
     private long totalUndecidedApplications;
 }
