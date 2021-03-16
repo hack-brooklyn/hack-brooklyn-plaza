@@ -1,11 +1,13 @@
 package org.hackbrooklyn.plaza.model;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import org.hackbrooklyn.plaza.util.LocalDateTimeWithUTCSerializer;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
@@ -21,7 +23,6 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "applications")
-@JsonFilter("GetAllSubmittedApplicationsFilter")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SubmittedApplication {
 
@@ -34,7 +35,7 @@ public class SubmittedApplication {
 
     @Column(name = "application_timestamp")
     @CreationTimestamp
-    @JsonIgnore
+    @JsonSerialize(using = LocalDateTimeWithUTCSerializer.class)
     private LocalDateTime applicationTimestamp;
 
     // Part 1
@@ -107,6 +108,7 @@ public class SubmittedApplication {
     // Uploaded resume file is for the application form only
     // The resume file itself is not saved in the database
     @Transient
+    @JsonIgnore
     private MultipartFile resumeFile;
 
     @Column(name = "resume_key_s3")
@@ -129,6 +131,7 @@ public class SubmittedApplication {
     @Transient
     @NotNull
     @AssertTrue
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean acceptTocAndCoc;
 
     @Column(name = "share_resume_with_sponsors")
@@ -159,15 +162,14 @@ public class SubmittedApplication {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "decision")
-    @NotEmpty
     private Decision decision;
 
     @Getter
     @AllArgsConstructor
     public enum Decision {
-        ACCEPTED("Accepted"),
-        REJECTED("Rejected"),
-        UNDECIDED("Undecided");
+        ACCEPTED("ACCEPTED"),
+        REJECTED("REJECTED"),
+        UNDECIDED("UNDECIDED");
 
         private final String decision;
     }
