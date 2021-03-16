@@ -4,8 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public final class Authorities {
-    public static final String APPLICATIONS_READ_ALL = "APPLICATIONS_READ_ALL";
-    public static final String APPLICATIONS_READ_INDIVIDUAL = "APPLICATIONS_READ_INDIVIDUAL";
+    public static final String APPLICATIONS_READ = "APPLICATIONS_READ";
     public static final String APPLICATIONS_UPDATE_DECISION = "APPLICATIONS_UPDATE_DECISION";
     public static final String APPLICATIONS_DELETE = "APPLICATIONS_DELETE";
 
@@ -18,8 +17,7 @@ public final class Authorities {
     public static final String ANNOUNCEMENTS_DELETE = "ANNOUNCEMENTS_DELETE";
 
     public static final String EVENTS_CREATE = "EVENTS_CREATE";
-    public static final String EVENTS_READ_ALL = "EVENTS_READ_ALL";
-    public static final String EVENTS_READ_INDIVIDUAL = "EVENTS_READ_INDIVIDUAL";
+    public static final String EVENTS_READ = "EVENTS_READ";
     public static final String EVENTS_UPDATE = "EVENTS_UPDATE";
     public static final String EVENTS_DELETE = "EVENTS_DELETE";
 
