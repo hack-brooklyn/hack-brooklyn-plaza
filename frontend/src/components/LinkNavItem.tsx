@@ -7,7 +7,7 @@ interface NavLinkContainerProps {
   children: React.ReactNode;
 }
 
-const LinkNavItem = (props: NavLinkContainerProps) => {
+const LinkNavItem = (props: NavLinkContainerProps): JSX.Element => {
   const { to, children } = props;
 
   return (

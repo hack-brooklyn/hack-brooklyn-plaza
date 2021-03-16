@@ -9,7 +9,7 @@ interface LinkButtonContainerProps {
   children?: React.ReactNode;
 }
 
-const LinkButtonNavItem = (props: LinkButtonContainerProps) => {
+const LinkButtonNavItem = (props: LinkButtonContainerProps): JSX.Element => {
   const { variant, to, children } = props;
 
   return (

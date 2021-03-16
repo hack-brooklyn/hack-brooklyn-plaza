@@ -10,7 +10,7 @@ interface ActionLinkProps {
   link: string;
 }
 
-const ActionLink = (props: ActionLinkProps) => {
+const ActionLink = (props: ActionLinkProps): JSX.Element => {
   const { name, description, link } = props;
 
   return (
