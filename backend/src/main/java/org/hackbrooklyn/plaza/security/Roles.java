@@ -20,8 +20,7 @@ public class Roles {
         // Admins
         String[] adminAuthorities = {
                 // Applications
-                Authorities.APPLICATIONS_READ_ALL,
-                Authorities.APPLICATIONS_READ_INDIVIDUAL,
+                Authorities.APPLICATIONS_READ,
                 Authorities.APPLICATIONS_UPDATE_DECISION,
                 Authorities.APPLICATIONS_DELETE,
 
@@ -37,8 +36,7 @@ public class Roles {
 
                 // Events
                 Authorities.EVENTS_CREATE,
-                Authorities.EVENTS_READ_ALL,
-                Authorities.EVENTS_READ_INDIVIDUAL,
+                Authorities.EVENTS_READ,
                 Authorities.EVENTS_UPDATE,
                 Authorities.EVENTS_DELETE,
 
@@ -54,8 +52,7 @@ public class Roles {
                 Authorities.ANNOUNCEMENTS_READ,
 
                 // Events
-                Authorities.EVENTS_READ_ALL,
-                Authorities.EVENTS_READ_INDIVIDUAL,
+                Authorities.EVENTS_READ,
 
                 // Saved Events
                 Authorities.SAVED_EVENTS_ADD,
@@ -69,8 +66,7 @@ public class Roles {
                 Authorities.ANNOUNCEMENTS_READ,
 
                 // Events
-                Authorities.EVENTS_READ_ALL,
-                Authorities.EVENTS_READ_INDIVIDUAL,
+                Authorities.EVENTS_READ,
 
                 // Saved Events
                 Authorities.SAVED_EVENTS_ADD,
