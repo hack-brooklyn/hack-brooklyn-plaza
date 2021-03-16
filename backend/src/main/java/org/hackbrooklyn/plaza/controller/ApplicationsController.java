@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,5 +43,13 @@ public class ApplicationsController {
         MultipleApplicationsResponse foundApplications = applicationsService.getMultipleApplications(page, limit, searchQuery, decision);
 
         return new ResponseEntity<>(foundApplications, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.APPLICATIONS_READ)")
+    @GetMapping("/{applicationNumber}")
+    public ResponseEntity<SubmittedApplication> getSingleApplication(@PathVariable @Valid int applicationNumber) {
+        SubmittedApplication foundApplication = applicationsService.getIndividualApplication(applicationNumber);
+
+        return new ResponseEntity<>(foundApplication, HttpStatus.OK);
     }
 }
