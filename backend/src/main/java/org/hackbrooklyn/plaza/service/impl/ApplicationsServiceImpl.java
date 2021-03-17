@@ -2,6 +2,7 @@ package org.hackbrooklyn.plaza.service.impl;
 
 import org.hackbrooklyn.plaza.dto.ApplicationManagerDTO;
 import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
+import org.hackbrooklyn.plaza.exception.ApplicationNotFoundException;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
 import org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository;
 import org.hackbrooklyn.plaza.service.ApplicationsService;
@@ -72,6 +73,13 @@ public class ApplicationsServiceImpl implements ApplicationsService {
                 totalFoundApplications,
                 totalUndecidedApplications
         );
+    }
+
+    @Override
+    public SubmittedApplication getIndividualApplication(int applicationNumber) {
+        return submittedApplicationRepository
+                .findFirstByApplicationNumber(applicationNumber)
+                .orElseThrow(ApplicationNotFoundException::new);
     }
 
     private Specification<SubmittedApplication> containsTextInNameOrEmail(String text) {
