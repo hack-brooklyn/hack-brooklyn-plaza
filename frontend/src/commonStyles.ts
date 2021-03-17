@@ -87,3 +87,12 @@ export const StyledAuthForm = styled(Form)`
   margin: 0 auto;
   max-width: 400px;
 `;
+
+export const HeadingSection = styled.section`
+  margin-bottom: 2rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    display: flex;
+    justify-content: space-between;
+  }
+`;
