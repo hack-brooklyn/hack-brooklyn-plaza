@@ -58,6 +58,14 @@ public class ApplicationsController {
         return new ResponseEntity<>(foundApplication, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority(@authorities.APPLICATIONS_DELETE)")
+    @DeleteMapping("/{applicationNumber}")
+    public ResponseEntity<Void> deleteApplication(@PathVariable @Valid int applicationNumber) {
+        applicationsService.deleteApplication(applicationNumber);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority(@authorities.APPLICATIONS_UPDATE_DECISION)")
     @PostMapping("/{applicationNumber}/setDecision")
     public ResponseEntity<Void> setApplicationDecision(

@@ -109,4 +109,15 @@ public class ApplicationsServiceImpl implements ApplicationsService {
 
         submittedApplicationRepository.save(foundApplication);
     }
+
+    @Override
+    public void deleteApplication(int applicationNumber) {
+        // Check if the application exists and throw a 404 Not Found error if it doesn't exist
+        submittedApplicationRepository
+                .findFirstByApplicationNumber(applicationNumber)
+                .orElseThrow(ApplicationNotFoundException::new);
+
+        // Application exists, proceed to delete it
+        submittedApplicationRepository.deleteByApplicationNumber(applicationNumber);
+    }
 }
