@@ -66,7 +66,25 @@ interface SetUserDataAction {
 
 export type UserActionTypes = SetUserDataAction;
 
-// Common responses
+// Admin
+export interface AdminState {
+  applicationReviewModeOn: boolean;
+}
+
+interface EnterApplicationReviewModeAction {
+  type: typeof ENTER_APPLICATION_REVIEW_MODE;
+}
+
+interface ExitApplicationReviewModeAction {
+  type: typeof EXIT_APPLICATION_REVIEW_MODE;
+}
+
+export type AdminActionTypes =
+  | EnterApplicationReviewModeAction
+  | ExitApplicationReviewModeAction;
+
+// General Types
+// The access token returned from an authentication response
 export interface AuthResponse {
   token: string;
 }
