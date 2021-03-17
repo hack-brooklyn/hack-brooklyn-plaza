@@ -1,12 +1,20 @@
-import { LOG_IN, LOG_OUT, SET_JWT_ACCESS_TOKEN, SET_USER_DATA, SET_WINDOW_WIDTH } from './constants';
+import {
+  ENTER_APPLICATION_REVIEW_MODE,
+  EXIT_APPLICATION_REVIEW_MODE,
+  LOG_IN,
+  LOG_OUT,
+  SET_JWT_ACCESS_TOKEN,
+  SET_USER_DATA,
+  SET_WINDOW_WIDTH
+} from './constants';
 
-// Redux
+// Redux Types
 // Root state
 export interface RootState {
   app: AppState;
   auth: AuthState;
   user: UserState;
-  burgerMenu: { isOpen: boolean }
+  burgerMenu: { isOpen: boolean };
 }
 
 // General app state
@@ -40,7 +48,10 @@ interface SetJwtAccessTokenAction {
   payload: string | null;
 }
 
-export type AuthActionTypes = LogInAction | LogOutAction | SetJwtAccessTokenAction;
+export type AuthActionTypes =
+  | LogInAction
+  | LogOutAction
+  | SetJwtAccessTokenAction;
 
 // User Data
 export interface UserState {
@@ -66,36 +77,89 @@ interface SetUserDataAction {
 
 export type UserActionTypes = SetUserDataAction;
 
-// Common responses
+// Admin
+export interface AdminState {
+  applicationReviewModeOn: boolean;
+}
+
+interface EnterApplicationReviewModeAction {
+  type: typeof ENTER_APPLICATION_REVIEW_MODE;
+}
+
+interface ExitApplicationReviewModeAction {
+  type: typeof EXIT_APPLICATION_REVIEW_MODE;
+}
+
+export type AdminActionTypes =
+  | EnterApplicationReviewModeAction
+  | ExitApplicationReviewModeAction;
+
+// General Types
+// The access token returned from an authentication response
 export interface AuthResponse {
   token: string;
 }
 
-// The react-select option.
+// A react-select option.
 export interface Option {
   value: string;
   label: string;
 }
 
-// The fields for the Hack Brooklyn application.
-export interface ApplicationFormValues {
-  // Part 1
+// A user's full name with their email address.
+export interface UserIdentity {
   firstName: string;
   lastName: string;
   email: string;
-  priorityApplicantEmail?: string;
+}
+
+// The form data for submitting an email as a request.
+export interface EmailData {
+  email: string;
+}
+
+// The form data for setting a new password.
+export interface SetPasswordData {
+  password: string;
+  confirmPassword: string;
+}
+
+// The form data for activating/resetting a password with a key-password combination
+export interface KeyPasswordData {
+  key: string;
+  password: string;
+}
+
+// Hackathon Applications
+// Common required fields for the application and the response
+export interface ApplicationCommon extends UserIdentity {
+  // Part 1
   country: string;
-  gender?: string;
-  pronouns?: string;
-  ethnicity?: string;
-  shirtSize?: string;
-  isFirstHackathon?: 'Yes' | 'No' | boolean | null;  // Converted to boolean during submission
-  numberHackathonsAttended?: number | null;
 
   // Part 2
   school: string;
   levelOfStudy: string;
   graduationYear: number;
+}
+
+// Common properties for submitted applications
+interface SubmittedApplicationCommon extends UserIdentity {
+  applicationTimestamp: Date;
+  decision: ApplicationDecisions;
+}
+
+// The application form with optional values as undefined.
+export interface SubmittingApplication extends ApplicationCommon {
+  // Part 1
+  gender?: string;
+  pronouns?: string;
+  ethnicity?: string;
+  shirtSize?: string;
+  priorityApplicantEmail?: string;
+  isFirstHackathon?: 'Yes' | 'No' | boolean | null; // Converted to boolean during submission
+  numberHackathonsAttended?: number | null;
+
+  // Part 2
   major?: string;
 
   // Part 3
@@ -114,6 +178,43 @@ export interface ApplicationFormValues {
   shareResumeWithSponsors?: boolean;
 }
 
+// A submitted application in the database with optional values returned as null.
+export interface SubmittedApplication extends SubmittedApplicationCommon {
+
+  // Part 1
+  gender: string | null;
+  pronouns: string | null;
+  ethnicity: string | null;
+  shirtSize: string | null;
+  isFirstHackathon: boolean | null;
+  numberHackathonsAttended: number | null;
+
+  // Part 2
+  major: string | null;
+
+  // Part 3
+  githubUrl: string | null;
+  linkedinUrl: string | null;
+  websiteUrl: string | null;
+  // AWS resume link must be requested on demand
+
+  // Part 4
+  shortResponseOne: string | null;
+  shortResponseTwo: string | null;
+  shortResponseThree: string | null;
+  shareResumeWithSponsors: boolean;
+
+  // Internal fields
+  priorityApplicant: boolean;
+  priorityApplicantEmail: string | null;
+  registeredInterest: boolean;
+}
+
+// An individual application in the manage applications table with an application number
+export interface SubmittedApplicationLite extends SubmittedApplicationCommon {
+  applicationNumber: number;
+}
+
 export interface MenuAction {
   type: 'anchor' | 'link' | 'button';
   text: string;
@@ -122,26 +223,21 @@ export interface MenuAction {
   icon: string;
 }
 
-export interface SetPasswordData {
-  password: string;
-  confirmPassword: string;
+// The possible decisions for hackathon applications.
+export enum ApplicationDecisions {
+  Accepted = 'ACCEPTED',
+  Rejected = 'REJECTED',
+  Undecided = 'UNDECIDED'
 }
 
-export interface EmailData {
-  email: string;
-}
-
-export interface KeyPasswordData {
-  key: string;
-  password: string;
-}
-
+// The possible user roles for activated users.
 export enum Roles {
   Admin = 'ROLE_ADMIN',
   Volunteer = 'ROLE_VOLUNTEER',
   Participant = 'ROLE_PARTICIPANT'
 }
 
+// The Bootstrap breakpoints in pixels.
 export enum Breakpoints {
   Small = 576,
   Medium = 768,
@@ -150,9 +246,8 @@ export enum Breakpoints {
   ExtraExtraLarge = 1400
 }
 
-/**
- * Thrown when the server could not be reached.
- */
+// Custom Errors
+// Thrown when the server could not be reached.
 export class ConnectionError extends Error {
   constructor() {
     super();
@@ -161,9 +256,7 @@ export class ConnectionError extends Error {
   }
 }
 
-/**
- * Thrown when any method of authentication fails.
- */
+// Thrown when any method of authentication fails.
 export class AuthenticationError extends Error {
   constructor() {
     super();
@@ -172,9 +265,7 @@ export class AuthenticationError extends Error {
   }
 }
 
-/**
- * Thrown when the user's credentials were not accepted by the server.
- */
+// Thrown when the user's credentials were not accepted by the server.
 export class InvalidCredentialsError extends Error {
   constructor() {
     super();
@@ -183,9 +274,7 @@ export class InvalidCredentialsError extends Error {
   }
 }
 
-/**
- * Thrown when an access token or a refresh token has expired.
- */
+// Thrown when an access token or a refresh token has expired.
 export class TokenExpiredError extends Error {
   constructor() {
     super();
@@ -194,6 +283,7 @@ export class TokenExpiredError extends Error {
   }
 }
 
+// Thrown when a password confirmation does not match.
 export class MismatchedPasswordError extends Error {
   constructor() {
     super();
@@ -202,10 +292,30 @@ export class MismatchedPasswordError extends Error {
   }
 }
 
+// Thrown when a password does not meet the minimum length requirements.
 export class PasswordTooShortError extends Error {
   constructor() {
     super();
     this.name = 'PasswordTooShortError';
-    this.message = 'Password is too short. Please make it 12 characters or more.';
+    this.message = 'The password you entered is too short. Please choose a password that is 12 characters or longer.';
+  }
+}
+
+// Thrown when a user tries to access an endpoint that they have no permission for.
+export class NoPermissionError extends Error {
+  constructor() {
+    super();
+    this.name = 'NoPermissionError';
+    this.message = 'You do not have access to this part of Hack Brooklyn Plaza.';
+  }
+}
+
+// Thrown when an unknown error occurs, such as an unhandled response status.
+export class UnknownError extends Error {
+  constructor() {
+    super();
+    this.name = 'UnknownError';
+    this.message =
+      'Something went wrong! Please refresh the page and try again.';
   }
 }
