@@ -8,12 +8,12 @@ import Button from 'react-bootstrap/Button';
 
 import { Agreements, PartFour, PartOne, PartThree, PartTwo } from './FormParts';
 import { toastValidationErrors } from 'util/toastValidationErrors';
-import { ApplicationFormValues } from 'types';
+import { SubmittingApplication } from 'types';
 import countries from 'assets/data/countries.json';
 import { API_ROOT, PRIORITY_APPLICATIONS_ACTIVE } from 'index';
 
 export interface FormPartProps {
-  formik: FormikProps<ApplicationFormValues>;
+  formik: FormikProps<SubmittingApplication>;
 }
 
 interface ApplicationFormProps {
@@ -24,7 +24,7 @@ interface ApplicationFormProps {
 const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
     const { setApplicationSubmitted, priorityApplicantEmail } = props;
 
-    const requiredInitialValues: ApplicationFormValues = {
+    const requiredInitialValues: SubmittingApplication = {
       // Part 1
       firstName: '',
       lastName: '',
@@ -40,7 +40,7 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
       acceptTocAndCoc: false
     };
 
-    const submitApplication = async (submittedApplication: ApplicationFormValues, { setSubmitting }: FormikHelpers<ApplicationFormValues>): Promise<void> => {
+    const submitApplication = async (submittedApplication: SubmittingApplication, { setSubmitting }: FormikHelpers<SubmittingApplication>): Promise<void> => {
       setSubmitting(true);
 
       // Check if resume is over 10MB
@@ -55,7 +55,7 @@ const ApplicationForm = (props: ApplicationFormProps): JSX.Element => {
 
       // We will send the resume and the form data separately to keep JSON types since multipart/form-data only sends data as strings
       // Copy application to process necessary fields and remove resumeFile (we're sending it separately)
-      const processedFormValues: ApplicationFormValues = cloneDeep(submittedApplication);
+      const processedFormValues: SubmittingApplication = cloneDeep(submittedApplication);
 
       // Convert isFirstHackathon boolean from "Yes"/"No" to boolean and nullify number of hackathons attended accordingly
       switch (processedFormValues.isFirstHackathon) {
