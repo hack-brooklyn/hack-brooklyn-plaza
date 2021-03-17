@@ -98,4 +98,15 @@ public class ApplicationsServiceImpl implements ApplicationsService {
                 .findFirstByApplicationNumber(applicationNumber)
                 .orElseThrow(ApplicationNotFoundException::new);
     }
+
+    @Override
+    public void setApplicationDecision(int applicationNumber, SubmittedApplication.Decision decision) {
+        SubmittedApplication foundApplication = submittedApplicationRepository
+                .findFirstByApplicationNumber(applicationNumber)
+                .orElseThrow(ApplicationNotFoundException::new);
+
+        foundApplication.setDecision(decision);
+
+        submittedApplicationRepository.save(foundApplication);
+    }
 }
