@@ -109,4 +109,9 @@ public class ApplicationsServiceImpl implements ApplicationsService {
 
         submittedApplicationRepository.save(foundApplication);
     }
+
+    @Override
+    public void deleteApplication(int applicationNumber) {
+        submittedApplicationRepository.deleteByApplicationNumber(applicationNumber);
+    }
 }
