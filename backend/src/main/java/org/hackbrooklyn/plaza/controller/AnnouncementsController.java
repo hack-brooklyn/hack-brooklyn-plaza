@@ -26,8 +26,10 @@ public class AnnouncementsController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<Announcement>> getAnnouncements(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestParam(required = false) String searchQuery) {
-        Collection<Announcement> announcements = announcementService.getMultipleAnnouncements(page, limit, searchQuery);
+    public ResponseEntity<Collection<Announcement>> getAnnouncements(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        Collection<Announcement> announcements = announcementService.getMultipleAnnouncements(page, limit);
         return new ResponseEntity<>(announcements, HttpStatus.OK);
     }
 

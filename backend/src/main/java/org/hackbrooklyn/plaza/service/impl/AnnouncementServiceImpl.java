@@ -23,7 +23,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Collection<Announcement> getMultipleAnnouncements(int page, int limit, String searchQuery) {
+    public Collection<Announcement> getMultipleAnnouncements(int page, int limit) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Announcement> criteriaQuery = criteriaBuilder.createQuery(Announcement.class);

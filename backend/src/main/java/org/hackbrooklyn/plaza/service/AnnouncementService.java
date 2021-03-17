@@ -6,6 +6,6 @@ import java.util.Collection;
 
 public interface AnnouncementService {
 
-    Collection<Announcement> getMultipleAnnouncements(int page, int limit, String searchQuery);
+    Collection<Announcement> getMultipleAnnouncements(int page, int limit);
 
 }
