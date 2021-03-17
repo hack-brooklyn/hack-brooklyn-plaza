@@ -13,6 +13,7 @@ import { setWindowWidth } from 'actions/app';
 import { refreshAccessToken, refreshUserData } from 'util/auth';
 import logo from 'assets/logo.png';
 import loadingIcon from 'assets/icons/loading.svg';
+import { logIn } from 'actions/auth';
 
 const App = (): JSX.Element => {
   return (
@@ -28,10 +29,10 @@ const App = (): JSX.Element => {
 };
 
 const AppContent = () => {
-  const [appReady, setAppReady] = useState(false);
-
   const history = useHistory();
   const dispatch = useDispatch();
+
+  const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
     // Add window width event listener
@@ -45,6 +46,7 @@ const AppContent = () => {
         try {
           await refreshAccessToken(history);
           await refreshUserData();
+          store.dispatch(logIn());
         } catch (err) {
           console.error(err);
           toast.error(err.message);

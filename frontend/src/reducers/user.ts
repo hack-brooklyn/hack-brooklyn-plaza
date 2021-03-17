@@ -5,7 +5,7 @@ export const initialUserState: UserState = {
   firstName: '',
   lastName: '',
   role: null,
-  userId: -1
+  id: -1
 };
 
 const userReducer = (state = initialUserState, action: UserActionTypes): UserState => {

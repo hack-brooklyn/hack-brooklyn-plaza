@@ -139,6 +139,9 @@ public class ApplyServiceImpl implements ApplyService {
             }
         }
 
+        // Initialize the applicant's decision to be undecided
+        processedApplication.setDecision(SubmittedApplication.Decision.UNDECIDED);
+
         // Upload resume to AWS S3 if one was submitted and retrieve file URL
         if (resumeFile != null) {
             // Validate the uploaded file before uploading
