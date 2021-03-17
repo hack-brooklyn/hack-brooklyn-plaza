@@ -55,7 +55,7 @@ export type AuthActionTypes =
 
 // User Data
 export interface UserState {
-  userId: number;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;
@@ -63,7 +63,7 @@ export interface UserState {
 }
 
 export interface SetUserData {
-  userId?: number;
+  id?: number;
   email?: string;
   firstName?: string;
   lastName?: string;
@@ -288,7 +288,7 @@ export class MismatchedPasswordError extends Error {
   constructor() {
     super();
     this.name = 'MismatchedPasswordError';
-    this.message = 'Passwords do not match. Please try again.';
+    this.message = 'The passwords you entered do not match. Please try again.';
   }
 }
 

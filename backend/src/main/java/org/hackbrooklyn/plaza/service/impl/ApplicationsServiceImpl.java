@@ -1,59 +1,77 @@
 package org.hackbrooklyn.plaza.service.impl;
 
-import org.hackbrooklyn.plaza.dto.ApplicationManagerDTO;
+import org.hackbrooklyn.plaza.dto.ApplicationManagerEntryDTO;
 import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
 import org.hackbrooklyn.plaza.exception.ApplicationNotFoundException;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
+import org.hackbrooklyn.plaza.model.SubmittedApplication_;
 import org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository;
 import org.hackbrooklyn.plaza.service.ApplicationsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 @Service
 public class ApplicationsServiceImpl implements ApplicationsService {
 
     private final SubmittedApplicationRepository submittedApplicationRepository;
+    private final EntityManager entityManager;
 
     @Autowired
-    public ApplicationsServiceImpl(SubmittedApplicationRepository submittedApplicationRepository) {
+    public ApplicationsServiceImpl(SubmittedApplicationRepository submittedApplicationRepository, EntityManager entityManager) {
         this.submittedApplicationRepository = submittedApplicationRepository;
+        this.entityManager = entityManager;
     }
 
     @Override
     public MultipleApplicationsResponse getMultipleApplications(int page, int limit, String searchQuery, SubmittedApplication.Decision decision) {
-        Pageable pageRequest = PageRequest.of(page - 1, limit, Sort.by("applicationNumber"));
-        Page<SubmittedApplication> applicationsPage;
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SubmittedApplication> query = cb.createQuery(SubmittedApplication.class);
 
+        // Query for submitted applications and apply sorting and filters if provided
+        Root<SubmittedApplication> applications = query.from(SubmittedApplication.class);
+        query.select(applications);
+
+        // Filter by search query on first name, last name, and email if a query was provided
         if (searchQuery != null) {
-            applicationsPage = submittedApplicationRepository.findAll(containsTextInNameOrEmail(searchQuery), pageRequest);
-        } else {
-            applicationsPage = submittedApplicationRepository.findAll(pageRequest);
+            String searchQueryPattern = "%" + searchQuery.toLowerCase() + "%";
+            query.where(cb.or(
+                    cb.like(cb.lower(applications.get(SubmittedApplication_.firstName)), searchQueryPattern),
+                    cb.like(cb.lower(applications.get(SubmittedApplication_.lastName)), searchQueryPattern),
+                    cb.like(cb.lower(applications.get(SubmittedApplication_.email)), searchQueryPattern)
+            ));
         }
 
-        List<SubmittedApplication> applicationList = applicationsPage.toList();
-
-        // Return only queried decisions
+        // Filter by decision if one was provided
         if (decision != null) {
-            applicationList = applicationList.stream()
-                    .filter(application -> application.getDecision() == decision)
-                    .collect(Collectors.toList());
+            query.where(cb.equal(applications.get(SubmittedApplication_.decision), decision));
         }
 
-        // Map each submitted application to application lite DTOs
-        Collection<ApplicationManagerDTO> applicationLites = new ArrayList<>(applicationList.size());
-        for (SubmittedApplication application : applicationList) {
-            applicationLites.add(new ApplicationManagerDTO(
+        // Finish query and get results
+        query.orderBy(cb.asc(applications.get(SubmittedApplication_.applicationNumber)));
+        TypedQuery<SubmittedApplication> typedQuery = entityManager.createQuery(query);
+
+        // Get total count and results from query
+        long foundApplicationsCount = typedQuery.getResultList().size();
+        int totalPages = (int) Math.ceil((double) foundApplicationsCount / limit);
+
+        // Get paginated applications from query
+        typedQuery.setFirstResult((page - 1) * limit);
+        typedQuery.setMaxResults(limit);
+        List<SubmittedApplication> foundApplications = typedQuery.getResultList();
+
+        // Map each submitted application to application manager entry DTOs
+        Collection<ApplicationManagerEntryDTO> applicationManagerEntries = new ArrayList<>(foundApplications.size());
+        for (SubmittedApplication application : foundApplications) {
+            applicationManagerEntries.add(new ApplicationManagerEntryDTO(
                     application.getApplicationNumber(),
                     application.getApplicationTimestamp(),
                     application.getFirstName(),
@@ -63,14 +81,13 @@ public class ApplicationsServiceImpl implements ApplicationsService {
             ));
         }
 
-        int totalPages = applicationsPage.getTotalPages();
-        long totalFoundApplications = applicationsPage.getTotalElements();
+        // Retrieve the amount of undecided applications in the database independent of the request's queries
         long totalUndecidedApplications = submittedApplicationRepository.countByDecision(SubmittedApplication.Decision.UNDECIDED);
 
         return new MultipleApplicationsResponse(
-                applicationLites,
+                applicationManagerEntries,
                 totalPages,
-                totalFoundApplications,
+                foundApplicationsCount,
                 totalUndecidedApplications
         );
     }
@@ -82,16 +99,14 @@ public class ApplicationsServiceImpl implements ApplicationsService {
                 .orElseThrow(ApplicationNotFoundException::new);
     }
 
-    private Specification<SubmittedApplication> containsTextInNameOrEmail(String text) {
-        if (!text.contains("%")) {
-            text = "%" + text + "%";
-        }
+    @Override
+    public void setApplicationDecision(int applicationNumber, SubmittedApplication.Decision decision) {
+        SubmittedApplication foundApplication = submittedApplicationRepository
+                .findFirstByApplicationNumber(applicationNumber)
+                .orElseThrow(ApplicationNotFoundException::new);
 
-        String finalText = text.toLowerCase(Locale.ROOT);
-        return (root, query, builder) -> builder.or(
-                builder.like(builder.lower(root.get("firstName")), finalText),
-                builder.like(builder.lower(root.get("lastName")), finalText),
-                builder.like(builder.lower(root.get("email")), finalText)
-        );
+        foundApplication.setDecision(decision);
+
+        submittedApplicationRepository.save(foundApplication);
     }
 }

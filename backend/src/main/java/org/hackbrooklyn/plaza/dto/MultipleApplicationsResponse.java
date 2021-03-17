@@ -9,7 +9,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class MultipleApplicationsResponse {
 
-    private Collection<ApplicationManagerDTO> applications;
+    private Collection<ApplicationManagerEntryDTO> applications;
     private int pages;
     private long totalFoundApplications;
     private long totalUndecidedApplications;

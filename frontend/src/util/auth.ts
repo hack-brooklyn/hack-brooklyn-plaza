@@ -39,14 +39,8 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
   }
 
   if (res.status === 200) {
-    // Get access token from response
     const resBody: AuthResponse = await res.json();
-
     await logInAndRefreshUserData(resBody.token);
-
-
-    // Retrieve user data and save to Redux store
-    await refreshUserData();
   } else if (res.status === 401 || res.status === 400) {
     throw new InvalidCredentialsError();
   } else {
@@ -54,14 +48,16 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
   }
 };
 
+/**
+ * Utility that logs a user in, sets their access token in the Redux store, and refreshes their user data.
+ * Used for logging in, activating accounts, and resetting passwords.
+ * @param accessToken The user's access token.
+ */
 export const logInAndRefreshUserData = async (accessToken: string): Promise<void> => {
-  // Set login data across stores
-  localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
   store.dispatch(setJwtAccessToken(accessToken));
-  store.dispatch(logIn());
-
-  // Retrieve user data and save to Redux store
   await refreshUserData();
+  store.dispatch(logIn());
+  localStorage.setItem('isUserLoggedIn', JSON.stringify(true));
 };
 
 /**
@@ -76,6 +72,9 @@ export const logOutUser = async (): Promise<void> => {
       credentials: 'include'
     });
   } catch (err) {
+    // Log the user out locally, items in Redux store will be removed on page reload
+    localStorage.setItem('isUserLoggedIn', JSON.stringify(false));
+    toast.warn('You have been logged out locally. Please refresh the page.');
     throw new ConnectionError();
   }
 

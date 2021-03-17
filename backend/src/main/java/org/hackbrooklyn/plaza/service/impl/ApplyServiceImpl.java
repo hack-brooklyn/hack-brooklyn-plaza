@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.exception.FoundDataConflictException;
 import org.hackbrooklyn.plaza.exception.PriorityApplicantIneligibleException;
 import org.hackbrooklyn.plaza.exception.RejectedFileTypeException;
+import org.hackbrooklyn.plaza.exception.TermsNotAcceptedException;
 import org.hackbrooklyn.plaza.model.PreviousSubmittedApplication;
 import org.hackbrooklyn.plaza.model.RegisteredInterestApplicant;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -74,6 +75,11 @@ public class ApplyServiceImpl implements ApplyService {
         final String priorityApplicantEmail = parsedApplication.getPriorityApplicantEmail();
         log.info(String.format("Processing application from %s %s with email %s", firstName, lastName, email));
 
+        // Check if the participant accepted the Terms and Conditions and Code of Conduct
+        if (!parsedApplication.isAcceptTocAndCoc()) {
+            throw new TermsNotAcceptedException();
+        }
+
         // Check if an application was already submitted with the applicant's submitted email.
         // Check email submitted in the form itself first
         SubmittedApplication existingApplicationEmail = submittedApplicationRepository.findFirstByEmailOrPriorityApplicantEmail(email, email);
@@ -138,6 +144,9 @@ public class ApplyServiceImpl implements ApplyService {
                 processedApplication.setPreviousApplication(foundApplicationPriority);
             }
         }
+
+        // Initialize the applicant's decision to be undecided
+        processedApplication.setDecision(SubmittedApplication.Decision.UNDECIDED);
 
         // Upload resume to AWS S3 if one was submitted and retrieve file URL
         if (resumeFile != null) {

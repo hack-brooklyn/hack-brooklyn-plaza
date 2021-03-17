@@ -130,7 +130,6 @@ public class SubmittedApplication {
     // accept it to submit the application in the first place.
     @Transient
     @NotNull
-    @AssertTrue
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean acceptTocAndCoc;
 
