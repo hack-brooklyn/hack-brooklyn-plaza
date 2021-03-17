@@ -93,7 +93,7 @@ export const logOutUser = async (): Promise<void> => {
  * Refreshes the user's access token using their refresh token and saves the new
  * access token in the Redux store.
  */
-export const refreshAccessToken = async (history: History<LocationState>): Promise<void> => {
+export const refreshAccessToken = async (history: History<LocationState>): Promise<string> => {
   let res;
   try {
     res = await fetch(`${API_ROOT}/users/refreshAccessToken`, {
@@ -108,8 +108,10 @@ export const refreshAccessToken = async (history: History<LocationState>): Promi
     // Get token from response body and save in Redux store
     const resBody: AuthResponse = await res.json();
     store.dispatch(setJwtAccessToken(resBody.token));
-    store.dispatch(logIn());
+    return resBody.token;
   } else if (res.status === 401) {
+    // Refresh token has expired
+    await logOutUser();
     history.push('/');
     throw new TokenExpiredError();
   } else {
