@@ -10,4 +10,6 @@ public interface ApplicationsService {
     SubmittedApplication getIndividualApplication(int applicationNumber);
 
     void setApplicationDecision(int applicationNumber, SubmittedApplication.Decision decision);
+
+    void deleteApplication(int applicationNumber);
 }

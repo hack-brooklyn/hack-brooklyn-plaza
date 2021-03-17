@@ -91,7 +91,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(ApplicationNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleApplicationNotFoundException() {
         Map<String, String> body = new HashMap<>();
-        body.put("message", "No application was found with the email provided.");
+        body.put("message", "No application was found with the provided data.");
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
