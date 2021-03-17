@@ -80,16 +80,16 @@ const Dashboard = (): JSX.Element => {
             members, find like-minded participants to work with, and assemble your dream team.
           </ChecklistItem>
 
-          <ChecklistItem type="link"
-                         name="3. Build your custom event schedule"
-                         buttonText="Build Your Schedule"
-                         buttonLink="/schedule">
-            Browse the agenda to discover exciting workshops and events happening throughout the hackathon, and build
-            your own personalized schedule to get notifications when they happen!
-          </ChecklistItem>
+          {/*<ChecklistItem type="link"*/}
+          {/*               name="3. Build your custom event schedule"*/}
+          {/*               buttonText="Build Your Schedule"*/}
+          {/*               buttonLink="/schedule">*/}
+          {/*  Browse the agenda to discover exciting workshops and events happening throughout the hackathon, and build*/}
+          {/*  your own personalized schedule to get notifications when they happen!*/}
+          {/*</ChecklistItem>*/}
 
           <ChecklistItem type="anchor"
-                         name="4. Register for the hackathon on Devpost"
+                         name="3. Register for the hackathon on Devpost"
                          buttonText="Register on Devpost"
                          buttonLink="https://hackbrooklyn.devpost.com">
             Projects will be submitted for judging on Devpost. Register for the hackathon on Devpost with your team to
@@ -97,7 +97,7 @@ const Dashboard = (): JSX.Element => {
           </ChecklistItem>
 
           <ChecklistItem type="anchor"
-                         name="5. Claim your Hopin ticket"
+                         name="4. Claim your Hopin ticket"
                          buttonText="Claim Hopin Ticket"
                          buttonLink="https://hopin.com">
             Some of the hackathon’s activities will take place on Hopin, including speed networking, sponsor booth
