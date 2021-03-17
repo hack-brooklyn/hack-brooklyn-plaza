@@ -1,5 +1,6 @@
 package org.hackbrooklyn.plaza.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -24,6 +25,7 @@ public class Announcement {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @JsonIgnore
     @NotNull
     private User authorId;
 
