@@ -206,6 +206,25 @@ export class PasswordTooShortError extends Error {
   constructor() {
     super();
     this.name = 'PasswordTooShortError';
-    this.message = 'Password is too short. Please make it 12 characters or more.';
+    this.message = 'The password you entered is too short. Please choose a password that is 12 characters or longer.';
+  }
+}
+
+// Thrown when a user tries to access an endpoint that they have no permission for.
+export class NoPermissionError extends Error {
+  constructor() {
+    super();
+    this.name = 'NoPermissionError';
+    this.message = 'You do not have access to this part of Hack Brooklyn Plaza.';
+  }
+}
+
+// Thrown when an unknown error occurs, such as an unhandled response status.
+export class UnknownError extends Error {
+  constructor() {
+    super();
+    this.name = 'UnknownError';
+    this.message =
+      'Something went wrong! Please refresh the page and try again.';
   }
 }
