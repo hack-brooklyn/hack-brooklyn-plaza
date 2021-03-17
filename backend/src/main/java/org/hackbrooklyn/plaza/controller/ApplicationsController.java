@@ -1,8 +1,11 @@
 package org.hackbrooklyn.plaza.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
+import org.hackbrooklyn.plaza.model.SubmittedApplication.Decision;
 import org.hackbrooklyn.plaza.service.ApplicationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,12 +15,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 
 @Slf4j
@@ -51,5 +56,23 @@ public class ApplicationsController {
         SubmittedApplication foundApplication = applicationsService.getIndividualApplication(applicationNumber);
 
         return new ResponseEntity<>(foundApplication, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.APPLICATIONS_UPDATE_DECISION)")
+    @PostMapping("/{applicationNumber}/setDecision")
+    public ResponseEntity<Void> setApplicationDecision(
+            @PathVariable @Valid int applicationNumber,
+            @RequestBody @Valid SetApplicationDecisionRequest reqBody) {
+        Decision newDecision = reqBody.getDecision();
+        applicationsService.setApplicationDecision(applicationNumber, newDecision);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Data
+    private static class SetApplicationDecisionRequest {
+
+        @NotNull(message = "must be one of ACCEPTED, REJECTED, or UNDECIDED")
+        private Decision decision;
     }
 }
