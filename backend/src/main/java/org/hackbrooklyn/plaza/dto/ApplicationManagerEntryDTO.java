@@ -8,9 +8,12 @@ import org.hackbrooklyn.plaza.util.LocalDateTimeWithUTCSerializer;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a signle entry in the application manager.
+ */
 @Data
 @AllArgsConstructor
-public class ApplicationManagerDTO {
+public class ApplicationManagerEntryDTO {
 
     private int applicationNumber;
 
