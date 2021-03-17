@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import org.hackbrooklyn.plaza.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -164,6 +165,16 @@ public class RestControllerExceptionHandler {
         Map<String, String> body = new HashMap<>();
         body.put("message", "One or more submitted values failed validation. Please try again.");
         body.put("errors", e.getLocalizedMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "There were errors with your request. Please correct them and try again.");
+        body.put("error", e.getLocalizedMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
