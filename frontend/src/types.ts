@@ -14,6 +14,7 @@ export interface RootState {
   app: AppState;
   auth: AuthState;
   user: UserState;
+  admin: AdminState;
   burgerMenu: { isOpen: boolean };
 }
 
@@ -143,7 +144,7 @@ export interface ApplicationCommon extends UserIdentity {
 }
 
 // Common properties for submitted applications
-interface SubmittedApplicationCommon extends UserIdentity {
+interface SubmittedApplicationCommon extends ApplicationCommon {
   applicationTimestamp: Date;
   decision: ApplicationDecisions;
 }
@@ -180,7 +181,6 @@ export interface SubmittingApplication extends ApplicationCommon {
 
 // A submitted application in the database with optional values returned as null.
 export interface SubmittedApplication extends SubmittedApplicationCommon {
-
   // Part 1
   gender: string | null;
   pronouns: string | null;
@@ -196,6 +196,7 @@ export interface SubmittedApplication extends SubmittedApplicationCommon {
   githubUrl: string | null;
   linkedinUrl: string | null;
   websiteUrl: string | null;
+  resumeKeyS3: string | null;
   // AWS resume link must be requested on demand
 
   // Part 4
@@ -244,6 +245,14 @@ export enum Breakpoints {
   Large = 992,
   ExtraLarge = 1200,
   ExtraExtraLarge = 1400
+}
+
+export enum ResumeType {
+  Pdf = 'PDF',
+  Word = 'Microsoft Word',
+  Image = 'Image',
+  Unknown = 'Unknown',
+  None = 'N/A'
 }
 
 // Custom Errors
@@ -317,5 +326,15 @@ export class UnknownError extends Error {
     this.name = 'UnknownError';
     this.message =
       'Something went wrong! Please refresh the page and try again.';
+  }
+}
+
+export class InvalidPathParametersError extends Error {
+  constructor(customMessage?: string) {
+    super();
+    this.name = 'InvalidPathParametersError';
+    this.message = customMessage
+      ? customMessage
+      : 'There is invalid data in the URL! Please try going back to where you were before and perform the action again.';
   }
 }
