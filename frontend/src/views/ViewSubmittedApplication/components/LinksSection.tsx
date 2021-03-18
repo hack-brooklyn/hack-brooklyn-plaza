@@ -1,15 +1,17 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components/macro';
+
+import { getResumeType } from 'util/resume';
 import { ResumeType, SubmittedApplication } from 'types';
+
 import githubIcon from 'assets/icons/logos/github.svg';
 import githubMissingIcon from 'assets/icons/logos/github-missing.svg';
 import linkedinIcon from 'assets/icons/logos/linkedin.svg';
 import linkedinMissingIcon from 'assets/icons/logos/linkedin-missing.svg';
 import webIcon from 'assets/icons/web.svg';
 import webMissingIcon from 'assets/icons/web-missing.svg';
-import { getResumeType } from 'util/resume';
 import fileMissingIcon from 'assets/icons/files/file-missing.svg';
-import React from 'react';
-import { Link } from 'react-router-dom';
 import filePdfIcon from 'assets/icons/files/file-pdf.svg';
 import fileWordIcon from 'assets/icons/files/file-word.svg';
 import fileImageIcon from 'assets/icons/files/file-image.svg';
