@@ -67,7 +67,7 @@ const Dashboard = (): JSX.Element => {
           <ChecklistItem type="anchor"
                          name="1. Join the Hack Brooklyn Discord server"
                          buttonText="Join Discord Server"
-                         buttonLink="http://www.hackbrooklyn.org/discord">
+                         buttonLink="https://discord.com/invite/GTsxDhx">
             Most of the hackathon’s action will take place on the Hack Brooklyn Discord server. Make sure to join the
             Discord server so you don’t miss any exciting news and events.
           </ChecklistItem>
@@ -141,7 +141,7 @@ const countdownRenderer = (props: CountdownRenderProps) => {
   const { days, hours, minutes, seconds, completed } = props;
 
   if (completed) {
-    return <p>done</p>;
+    return <div>Hack Brooklyn is now live!</div>;
   } else {
     return (
       <div role="text">
@@ -172,7 +172,7 @@ const CountdownSection = styled.section`
   }
 `;
 
-const DaysRemainingText = styled.p`
+const DaysRemainingText = styled.div`
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: -0.5rem;
@@ -183,7 +183,7 @@ const DaysRemainingText = styled.p`
   }
 `;
 
-const HMSRemainingText = styled.p`
+const HMSRemainingText = styled.div`
   font-size: 1.75rem;
   font-weight: 600;
   margin-bottom: 0;
