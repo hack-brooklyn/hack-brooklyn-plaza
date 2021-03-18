@@ -94,5 +94,52 @@ export const HeadingSection = styled.section`
   @media screen and (min-width: ${Breakpoints.Large}px) {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+  }
+`;
+
+export const ButtonActiveOverrideStyles = css`
+  &.btn-primary.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+
+    &:hover,
+    &:focus {
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+
+    &:active {
+      background-color: #0a58ca;
+      border-color: #0a53be;
+    }
+  }
+
+  &.btn-outline-primary.active {
+    color: #0d6efd;
+    background-color: transparent;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: #fff;
+      background-color: #0d6efd;
+    }
+  }
+
+  &.btn-success.active {
+    background-color: #198754;
+    border-color: #198754;
+
+    &:hover,
+    &:focus {
+      background-color: #157347;
+      border-color: #146c43;
+    }
+
+    &:active {
+      background-color: #146c43;
+      border-color: #13653f;
+    }
   }
 `;

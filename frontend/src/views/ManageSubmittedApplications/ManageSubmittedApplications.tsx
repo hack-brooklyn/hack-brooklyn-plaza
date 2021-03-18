@@ -65,8 +65,8 @@ const rowsPerPageOptions: RowsPerPageOptionTypes[] = [
 
 const ManageSubmittedApplications = (): JSX.Element => {
   const history = useHistory();
-  const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
 
+  const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
   const [tableReady, setTableReady] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   // Request parameters
@@ -214,7 +214,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
           <Col lg={3}>
             <Select
               options={decisionOptions}
-              placeholder="Show only decisions"
+              placeholder="Filter by decision"
               onChange={(option) => {
                 const decision = option ? option.value : undefined;
                 setCurrentPage(1);

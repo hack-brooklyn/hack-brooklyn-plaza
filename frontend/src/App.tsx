@@ -106,7 +106,8 @@ const StyledHeader = styled.header`
   background-color: white;
   top: 0;
   width: 100%;
-  // Ensure header is above Bootstrap dropdowns
+
+  /* Ensure header is above Bootstrap dropdowns */
   z-index: 1001;
 `;
 

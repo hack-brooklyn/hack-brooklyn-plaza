@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import queryString from 'query-string';
 
 import { StyledCenteredMarginH1 } from 'commonStyles';
-import ResetPasswordForm from './components/ResetPasswordForm';
-import ResetPasswordRequestForm from './components/ResetPasswordRequestForm';
+import { ResetPasswordForm, ResetPasswordRequestForm } from './components';
 
 const ForgotPassword = (): JSX.Element => {
   const [keyExists, setKeyExists] = useState(false);

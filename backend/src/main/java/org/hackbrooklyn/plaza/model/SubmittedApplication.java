@@ -112,7 +112,6 @@ public class SubmittedApplication {
     private MultipartFile resumeFile;
 
     @Column(name = "resume_key_s3")
-    @JsonIgnore
     private String resumeKeyS3;
 
     // Part 4
