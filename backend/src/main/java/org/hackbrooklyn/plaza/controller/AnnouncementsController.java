@@ -1,16 +1,19 @@
 package org.hackbrooklyn.plaza.controller;
 
+import lombok.Data;
 import org.hackbrooklyn.plaza.model.Announcement;
+import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.AnnouncementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 
 @Validated
@@ -25,12 +28,28 @@ public class AnnouncementsController {
         this.announcementService = announcementService;
     }
 
+    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_READ)")
     @GetMapping
     public ResponseEntity<Collection<Announcement>> getAnnouncements(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int limit) {
         Collection<Announcement> announcements = announcementService.getMultipleAnnouncements(page, limit);
         return new ResponseEntity<>(announcements, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_CREATE)")
+    @PostMapping
+    public ResponseEntity<Void> addAnnouncements(@AuthenticationPrincipal User user, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
+        announcementService.createNewAnnouncements(reqBody.getBody(), user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Data
+    private static class AnnouncementBodyRequest {
+
+        @NotBlank
+        private String body;
+
     }
 
 }
