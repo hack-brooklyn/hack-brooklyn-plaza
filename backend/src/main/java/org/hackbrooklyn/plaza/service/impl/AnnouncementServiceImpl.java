@@ -1,6 +1,8 @@
 package org.hackbrooklyn.plaza.service.impl;
 
 import org.hackbrooklyn.plaza.model.Announcement;
+import org.hackbrooklyn.plaza.model.User;
+import org.hackbrooklyn.plaza.repository.AnnouncementRepository;
 import org.hackbrooklyn.plaza.service.AnnouncementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,12 @@ import java.util.Collection;
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final EntityManager entityManager;
+    private AnnouncementRepository announcementRepository;
 
     @Autowired
-    public AnnouncementServiceImpl(EntityManager entityManager) {
+    public AnnouncementServiceImpl(EntityManager entityManager, AnnouncementRepository announcementRepository) {
         this.entityManager = entityManager;
+        this.announcementRepository = announcementRepository;
     }
 
     @Override
@@ -35,5 +39,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         typedQuery.setMaxResults(limit);
 
         return typedQuery.getResultList();
+    }
+
+    @Override
+    public void createNewAnnouncements(String body, User author) {
+        Announcement announcement = new Announcement();
+        announcement.setBody(body);
+        announcement.setAuthor(author);
+        announcementRepository.save(announcement);
     }
 }
