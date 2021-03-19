@@ -9,6 +9,6 @@ public interface AnnouncementService {
 
     Collection<Announcement> getMultipleAnnouncements(int page, int limit);
 
-    void createNewAnnouncements(String body, User author);
+    int createNewAnnouncement(String body, User author);
 
 }

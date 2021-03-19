@@ -42,10 +42,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public void createNewAnnouncements(String body, User author) {
+    public int createNewAnnouncement(String body, User author) {
         Announcement announcement = new Announcement();
         announcement.setBody(body);
         announcement.setAuthor(author);
-        announcementRepository.save(announcement);
+        Announcement newAnnouncement = announcementRepository.save(announcement);
+
+        return newAnnouncement.getId();
+
     }
 }
