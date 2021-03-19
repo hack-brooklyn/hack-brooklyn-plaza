@@ -5,6 +5,7 @@ import org.hackbrooklyn.plaza.model.Announcement;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.AnnouncementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,9 +40,14 @@ public class AnnouncementsController {
 
     @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_CREATE)")
     @PostMapping
-    public ResponseEntity<Void> addAnnouncements(@AuthenticationPrincipal User user, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
-        announcementService.createNewAnnouncements(reqBody.getBody(), user);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> addAnnouncement(@AuthenticationPrincipal User user, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
+        int id = announcementService.createNewAnnouncement(reqBody.getBody(), user);
+        String link = "/announcements/" + id;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", link);
+
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
     @Data
