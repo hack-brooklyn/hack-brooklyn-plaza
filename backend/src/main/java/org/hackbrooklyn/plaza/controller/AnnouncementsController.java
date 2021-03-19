@@ -40,7 +40,7 @@ public class AnnouncementsController {
 
     @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_CREATE)")
     @PostMapping
-    public ResponseEntity<String> addAnnouncement(@AuthenticationPrincipal User user, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
+    public ResponseEntity<Void> addAnnouncement(@AuthenticationPrincipal User user, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
         int id = announcementService.createNewAnnouncement(reqBody.getBody(), user);
         String link = "/announcements/" + id;
 
