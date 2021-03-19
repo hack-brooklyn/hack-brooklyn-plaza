@@ -4,7 +4,7 @@ import styled from 'styled-components/macro';
 import { action as toggleMenu } from 'redux-burger-menu';
 
 import { LinkButtonNavItem, LinkNavItem, ProfileDropdownMenu } from 'components';
-import { Logo, StyledNavLink } from 'commonStyles';
+import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'commonStyles';
 import { APPLICATIONS_ACTIVE, HACKATHON_ACTIVE } from 'index';
 import { Breakpoints, RootState } from 'types';
 import logo from 'assets/logo.png';
@@ -50,22 +50,12 @@ const Navbar = (): JSX.Element => {
 export const LoggedInNavItems = (): JSX.Element => {
   return (
     <>
-      <LinkNavItem to="/">
-        Dashboard
-      </LinkNavItem>
-      <LinkNavItem to="/announcements">
-        Announcements
-      </LinkNavItem>
-      <LinkNavItem to="/teams">
-        Team Formation
-      </LinkNavItem>
-      <LinkNavItem to="/schedule">
-        Schedule Builder
-      </LinkNavItem>
+      <LinkNavItem to="/">Dashboard</LinkNavItem>
+      <LinkNavItem to="/announcements">Announcements</LinkNavItem>
+      <LinkNavItem to="/teams">Team Formation</LinkNavItem>
+      <LinkNavItem to="/schedule">Schedule Builder</LinkNavItem>
       {HACKATHON_ACTIVE && (
-        <LinkNavItem to="/mentorship">
-          Mentor Matcher
-        </LinkNavItem>
+        <LinkNavItem to="/mentorship">Mentor Matcher</LinkNavItem>
       )}
     </>
   );
@@ -120,53 +110,11 @@ const NavItemsList = styled.ul`
 `;
 
 const NavLinks = styled.div`
+  ${ButtonActiveOverrideStyles};
+
   display: flex;
   flex-direction: row;
   align-items: center;
-
-  a.btn-primary.active {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-
-    &:hover,
-    &:focus {
-      background-color: #0b5ed7;
-      border-color: #0a58ca;
-    }
-
-    &:active {
-      background-color: #0a58ca;
-      border-color: #0a53be;
-    }
-  }
-
-  a.btn-outline-primary.active {
-    color: #0d6efd;
-    background-color: transparent;
-
-    &:hover,
-    &:focus,
-    &:active {
-      color: #fff;
-      background-color: #0d6efd;
-    }
-  }
-
-  a.btn-success.active {
-    background-color: #198754;
-    border-color: #198754;
-
-    &:hover,
-    &:focus {
-      background-color: #157347;
-      border-color: #146c43;
-    }
-
-    &:active {
-      background-color: #146c43;
-      border-color: #13653f;
-    }
-  }
 
   ${StyledNavLink}:not(:first-child), .btn {
     margin-left: 0.5rem;

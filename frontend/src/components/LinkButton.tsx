@@ -15,7 +15,9 @@ const LinkButton = (props: LinkButtonProps): JSX.Element => {
 
   return (
     <LinkContainer to={to}>
-      <Button variant={variant} size={size}>{children}</Button>
+      <Button variant={variant} size={size} {...props}>
+        {children}
+      </Button>
     </LinkContainer>
   );
 };

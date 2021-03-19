@@ -2,16 +2,28 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
-import { Activate, ApplicationLanding, ApplicationPage, Dashboard, Landing, Login, ManageApplications } from 'views';
+import {
+  Activate,
+  ApplicationLanding,
+  ApplicationPage,
+  Dashboard,
+  ForgotPassword,
+  Landing,
+  Login,
+  ManageApplications,
+  ViewSubmittedApplication
+} from 'views';
 import { RootState } from 'types';
-import ForgotPassword from 'views/ForgotPassword';
-
 
 const Routes = (): JSX.Element => {
   const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   return (
     <Switch>
+      <Route path="/admin/applications/:applicationNumberParam">
+        <ViewSubmittedApplication />
+      </Route>
+
       <Route path="/admin/applications">
         <ManageApplications />
       </Route>
