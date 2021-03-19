@@ -27,11 +27,12 @@ public class Announcement {
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     @JsonIgnore
     @NotNull
-    private User authorId;
+    private User author;
 
     @Column(name = "time_created")
     @CreationTimestamp
     private LocalDateTime timeCreated;
+
 
     @Column(name = "last_updated")
     @CreationTimestamp
