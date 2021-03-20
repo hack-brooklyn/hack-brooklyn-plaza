@@ -37,6 +37,7 @@
     "redux": "^4.0.5",
     "redux-burger-menu": "^0.2.8",
     "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.3.0",
     "styled-components": "^5.2.1",
     "typeface-anonymous-pro": "^1.1.13",
     "typeface-major-mono-display": "^1.1.13",
