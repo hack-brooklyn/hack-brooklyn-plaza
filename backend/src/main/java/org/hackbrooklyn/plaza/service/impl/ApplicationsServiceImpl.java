@@ -1,6 +1,8 @@
 package org.hackbrooklyn.plaza.service.impl;
 
+import com.google.common.primitives.Ints;
 import org.hackbrooklyn.plaza.dto.ApplicationManagerEntryDTO;
+import org.hackbrooklyn.plaza.dto.ApplicationNumbersDTO;
 import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
 import org.hackbrooklyn.plaza.exception.ApplicationNotFoundException;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -18,6 +20,10 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.hackbrooklyn.plaza.model.SubmittedApplication.Decision;
+import static org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository.ApplicationNumbersOnly;
 
 @Service
 public class ApplicationsServiceImpl implements ApplicationsService {
@@ -32,7 +38,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
     }
 
     @Override
-    public MultipleApplicationsResponse getMultipleApplications(int page, int limit, String searchQuery, SubmittedApplication.Decision decision) {
+    public MultipleApplicationsResponse getMultipleApplications(int page, int limit, String searchQuery, Decision decision) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<SubmittedApplication> query = cb.createQuery(SubmittedApplication.class);
 
@@ -82,7 +88,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         }
 
         // Retrieve the amount of undecided applications in the database independent of the request's queries
-        long totalUndecidedApplications = submittedApplicationRepository.countByDecision(SubmittedApplication.Decision.UNDECIDED);
+        long totalUndecidedApplications = submittedApplicationRepository.countByDecision(Decision.UNDECIDED);
 
         return new MultipleApplicationsResponse(
                 applicationManagerEntries,
@@ -100,7 +106,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
     }
 
     @Override
-    public void setApplicationDecision(int applicationNumber, SubmittedApplication.Decision decision) {
+    public void setApplicationDecision(int applicationNumber, Decision decision) {
         SubmittedApplication foundApplication = submittedApplicationRepository
                 .findFirstByApplicationNumber(applicationNumber)
                 .orElseThrow(ApplicationNotFoundException::new);
@@ -119,5 +125,17 @@ public class ApplicationsServiceImpl implements ApplicationsService {
 
         // Application exists, proceed to delete it
         submittedApplicationRepository.deleteByApplicationNumber(applicationNumber);
+    }
+
+    @Override
+    public ApplicationNumbersDTO getUndecidedApplicationNumbers() {
+        List<ApplicationNumbersOnly> applications = submittedApplicationRepository.findAllByDecisionOrderByApplicationNumber(Decision.UNDECIDED);
+
+        // Convert ApplicationNumbersOnly projection to list of Integers
+        List<Integer> applicationNumbers = applications.stream()
+                .map(ApplicationNumbersOnly::getApplicationNumber)
+                .collect(Collectors.toList());
+
+        return new ApplicationNumbersDTO(Ints.toArray(applicationNumbers));
     }
 }
