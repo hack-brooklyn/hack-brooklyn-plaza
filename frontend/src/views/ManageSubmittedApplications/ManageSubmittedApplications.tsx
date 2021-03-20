@@ -18,26 +18,15 @@ import { refreshAccessToken } from 'util/auth';
 import {
   ApplicationDecisions,
   ConnectionError,
+  GetApplicationsRequestParams,
+  GetApplicationsResponse,
   NoPermissionError,
   RootState,
   SubmittedApplicationLite,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
-
-interface GetApplicationsRequestParams {
-  page?: number;
-  limit?: number;
-  decision?: ApplicationDecisions;
-  searchQuery?: string;
-}
-
-interface GetApplicationsResponse {
-  applications: SubmittedApplicationLite[];
-  pages: number;
-  totalApplications: number;
-  totalUndecidedApplications: number;
-}
+import { enterApplicationReviewMode } from 'actions/applicationReview';
 
 interface DecisionOptionTypes {
   value: ApplicationDecisions;
