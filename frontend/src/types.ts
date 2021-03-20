@@ -7,6 +7,8 @@ import {
   SET_USER_DATA,
   SET_WINDOW_WIDTH
 } from './constants';
+import { ThunkAction } from 'redux-thunk';
+import { Action } from 'redux';
 
 // Redux Types
 // Root state
@@ -17,6 +19,9 @@ export interface RootState {
   admin: AdminState;
   burgerMenu: { isOpen: boolean };
 }
+
+export type AppThunk<ReturnType = void> =
+  ThunkAction<ReturnType, RootState, unknown, Action<string>>
 
 // General app state
 export interface AppState {
