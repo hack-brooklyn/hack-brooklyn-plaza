@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 
 @Validated
@@ -42,12 +43,19 @@ public class AnnouncementsController {
     @PostMapping
     public ResponseEntity<Void> addAnnouncement(@AuthenticationPrincipal User user, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
         int id = announcementService.createNewAnnouncement(reqBody.getBody(), user);
-        String link = "/announcements/" + id;
-
+        String location = "/announcements/" + id;
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", link);
+        headers.add("Location", location);
 
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_UPDATE)")
+    @PutMapping("/{announcementId}")
+    public ResponseEntity<Void> updateAnnouncement(@PathVariable @Positive int announcementId, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
+        announcementService.updateAnnouncement(announcementId, reqBody.getBody());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Data

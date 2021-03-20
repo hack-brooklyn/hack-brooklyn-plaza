@@ -11,4 +11,6 @@ public interface AnnouncementService {
 
     int createNewAnnouncement(String body, User author);
 
+    void updateAnnouncement(int id, String body);
+
 }

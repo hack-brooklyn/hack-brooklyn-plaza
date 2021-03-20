@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Service
@@ -49,6 +50,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         Announcement newAnnouncement = announcementRepository.save(announcement);
 
         return newAnnouncement.getId();
+    }
 
+    @Override
+    public void updateAnnouncement(int id, String body) {
+        Announcement announcement = announcementRepository.getOne(id);
+        announcement.setBody(body);
+        announcement.setLastUpdated(LocalDateTime.now());
+        announcementRepository.save(announcement);
     }
 }
