@@ -252,6 +252,24 @@ export interface SubmittedApplicationLite extends SubmittedApplicationCommon {
   applicationNumber: number;
 }
 
+export interface GetApplicationsRequestParams {
+  page?: number;
+  limit?: number;
+  decision?: ApplicationDecisions;
+  searchQuery?: string;
+}
+
+export interface GetApplicationsResponse {
+  applications: SubmittedApplicationLite[];
+  pages: number;
+  totalApplications: number;
+  totalUndecidedApplications: number;
+}
+
+export interface GetApplicationNumbersResponse {
+  applicationNumbers: number[];
+}
+
 export interface MenuAction {
   type: 'anchor' | 'link' | 'button';
   text: string;
