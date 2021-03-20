@@ -92,7 +92,7 @@ export const logOutUser = async (): Promise<void> => {
  * Refreshes the user's access token using their refresh token and saves the new
  * access token in the Redux store.
  */
-export const refreshAccessToken = async (history: History<LocationState>): Promise<string> => {
+export const refreshAccessToken = async (history?: History<LocationState>): Promise<string> => {
   let res;
   try {
     res = await fetch(`${API_ROOT}/users/refreshAccessToken`, {
@@ -111,7 +111,7 @@ export const refreshAccessToken = async (history: History<LocationState>): Promi
   } else if (res.status === 401) {
     // Refresh token has expired
     await logOutUser();
-    history.push('/');
+    history && history.push('/');
     throw new TokenExpiredError();
   } else {
     throw new AuthenticationError();
