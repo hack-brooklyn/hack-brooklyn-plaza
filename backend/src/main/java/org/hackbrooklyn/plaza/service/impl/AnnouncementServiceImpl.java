@@ -50,16 +50,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         Announcement newAnnouncement = announcementRepository.save(announcement);
 
         return newAnnouncement.getId();
-
     }
 
     @Override
-    public int updateAnnouncement(int id, String body) {
+    public void updateAnnouncement(int id, String body) {
         Announcement announcement = announcementRepository.getOne(id);
         announcement.setBody(body);
         announcement.setLastUpdated(LocalDateTime.now());
         announcementRepository.save(announcement);
-
-        return announcement.getId();
     }
 }
