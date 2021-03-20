@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
 @Validated
@@ -42,16 +43,38 @@ public class AnnouncementsController {
     @PostMapping
     public ResponseEntity<Void> addAnnouncement(@AuthenticationPrincipal User user, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
         int id = announcementService.createNewAnnouncement(reqBody.getBody(), user);
-        String link = "/announcements/" + id;
 
+        return new ResponseEntity<>(getLocationHeader("/announcements/" + id), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_UPDATE)")
+    @PutMapping
+    public ResponseEntity<Void> updateAnnouncement(@RequestBody @Valid ModifyAnnouncementRequest reqBody) {
+        int id = announcementService.updateAnnouncement(reqBody.getId(), reqBody.getBody());
+
+        return new ResponseEntity<>(getLocationHeader("/announcements/" + id), HttpStatus.NO_CONTENT);
+    }
+
+    public HttpHeaders getLocationHeader(String location) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", link);
+        headers.add("Location", location);
 
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return headers;
     }
 
     @Data
     private static class AnnouncementBodyRequest {
+
+        @NotBlank
+        private String body;
+
+    }
+
+    @Data
+    private static class ModifyAnnouncementRequest {
+
+        @PositiveOrZero
+        private int id;
 
         @NotBlank
         private String body;
