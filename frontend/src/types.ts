@@ -1,3 +1,5 @@
+import { Action } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 import {
   ADVANCE_APPLICATION_INDEX,
   ENTER_APPLICATION_REVIEW_MODE,
@@ -11,8 +13,6 @@ import {
   SET_USER_DATA,
   SET_WINDOW_WIDTH
 } from './constants';
-import { ThunkAction } from 'redux-thunk';
-import { Action } from 'redux';
 
 // Redux Types
 // Root state
