@@ -290,6 +290,19 @@ export enum ApplicationDecisions {
   Undecided = 'UNDECIDED'
 }
 
+// The possible user roles for activated users.
+export enum Roles {
+  Admin = 'ROLE_ADMIN',
+  Volunteer = 'ROLE_VOLUNTEER',
+  Participant = 'ROLE_PARTICIPANT'
+}
+
+export enum ApplicationExportTypes {
+  CSV = 'CSV',
+  JSON = 'JSON',
+  XML = 'XML'
+}
+
 // The Bootstrap breakpoints in pixels.
 export enum Breakpoints {
   Small = 576,
