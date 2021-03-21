@@ -276,6 +276,25 @@ public class UsersServiceImpl implements UsersService {
         );
     }
 
+    @Override
+    public DecisionDTO getApplicationDecision(User user) {
+        // Get the user's linked application number from the User model if they have one
+        SubmittedApplication userLinkedApplication = user.getLinkedApplication();
+        if (userLinkedApplication == null) throw new ApplicationNotFoundException();
+
+        // Due to the way we get the user, Hibernate will throw a LazyInitializationException
+        // if we try to use user.getLinkedApplication().getDecision()
+        // Get the application through SubmittedApplicationRepository instead since we do have
+        // the application number from the User model
+        int applicationNumber = user.getLinkedApplication().getApplicationNumber();
+        SubmittedApplication foundApplication = submittedApplicationRepository
+                .findFirstByApplicationNumber(applicationNumber)
+                .orElseThrow(ApplicationNotFoundException::new);
+
+        Decision decision = foundApplication.getDecision();
+        return new DecisionDTO(decision);
+    }
+
     private void sendDynamicTemplateEmailUsingSendGrid(String templateId, Personalization personalization) throws IOException {
         Email fromEmail = new Email(SENDGRID_FROM_EMAIL);
 
