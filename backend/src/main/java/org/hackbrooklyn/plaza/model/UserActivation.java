@@ -20,7 +20,7 @@ public class UserActivation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "activation_key")
+    @Column(name = "activation_key", unique = true)
     @NotBlank
     private String activationKey;
 

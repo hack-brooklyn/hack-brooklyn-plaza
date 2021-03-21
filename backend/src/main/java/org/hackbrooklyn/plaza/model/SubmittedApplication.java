@@ -47,7 +47,7 @@ public class SubmittedApplication {
     @NotBlank
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     @NotBlank
     @Email
     private String email;
@@ -140,12 +140,12 @@ public class SubmittedApplication {
     @NotNull
     private boolean priorityApplicant;
 
-    @Column(name = "priority_applicant_email")
+    @Column(name = "priority_applicant_email", unique = true)
     @Email
     private String priorityApplicantEmail;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "previous_application_id", referencedColumnName = "id")
+    @JoinColumn(name = "previous_application_id", referencedColumnName = "id", unique = true)
     @JsonIgnore
     private PreviousSubmittedApplication previousApplication;
 
@@ -154,7 +154,7 @@ public class SubmittedApplication {
     private boolean registeredInterest;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_interest_applicant_id", referencedColumnName = "id")
+    @JoinColumn(name = "registered_interest_applicant_id", referencedColumnName = "id", unique = true)
     @JsonIgnore
     private RegisteredInterestApplicant registeredInterestApplicant;
 
