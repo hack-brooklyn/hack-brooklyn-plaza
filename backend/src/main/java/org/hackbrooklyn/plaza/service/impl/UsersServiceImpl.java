@@ -9,6 +9,7 @@ import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.TokenDTO;
+import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.PasswordReset;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -19,8 +20,6 @@ import org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository;
 import org.hackbrooklyn.plaza.repository.UserActivationRepository;
 import org.hackbrooklyn.plaza.repository.UserRepository;
 import org.hackbrooklyn.plaza.security.Roles;
-import org.hackbrooklyn.plaza.exception.SendGridException;
-import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.hibernate.Session;
@@ -40,6 +39,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
+
+import static org.hackbrooklyn.plaza.model.SubmittedApplication.*;
 
 @Slf4j
 @Service
@@ -147,7 +148,8 @@ public class UsersServiceImpl implements UsersService {
         SubmittedApplication foundApplication = submittedApplicationRepository.findFirstByEmail(activatingUserEmail)
                 .orElseThrow(ApplicationNotFoundException::new);
 
-        if (foundApplication.getDecision() == null || !foundApplication.getDecision().equals("Accepted")) {
+        Decision decision = foundApplication.getDecision();
+        if (decision == null || !decision.equals(Decision.ACCEPTED)) {
             throw new ApplicantNotAcceptedException();
         }
 
