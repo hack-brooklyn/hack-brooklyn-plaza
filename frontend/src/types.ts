@@ -1,5 +1,6 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { Roles } from 'security/accessControl';
 import {
   ADVANCE_APPLICATION_INDEX,
   ENTER_APPLICATION_REVIEW_MODE,
@@ -287,13 +288,6 @@ export enum ApplicationDecisions {
   Accepted = 'ACCEPTED',
   Rejected = 'REJECTED',
   Undecided = 'UNDECIDED'
-}
-
-// The possible user roles for activated users.
-export enum Roles {
-  Admin = 'ROLE_ADMIN',
-  Volunteer = 'ROLE_VOLUNTEER',
-  Participant = 'ROLE_PARTICIPANT'
 }
 
 // The Bootstrap breakpoints in pixels.
