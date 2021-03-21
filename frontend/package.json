@@ -17,6 +17,7 @@
     "bootstrap": "5.0.0-beta1",
     "country-json": "^1.1.0",
     "dayjs": "^1.10.4",
+    "file-saver": "^2.0.5",
     "formik": "^2.2.6",
     "lodash.clonedeep": "^4.5.0",
     "lodash.startcase": "^4.4.0",
@@ -72,6 +73,7 @@
     ]
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.1",
     "@types/lodash.clonedeep": "^4.5.6",
     "@types/lodash.startcase": "^4.4.6",
     "@types/react-burger-menu": "^2.6.2",
