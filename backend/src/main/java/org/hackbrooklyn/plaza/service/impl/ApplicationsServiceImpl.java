@@ -4,6 +4,7 @@ import com.google.common.primitives.Ints;
 import org.hackbrooklyn.plaza.dto.ApplicationManagerEntryDTO;
 import org.hackbrooklyn.plaza.dto.LinkDTO;
 import org.hackbrooklyn.plaza.dto.ApplicationNumbersDTO;
+import org.hackbrooklyn.plaza.dto.LinkDTO;
 import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
 import org.hackbrooklyn.plaza.exception.ApplicationNotFoundException;
 import org.hackbrooklyn.plaza.exception.ResumeNotFoundException;
