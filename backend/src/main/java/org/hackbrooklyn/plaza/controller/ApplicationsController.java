@@ -2,6 +2,7 @@ package org.hackbrooklyn.plaza.controller;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.hackbrooklyn.plaza.dto.LinkDTO;
 import org.hackbrooklyn.plaza.dto.ApplicationNumbersDTO;
 import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -77,6 +78,14 @@ public class ApplicationsController {
         applicationsService.setApplicationDecision(applicationNumber, newDecision);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.APPLICATIONS_RESUME_DOWNLOAD)")
+    @GetMapping("/{applicationNumber}/generateResumeLink")
+    public ResponseEntity<LinkDTO> getResumeLink(@PathVariable @Valid int applicationNumber) {
+        LinkDTO resumeLinkS3 = applicationsService.getResumeLink(applicationNumber);
+
+        return new ResponseEntity<>(resumeLinkS3, HttpStatus.OK);
     }
 
     @Data
