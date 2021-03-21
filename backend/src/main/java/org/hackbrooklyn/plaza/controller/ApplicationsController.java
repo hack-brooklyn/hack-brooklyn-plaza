@@ -1,8 +1,8 @@
 package org.hackbrooklyn.plaza.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.hackbrooklyn.plaza.dto.LinkDTO;
 import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
 import org.hackbrooklyn.plaza.model.SubmittedApplication.Decision;
@@ -15,12 +15,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -75,6 +69,14 @@ public class ApplicationsController {
         applicationsService.setApplicationDecision(applicationNumber, newDecision);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.APPLICATIONS_RESUME_DOWNLOAD)")
+    @GetMapping("/{applicationNumber}/generateResumeLink")
+    public ResponseEntity<LinkDTO> getResumeLink(@PathVariable @Valid int applicationNumber) {
+        LinkDTO resumeLinkS3 = applicationsService.getResumeLink(applicationNumber);
+
+        return new ResponseEntity<>(resumeLinkS3, HttpStatus.OK);
     }
 
     @Data
