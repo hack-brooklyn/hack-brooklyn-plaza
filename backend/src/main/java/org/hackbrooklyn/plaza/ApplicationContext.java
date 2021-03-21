@@ -36,11 +36,6 @@ public class ApplicationContext {
     }
 
     @Bean
-    AwsS3Utils awsS3Utils() {
-        return new AwsS3Utils();
-    }
-
-    @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
     }
