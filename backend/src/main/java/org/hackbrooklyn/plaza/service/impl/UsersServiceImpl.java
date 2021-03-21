@@ -41,6 +41,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
 
+import static org.hackbrooklyn.plaza.model.SubmittedApplication.Decision;
+
 @Slf4j
 @Service
 public class UsersServiceImpl implements UsersService {
@@ -155,20 +157,16 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public void requestActivation(String activatingUserEmail) {
-        // Check if the applicant was accepted
-        SubmittedApplication foundApplication = submittedApplicationRepository.findFirstByEmail(activatingUserEmail)
+        SubmittedApplication foundApplication = submittedApplicationRepository
+                .findFirstByEmail(activatingUserEmail)
                 .orElseThrow(ApplicationNotFoundException::new);
-
-        if (foundApplication.getDecision() == null || !foundApplication.getDecision().equals("Accepted")) {
-            throw new ApplicantNotAcceptedException();
-        }
 
         // Check if there is already an account activated with the email
         if (userRepository.findByEmail(activatingUserEmail).isPresent()) {
             throw new AccountAlreadyActivatedException();
         }
 
-        // Applicant is accepted and is not already activated, generate activation key and send to user
+        // Account is not already activated, generate activation key and send to user
         String activationKey = UUID.randomUUID().toString();
         String activationLink = String.format("%s/activate?key=%s", FRONTEND_DOMAIN, activationKey);
         long expiryTimeMs = System.currentTimeMillis() + USER_ACTIVATION_KEY_EXPIRATION_TIME_MS;
