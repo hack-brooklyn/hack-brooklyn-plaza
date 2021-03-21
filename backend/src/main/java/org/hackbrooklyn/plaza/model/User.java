@@ -35,12 +35,12 @@ public class User implements UserDetails {
     @NotBlank
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     @NotBlank
     @Email
     private String email;
 
-    @Column(name = "hashed_password")
+    @Column(name = "hashed_password", unique = true)
     @NotBlank
     @JsonIgnore
     private String hashedPassword;
@@ -52,6 +52,10 @@ public class User implements UserDetails {
     @Column(name = "activation_timestamp")
     @CreationTimestamp
     private LocalDateTime activationTimestamp;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "linked_application", referencedColumnName = "application_number", unique = true)
+    private SubmittedApplication linkedApplication;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
