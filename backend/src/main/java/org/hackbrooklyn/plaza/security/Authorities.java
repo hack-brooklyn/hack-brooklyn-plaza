@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public final class Authorities {
     public static final String APPLICATIONS_READ = "APPLICATIONS_READ";
+    public static final String APPLICATIONS_RESUME_DOWNLOAD = "APPLICATIONS_RESUME_DOWNLOAD";
     public static final String APPLICATIONS_UPDATE_DECISION = "APPLICATIONS_UPDATE_DECISION";
     public static final String APPLICATIONS_DELETE = "APPLICATIONS_DELETE";
 
