@@ -20,7 +20,7 @@ public class PasswordReset {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "password_reset_key")
+    @Column(name = "password_reset_key", unique = true)
     @NotBlank
     private String passwordResetKey;
 
