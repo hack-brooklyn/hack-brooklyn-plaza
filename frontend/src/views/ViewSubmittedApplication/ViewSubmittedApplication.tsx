@@ -14,14 +14,11 @@ import {
   ConnectionError,
   InvalidPathParametersError,
   NoPermissionError,
+  PageParams,
   RootState,
   SubmittedApplication,
   UnknownError
 } from 'types';
-
-interface PageParams {
-  applicationNumberParam?: string;
-}
 
 interface HeadingButtonsProps {
   pageReady: boolean;

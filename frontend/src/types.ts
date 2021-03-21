@@ -224,6 +224,10 @@ export interface MenuAction {
   icon: string;
 }
 
+export interface PageParams {
+  applicationNumberParam?: string;
+}
+
 // The possible decisions for hackathon applications.
 export enum ApplicationDecisions {
   Accepted = 'ACCEPTED',
