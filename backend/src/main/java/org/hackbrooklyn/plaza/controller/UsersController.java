@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.dto.TokenDTO;
 import org.hackbrooklyn.plaza.dto.UserDataDTO;
+import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +135,16 @@ public class UsersController {
     @GetMapping("data")
     public ResponseEntity<UserDataDTO> getUserData(@AuthenticationPrincipal User user) {
         UserDataDTO resBody = usersService.getUserData(user);
+
+        return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    /**
+     * Separate endpoint for getting decisions since we have to look up the application as well as the user
+     */
+    @GetMapping("applicationDecision")
+    public ResponseEntity<DecisionDTO> getApplicationDecision(@AuthenticationPrincipal User user) {
+        DecisionDTO resBody = usersService.getApplicationDecision(user);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
