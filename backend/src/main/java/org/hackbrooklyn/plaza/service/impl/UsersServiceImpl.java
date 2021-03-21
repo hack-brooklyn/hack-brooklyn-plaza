@@ -132,7 +132,19 @@ public class UsersServiceImpl implements UsersService {
         activatedUser.setLastName(activatedUserApplication.getLastName());
         activatedUser.setEmail(activatedUserApplication.getEmail());
         activatedUser.setHashedPassword(passwordEncoder.encode(password));
-        activatedUser.setRole(Roles.PARTICIPANT);
+        activatedUser.setLinkedApplication(activatedUserApplication);
+        switch (activatedUserApplication.getDecision()) {
+            case ACCEPTED:
+                activatedUser.setRole(Roles.PARTICIPANT);
+                break;
+            case REJECTED:
+            case UNDECIDED:
+                activatedUser.setRole(Roles.APPLICANT);
+                break;
+            default:
+                activatedUser.setRole(Roles.NONE);
+        }
+
         userRepository.save(activatedUser);
 
         // Destroy all activation keys from the activating user
