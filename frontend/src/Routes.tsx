@@ -11,6 +11,7 @@ import {
   Landing,
   Login,
   ManageApplications,
+  SubmittedApplicationResume,
   ViewSubmittedApplication
 } from 'views';
 import { RootState } from 'types';
@@ -20,6 +21,10 @@ const Routes = (): JSX.Element => {
 
   return (
     <Switch>
+      <Route path="/admin/applications/:applicationNumberParam/resume">
+        <SubmittedApplicationResume />
+      </Route>
+
       <Route path="/admin/applications/:applicationNumberParam">
         <ViewSubmittedApplication />
       </Route>
