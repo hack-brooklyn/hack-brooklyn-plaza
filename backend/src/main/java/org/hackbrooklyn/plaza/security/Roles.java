@@ -11,10 +11,14 @@ public class Roles {
     public static final String ADMIN = "ROLE_ADMIN";
     public static final String VOLUNTEER = "ROLE_VOLUNTEER";
     public static final String PARTICIPANT = "ROLE_PARTICIPANT";
+    public static final String APPLICANT = "ROLE_APPLICANT";
+    public static final String NONE = "ROLE_NONE";
 
     public static final Set<GrantedAuthority> ADMIN_GRANTED_AUTHORITIES;
     public static final Set<GrantedAuthority> VOLUNTEER_GRANTED_AUTHORITIES;
     public static final Set<GrantedAuthority> PARTICIPANT_GRANTED_AUTHORITIES;
+    public static final Set<GrantedAuthority> APPLICANT_GRANTED_AUTHORITIES;
+    public static final Set<GrantedAuthority> NONE_GRANTED_AUTHORITIES;
 
     static {
         // Admins
@@ -74,9 +78,17 @@ public class Roles {
                 Authorities.SAVED_EVENTS_READ,
         };
 
+        // Participants
+        String[] applicantAuthorities = {
+                // Announcements
+                Authorities.ANNOUNCEMENTS_READ
+        };
+
+        APPLICANT_GRANTED_AUTHORITIES = createGrantedAuthoritySet(applicantAuthorities);
         PARTICIPANT_GRANTED_AUTHORITIES = createGrantedAuthoritySet(participantAuthorities);
         VOLUNTEER_GRANTED_AUTHORITIES = createGrantedAuthoritySet(volunteerAuthorities);
         ADMIN_GRANTED_AUTHORITIES = createGrantedAuthoritySet(adminAuthorities);
+        NONE_GRANTED_AUTHORITIES = Collections.unmodifiableSet(new HashSet<>(0));
     }
 
     public static Set<GrantedAuthority> getGrantedAuthoritiesForRole(String role) {
@@ -87,6 +99,10 @@ public class Roles {
                 return VOLUNTEER_GRANTED_AUTHORITIES;
             case "ROLE_PARTICIPANT":
                 return PARTICIPANT_GRANTED_AUTHORITIES;
+            case "ROLE_APPLICANT":
+                return APPLICANT_GRANTED_AUTHORITIES;
+            case "ROLE_NONE":
+                return NONE_GRANTED_AUTHORITIES;
             default:
                 return null;
         }
