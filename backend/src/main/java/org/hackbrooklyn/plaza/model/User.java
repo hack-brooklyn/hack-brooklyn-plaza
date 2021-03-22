@@ -1,6 +1,5 @@
 package org.hackbrooklyn.plaza.model;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hackbrooklyn.plaza.security.Roles;
