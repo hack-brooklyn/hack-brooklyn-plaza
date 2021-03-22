@@ -113,9 +113,13 @@ const StyledH1 = styled.h1`
 `;
 
 const StyledH2 = styled.h2`
-  margin-top: 0.5rem;
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   text-align: center;
+  margin-top: 0.5rem;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    font-size: 1.75rem;
+  }
 `;
 
 const ResumeLinkAnchor = styled.a`
