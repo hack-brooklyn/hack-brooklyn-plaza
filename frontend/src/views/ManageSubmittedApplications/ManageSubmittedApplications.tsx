@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { Column, useSortBy, useTable } from 'react-table';
 import Select from 'react-select';
-import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -14,9 +13,12 @@ import queryString from 'query-string';
 import dayjs from 'dayjs';
 
 import { HeadingSection, StyledH1 } from 'commonStyles';
-import { refreshAccessToken } from 'util/auth';
+import { acCan, refreshAccessToken } from 'util/auth';
+import { handleError, handleErrorAndPush } from 'util/plazaUtils';
+import { Resources } from 'security/accessControl';
 import {
   ApplicationDecisions,
+  Breakpoints,
   ConnectionError,
   GetApplicationsRequestParams,
   GetApplicationsResponse,
@@ -27,6 +29,7 @@ import {
 } from 'types';
 import { API_ROOT } from 'index';
 import { enterApplicationReviewMode } from 'actions/applicationReview';
+import { toast } from 'react-toastify';
 
 interface DecisionOptionTypes {
   value: ApplicationDecisions;
@@ -60,6 +63,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
   const reviewModeLoading = useSelector((state: RootState) => state.applicationReview.loading);
   const reviewModeEnabled = useSelector((state: RootState) => state.applicationReview.enabled);
   const reviewModeApplications = useSelector((state: RootState) => state.applicationReview.applicationNumbers);
+  const userRole = useSelector((state: RootState) => state.user.role);
 
   const [tableReady, setTableReady] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,9 +76,16 @@ const ManageSubmittedApplications = (): JSX.Element => {
   const [totalUndecidedApplications, setTotalUndecidedApplications] = useState(0);
 
   useEffect(() => {
+    try {
+      const permission = acCan(userRole).readAny(Resources.Applications);
+      if (!permission.granted) throw new NoPermissionError();
+    } catch (err) {
+      handleErrorAndPush(err, history);
+      return;
+    }
+
     getApplications(currentRequestParams).catch(err => {
-      console.error(err);
-      toast.error(err.message);
+      handleError(err);
     });
   }, [currentRequestParams]);
 
@@ -168,9 +179,8 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
       setTableReady(true);
     } else if (res.status === 401) {
-      refreshAccessToken(history)
-        .then((refreshedToken) => getApplications(options, refreshedToken))
-        .catch(err => toast.error(err.message));
+      const refreshedToken = await refreshAccessToken(history);
+      await getApplications(options, refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -211,7 +221,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
       <FilterSection>
         <Row>
-          <Col lg={6}>
+          <StyledCol lg={6}>
             <SearchForm onSubmit={(e: React.FormEvent) => {
               e.preventDefault();
               setCurrentRequestParams({ ...currentRequestParams, searchQuery: searchQuery });
@@ -225,9 +235,9 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
               <SearchButton variant="secondary" type="submit">Search</SearchButton>
             </SearchForm>
-          </Col>
+          </StyledCol>
 
-          <Col lg={3}>
+          <StyledCol lg={3}>
             <Select
               options={decisionOptions}
               placeholder="Filter by decision"
@@ -238,9 +248,9 @@ const ManageSubmittedApplications = (): JSX.Element => {
               }}
               isClearable
             />
-          </Col>
+          </StyledCol>
 
-          <Col lg={3}>
+          <StyledCol lg={3}>
             <Select
               options={rowsPerPageOptions}
               placeholder="Rows per page"
@@ -251,11 +261,11 @@ const ManageSubmittedApplications = (): JSX.Element => {
               }}
               isClearable
             />
-          </Col>
+          </StyledCol>
         </Row>
       </FilterSection>
 
-      <Table hover {...getTableProps}>
+      <Table responsive hover {...getTableProps}>
         <thead>
         {headerGroups.map((headerGroup, index) => (
           <tr {...headerGroup.getHeaderGroupProps()} key={index}>
@@ -333,21 +343,48 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
 const ReviewModeContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
+  margin-top: 1rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    flex-direction: row;
+    margin-top: 0;
+  }
 `;
 
 const ApplicationCount = styled.div`
   font-size: 1.25rem;
   font-weight: bold;
+  margin-bottom: 1rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-bottom: 0;
+  }
 `;
 
 const EnterReviewModeButton = styled(Button)`
-  margin-left: 1rem;
+  width: 100%;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    width: auto;
+  }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-left: 1rem;
+  }
 `;
 
 const FilterSection = styled.section`
   margin-bottom: 1rem;
+`;
+
+const StyledCol = styled(Col)`
+  margin-bottom: 0.5rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-bottom: 0;
+  }
 `;
 
 const SearchForm = styled(Form)`
@@ -371,12 +408,22 @@ const ApplicationRow = styled.tr`
 
 const PageControls = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
 
 const PageIndicator = styled.div`
+  margin-bottom: 1rem;
   font-weight: bold;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    margin-bottom: 0;
+  }
 `;
 
 const PageButtonContainer = styled.div`

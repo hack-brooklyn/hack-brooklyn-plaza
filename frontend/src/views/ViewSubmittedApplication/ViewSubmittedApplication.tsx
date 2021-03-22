@@ -8,11 +8,14 @@ import Button from 'react-bootstrap/Button';
 import { LinkButton } from 'components';
 import { LinksSection, ProfileSection, ShortResponseSection, SummarySection } from './components';
 import { ButtonActiveOverrideStyles, HeadingSection, StyledH1 } from 'commonStyles';
-import { refreshAccessToken } from 'util/auth';
 import { advanceApplicationIndex, exitApplicationReviewMode } from 'actions/applicationReview';
-import { API_ROOT } from 'index';
+import { acCan, refreshAccessToken } from 'util/auth';
+import { handleError, handleErrorAndPush } from 'util/plazaUtils';
+import { checkApplicationPageParams } from 'util/applications';
+import { Resources } from 'security/accessControl';
 import {
   ApplicationDecisions,
+  Breakpoints,
   ConnectionError,
   NoPermissionError,
   PageParams,
@@ -20,6 +23,7 @@ import {
   SubmittedApplication,
   UnknownError
 } from 'types';
+import { API_ROOT } from 'index';
 
 const ViewSubmittedApplication = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -27,6 +31,7 @@ const ViewSubmittedApplication = (): JSX.Element => {
   const { applicationNumberParam } = useParams<PageParams>();
 
   const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
+  const userRole = useSelector((state: RootState) => state.user.role);
   const reviewModeOn = useSelector((state: RootState) => state.applicationReview.enabled);
   const appNumbers = useSelector((state: RootState) => state.applicationReview.applicationNumbers);
   const currentIndex = useSelector((state: RootState) => state.applicationReview.currentIndex);
@@ -37,26 +42,25 @@ const ViewSubmittedApplication = (): JSX.Element => {
   const [actionProcessing, setActionProcessing] = useState(false);
 
   useEffect(() => {
-    // Try to parse application number from path
-    if (applicationNumberParam === undefined) {
-      toast.error('Please specify an application number in the URL.');
+    try {
+      const permission = acCan(userRole).readAny(Resources.Applications);
+      if (!permission.granted) throw new NoPermissionError();
+    } catch (err) {
+      handleErrorAndPush(err, history);
       return;
     }
 
-    // Application number must be an integer to be sent to the backend
-    const parsedApplicationNumber = parseInt(applicationNumberParam);
-    if (isNaN(parsedApplicationNumber)) {
-      toast.error('The application number in the URL is invalid.');
+    let parsedApplicationNumber: number;
+    try {
+      parsedApplicationNumber = checkApplicationPageParams(applicationNumberParam);
+    } catch (err) {
+      handleError(err);
       return;
     }
 
-    // Set and retrieve the current application data
     setApplicationNumber(parsedApplicationNumber);
     getApplicationData(parsedApplicationNumber)
-      .catch((err) => {
-        console.error(err);
-        toast.error(err.message);
-      });
+      .catch((err) => handleError(err));
   }, [applicationNumberParam]);
 
   const getApplicationData = async (appNumber: number, overriddenAccessToken?: string) => {
@@ -163,14 +167,14 @@ const ViewSubmittedApplication = (): JSX.Element => {
         setActionProcessing(true);
         await deleteApplication();
         toast.success('The application has been deleted.');
+
         if (reviewModeOn) {
           goToNextApplication();
         } else {
           history.push('/admin/applications');
         }
       } catch (err) {
-        console.error(err);
-        toast.error(err.message);
+        handleError(err);
       } finally {
         setActionProcessing(false);
       }
@@ -189,8 +193,7 @@ const ViewSubmittedApplication = (): JSX.Element => {
         goToNextApplication();
       }
     } catch (err) {
-      console.error(err);
-      toast.error(err.message);
+      handleError(err);
     } finally {
       setActionProcessing(false);
     }
@@ -320,14 +323,29 @@ const LoadingText = styled.div`
 
 const HeadingButtons = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  margin-top: 2.5rem;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-top: 0;
+  }
 `;
 
 const CommonButtonStyles = css`
-  &:not(:first-child) {
-    margin-left: 1rem;
+  margin-bottom: 0.75rem;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    margin-bottom: 0;
+
+    &:not(:first-child) {
+      margin-left: 1rem;
+    }
   }
 `;
 

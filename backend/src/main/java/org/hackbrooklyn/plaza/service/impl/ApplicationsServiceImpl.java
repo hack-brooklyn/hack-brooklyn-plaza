@@ -7,10 +7,14 @@ import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
 import org.hackbrooklyn.plaza.exception.ApplicationNotFoundException;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
 import org.hackbrooklyn.plaza.model.SubmittedApplication_;
+import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository;
+import org.hackbrooklyn.plaza.repository.UserRepository;
 import org.hackbrooklyn.plaza.service.ApplicationsService;
+import org.hackbrooklyn.plaza.util.UsersUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -29,12 +33,16 @@ import static org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository.A
 public class ApplicationsServiceImpl implements ApplicationsService {
 
     private final SubmittedApplicationRepository submittedApplicationRepository;
+    private final UserRepository userRepository;
     private final EntityManager entityManager;
+    private final UsersUtils usersUtils;
 
     @Autowired
-    public ApplicationsServiceImpl(SubmittedApplicationRepository submittedApplicationRepository, EntityManager entityManager) {
+    public ApplicationsServiceImpl(SubmittedApplicationRepository submittedApplicationRepository, UserRepository userRepository, EntityManager entityManager, UsersUtils usersUtils) {
         this.submittedApplicationRepository = submittedApplicationRepository;
+        this.userRepository = userRepository;
         this.entityManager = entityManager;
+        this.usersUtils = usersUtils;
     }
 
     @Override
@@ -106,14 +114,22 @@ public class ApplicationsServiceImpl implements ApplicationsService {
     }
 
     @Override
+    @Transactional
     public void setApplicationDecision(int applicationNumber, Decision decision) {
         SubmittedApplication foundApplication = submittedApplicationRepository
                 .findFirstByApplicationNumber(applicationNumber)
                 .orElseThrow(ApplicationNotFoundException::new);
 
         foundApplication.setDecision(decision);
-
         submittedApplicationRepository.save(foundApplication);
+
+        // Try to find a user with the application and update their role
+        User user = foundApplication.getActivatedUser();
+        if (user != null) {
+            String updatedRole = usersUtils.getRoleForDecision(decision);
+            user.setRole(updatedRole);
+            userRepository.save(user);
+        }
     }
 
     @Override

@@ -21,6 +21,7 @@ const ReduxMenu = reduxBurgerMenu(Menu);
 const BurgerMenu = (): JSX.Element => {
   const history = useHistory();
   const dispatch = useDispatch();
+
   const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const burgerMenuIsOpen = useSelector((state: RootState) => state.burgerMenu.isOpen);
   const userData = useSelector((state: RootState) => state.user);

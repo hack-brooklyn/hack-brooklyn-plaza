@@ -8,7 +8,9 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import lombok.extern.slf4j.Slf4j;
+import org.hackbrooklyn.plaza.dto.DecisionDTO;
 import org.hackbrooklyn.plaza.dto.TokenDTO;
+import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.PasswordReset;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -19,8 +21,6 @@ import org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository;
 import org.hackbrooklyn.plaza.repository.UserActivationRepository;
 import org.hackbrooklyn.plaza.repository.UserRepository;
 import org.hackbrooklyn.plaza.security.Roles;
-import org.hackbrooklyn.plaza.exception.SendGridException;
-import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.hibernate.Session;
@@ -33,6 +33,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
@@ -40,6 +41,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
+
+import static org.hackbrooklyn.plaza.model.SubmittedApplication.Decision;
 
 @Slf4j
 @Service
@@ -132,8 +135,24 @@ public class UsersServiceImpl implements UsersService {
         activatedUser.setLastName(activatedUserApplication.getLastName());
         activatedUser.setEmail(activatedUserApplication.getEmail());
         activatedUser.setHashedPassword(passwordEncoder.encode(password));
-        activatedUser.setRole(Roles.PARTICIPANT);
-        userRepository.save(activatedUser);
+        activatedUser.setLinkedApplication(activatedUserApplication);
+        switch (activatedUserApplication.getDecision()) {
+            case ACCEPTED:
+                activatedUser.setRole(Roles.PARTICIPANT);
+                break;
+            case REJECTED:
+            case UNDECIDED:
+                activatedUser.setRole(Roles.APPLICANT);
+                break;
+            default:
+                activatedUser.setRole(Roles.NONE);
+        }
+
+        User savedActivatedUser = userRepository.save(activatedUser);
+
+        // Save the newly activated user on the application as well
+        activatedUserApplication.setActivatedUser(savedActivatedUser);
+        submittedApplicationRepository.save(activatedUserApplication);
 
         // Destroy all activation keys from the activating user
         userActivationRepository.deleteAllByActivatingApplication(activatedUserApplication);
@@ -143,20 +162,16 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public void requestActivation(String activatingUserEmail) {
-        // Check if the applicant was accepted
-        SubmittedApplication foundApplication = submittedApplicationRepository.findFirstByEmail(activatingUserEmail)
+        SubmittedApplication foundApplication = submittedApplicationRepository
+                .findFirstByEmail(activatingUserEmail)
                 .orElseThrow(ApplicationNotFoundException::new);
-
-        if (foundApplication.getDecision() == null || !foundApplication.getDecision().equals("Accepted")) {
-            throw new ApplicantNotAcceptedException();
-        }
 
         // Check if there is already an account activated with the email
         if (userRepository.findByEmail(activatingUserEmail).isPresent()) {
             throw new AccountAlreadyActivatedException();
         }
 
-        // Applicant is accepted and is not already activated, generate activation key and send to user
+        // Account is not already activated, generate activation key and send to user
         String activationKey = UUID.randomUUID().toString();
         String activationLink = String.format("%s/activate?key=%s", FRONTEND_DOMAIN, activationKey);
         long expiryTimeMs = System.currentTimeMillis() + USER_ACTIVATION_KEY_EXPIRATION_TIME_MS;
@@ -182,6 +197,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    @Transactional
     public TokenDTO resetPassword(String passwordResetKey, String password) {
         // Find the user via password reset key
         PasswordReset passwordReset = passwordResetRepository.findFirstByPasswordResetKey(passwordResetKey)
@@ -194,17 +210,14 @@ public class UsersServiceImpl implements UsersService {
             throw new InvalidKeyException();
         }
 
-        User resettingUser = passwordReset.getResettingUser();
 
         // Password reset key is valid, proceed to hash and reset the user's password
         // Hash and set password
         String newHashedPassword = passwordEncoder.encode(password);
-        resettingUser.setHashedPassword(newHashedPassword);
 
-        // Save updated hash in database
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        session.update(resettingUser);
-        session.close();
+        User resettingUser = passwordReset.getResettingUser();
+        resettingUser.setHashedPassword(newHashedPassword);
+        userRepository.save(resettingUser);
 
         // Destroy all password reset keys from the activating user
         passwordResetRepository.deleteAllByResettingUser(resettingUser);
@@ -264,6 +277,25 @@ public class UsersServiceImpl implements UsersService {
                 user.getLastName(),
                 user.getRole()
         );
+    }
+
+    @Override
+    public DecisionDTO getApplicationDecision(User user) {
+        // Get the user's linked application number from the User model if they have one
+        SubmittedApplication userLinkedApplication = user.getLinkedApplication();
+        if (userLinkedApplication == null) throw new ApplicationNotFoundException();
+
+        // Due to the way we get the user, Hibernate will throw a LazyInitializationException
+        // if we try to use user.getLinkedApplication().getDecision()
+        // Get the application through SubmittedApplicationRepository instead since we do have
+        // the application number from the User model
+        int applicationNumber = user.getLinkedApplication().getApplicationNumber();
+        SubmittedApplication foundApplication = submittedApplicationRepository
+                .findFirstByApplicationNumber(applicationNumber)
+                .orElseThrow(ApplicationNotFoundException::new);
+
+        Decision decision = foundApplication.getDecision();
+        return new DecisionDTO(decision);
     }
 
     private void sendDynamicTemplateEmailUsingSendGrid(String templateId, Personalization personalization) throws IOException {

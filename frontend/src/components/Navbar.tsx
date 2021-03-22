@@ -1,17 +1,21 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components/macro';
 import { action as toggleMenu } from 'redux-burger-menu';
+import styled from 'styled-components/macro';
 
 import { LinkButtonNavItem, LinkNavItem, ProfileDropdownMenu } from 'components';
 import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'commonStyles';
-import { APPLICATIONS_ACTIVE, HACKATHON_ACTIVE } from 'index';
+import { enumHasValue } from 'util/plazaUtils';
+import ac, { Resources, Roles } from 'security/accessControl';
 import { Breakpoints, RootState } from 'types';
+import { APPLICATIONS_ACTIVE, HACKATHON_ACTIVE } from 'index';
+
 import logo from 'assets/logo.png';
 import burgerMenuIcon from 'assets/icons/burger-menu.svg';
 
 const Navbar = (): JSX.Element => {
   const dispatch = useDispatch();
+
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
   const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const burgerMenuIsOpen = useSelector((state: RootState) => state.burgerMenu.isOpen);
@@ -48,14 +52,27 @@ const Navbar = (): JSX.Element => {
 };
 
 export const LoggedInNavItems = (): JSX.Element => {
+  const userRole = useSelector((state: RootState) => state.user.role);
+
   return (
     <>
+      {/* Everyone can use the dashboard */}
       <LinkNavItem to="/">Dashboard</LinkNavItem>
-      <LinkNavItem to="/announcements">Announcements</LinkNavItem>
-      <LinkNavItem to="/teams">Team Formation</LinkNavItem>
-      <LinkNavItem to="/schedule">Schedule Builder</LinkNavItem>
-      {HACKATHON_ACTIVE && (
-        <LinkNavItem to="/mentorship">Mentor Matcher</LinkNavItem>
+
+      {userRole !== null && enumHasValue(Roles, userRole) && (
+        <>
+          {ac.can(userRole).readAny(Resources.Applications).granted &&
+          <LinkNavItem to="/announcements">Announcements</LinkNavItem>}
+
+          {ac.can(userRole).readAny(Resources.TeamFormation).granted &&
+          <LinkNavItem to="/teams">Team Formation</LinkNavItem>}
+
+          {ac.can(userRole).readAny(Resources.ScheduleBuilder).granted &&
+          <LinkNavItem to="/schedule">Schedule Builder</LinkNavItem>}
+
+          {HACKATHON_ACTIVE && ac.can(userRole).readAny(Resources.MentorMatcher).granted &&
+          <LinkNavItem to="/mentorship">Mentor Matcher</LinkNavItem>}
+        </>
       )}
     </>
   );

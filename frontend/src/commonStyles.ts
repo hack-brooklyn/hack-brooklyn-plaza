@@ -12,6 +12,7 @@ export const StyledH1 = styled.h1`
   @media screen and (min-width: ${Breakpoints.Large}px) {
     font-size: 3rem;
     text-align: left;
+    align-self: flex-start;
   }
 `;
 

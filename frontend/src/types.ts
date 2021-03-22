@@ -1,5 +1,6 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { Roles } from 'security/accessControl';
 import {
   ADVANCE_APPLICATION_INDEX,
   ENTER_APPLICATION_REVIEW_MODE,
@@ -289,13 +290,6 @@ export enum ApplicationDecisions {
   Undecided = 'UNDECIDED'
 }
 
-// The possible user roles for activated users.
-export enum Roles {
-  Admin = 'ROLE_ADMIN',
-  Volunteer = 'ROLE_VOLUNTEER',
-  Participant = 'ROLE_PARTICIPANT'
-}
-
 // The Bootstrap breakpoints in pixels.
 export enum Breakpoints {
   Small = 576,
@@ -394,5 +388,14 @@ export class InvalidPathParametersError extends Error {
     this.message = customMessage
       ? customMessage
       : 'There is invalid data in the URL! Please try going back to where you were before and perform the action again.';
+  }
+}
+
+// Thrown when an unknown error occurs, such as an unhandled response status.
+export class RoleNotFoundError extends Error {
+  constructor() {
+    super();
+    this.name = 'RoleNotFoundError';
+    this.message = 'A user role hasn\'t been assigned to you. Please contact us for further assistance.';
   }
 }
