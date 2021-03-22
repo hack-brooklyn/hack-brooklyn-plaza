@@ -31,6 +31,7 @@ public class Roles {
                 // Announcements
                 Authorities.ANNOUNCEMENTS_CREATE,
                 Authorities.ANNOUNCEMENTS_READ_PUBLIC,
+                Authorities.ANNOUNCEMENTS_READ_PARTICIPANTS_ONLY,
                 Authorities.ANNOUNCEMENTS_UPDATE,
                 Authorities.ANNOUNCEMENTS_DELETE,
 
