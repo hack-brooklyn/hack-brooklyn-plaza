@@ -8,7 +8,9 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import lombok.extern.slf4j.Slf4j;
+import org.hackbrooklyn.plaza.dto.DecisionDTO;
 import org.hackbrooklyn.plaza.dto.TokenDTO;
+import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.PasswordReset;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -19,8 +21,6 @@ import org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository;
 import org.hackbrooklyn.plaza.repository.UserActivationRepository;
 import org.hackbrooklyn.plaza.repository.UserRepository;
 import org.hackbrooklyn.plaza.security.Roles;
-import org.hackbrooklyn.plaza.exception.SendGridException;
-import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.hibernate.Session;
@@ -147,7 +147,11 @@ public class UsersServiceImpl implements UsersService {
                 activatedUser.setRole(Roles.NONE);
         }
 
-        userRepository.save(activatedUser);
+        User savedActivatedUser = userRepository.save(activatedUser);
+
+        // Save the newly activated user on the application as well
+        activatedUserApplication.setActivatedUser(savedActivatedUser);
+        submittedApplicationRepository.save(activatedUserApplication);
 
         // Destroy all activation keys from the activating user
         userActivationRepository.deleteAllByActivatingApplication(activatedUserApplication);
