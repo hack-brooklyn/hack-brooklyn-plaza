@@ -255,7 +255,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
         </Row>
       </FilterSection>
 
-      <Table hover {...getTableProps}>
+      <Table responsive hover {...getTableProps}>
         <thead>
         {headerGroups.map((headerGroup, index) => (
           <tr {...headerGroup.getHeaderGroupProps()} key={index}>
