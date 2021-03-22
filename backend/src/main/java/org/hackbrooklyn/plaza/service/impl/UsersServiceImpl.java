@@ -33,6 +33,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManagerFactory;
 import java.io.IOException;
@@ -196,6 +197,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    @Transactional
     public TokenDTO resetPassword(String passwordResetKey, String password) {
         // Find the user via password reset key
         PasswordReset passwordReset = passwordResetRepository.findFirstByPasswordResetKey(passwordResetKey)
@@ -208,17 +210,14 @@ public class UsersServiceImpl implements UsersService {
             throw new InvalidKeyException();
         }
 
-        User resettingUser = passwordReset.getResettingUser();
 
         // Password reset key is valid, proceed to hash and reset the user's password
         // Hash and set password
         String newHashedPassword = passwordEncoder.encode(password);
-        resettingUser.setHashedPassword(newHashedPassword);
 
-        // Save updated hash in database
-        Session session = entityManagerFactory.createEntityManager().unwrap(Session.class);
-        session.update(resettingUser);
-        session.close();
+        User resettingUser = passwordReset.getResettingUser();
+        resettingUser.setHashedPassword(newHashedPassword);
+        userRepository.save(resettingUser);
 
         // Destroy all password reset keys from the activating user
         passwordResetRepository.deleteAllByResettingUser(resettingUser);
