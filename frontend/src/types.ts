@@ -1,8 +1,14 @@
+import { Action } from 'redux';
+import { ThunkAction } from 'redux-thunk';
 import {
+  ADVANCE_APPLICATION_INDEX,
   ENTER_APPLICATION_REVIEW_MODE,
+  ENTER_APPLICATION_REVIEW_MODE_FAILURE,
+  ENTER_APPLICATION_REVIEW_MODE_SUCCESS,
   EXIT_APPLICATION_REVIEW_MODE,
   LOG_IN,
   LOG_OUT,
+  SET_APPLICATIONS_LOADING,
   SET_JWT_ACCESS_TOKEN,
   SET_USER_DATA,
   SET_WINDOW_WIDTH
@@ -14,9 +20,12 @@ export interface RootState {
   app: AppState;
   auth: AuthState;
   user: UserState;
-  admin: AdminState;
+  applicationReview: ApplicationReviewState;
   burgerMenu: { isOpen: boolean };
 }
+
+export type AppThunk<ReturnType = void> =
+  ThunkAction<ReturnType, RootState, unknown, Action<string>>
 
 // General app state
 export interface AppState {
@@ -78,22 +87,49 @@ interface SetUserDataAction {
 
 export type UserActionTypes = SetUserDataAction;
 
-// Admin
-export interface AdminState {
-  applicationReviewModeOn: boolean;
+// Application Review
+export interface ApplicationReviewState {
+  enabled: boolean;
+  loading: boolean;
+  error: Error | null;
+  applicationNumbers: number[];
+  currentIndex: number | null;
 }
 
 interface EnterApplicationReviewModeAction {
   type: typeof ENTER_APPLICATION_REVIEW_MODE;
 }
 
+interface EnterApplicationReviewModeSuccessAction {
+  type: typeof ENTER_APPLICATION_REVIEW_MODE_SUCCESS;
+  payload: number[];
+}
+
+interface EnterApplicationReviewModeFailureAction {
+  type: typeof ENTER_APPLICATION_REVIEW_MODE_FAILURE;
+  payload: Error;
+}
+
 interface ExitApplicationReviewModeAction {
   type: typeof EXIT_APPLICATION_REVIEW_MODE;
 }
 
-export type AdminActionTypes =
-  | EnterApplicationReviewModeAction
-  | ExitApplicationReviewModeAction;
+interface AdvanceApplicationIndexAction {
+  type: typeof ADVANCE_APPLICATION_INDEX;
+}
+
+interface SetApplicationsLoadingAction {
+  type: typeof SET_APPLICATIONS_LOADING;
+  payload: boolean;
+}
+
+export type ApplicationReviewActionTypes =
+  EnterApplicationReviewModeAction
+  | EnterApplicationReviewModeSuccessAction
+  | EnterApplicationReviewModeFailureAction
+  | ExitApplicationReviewModeAction
+  | AdvanceApplicationIndexAction
+  | SetApplicationsLoadingAction;
 
 // General Types
 // The access token returned from an authentication response
@@ -216,12 +252,34 @@ export interface SubmittedApplicationLite extends SubmittedApplicationCommon {
   applicationNumber: number;
 }
 
+export interface GetApplicationsRequestParams {
+  page?: number;
+  limit?: number;
+  decision?: ApplicationDecisions;
+  searchQuery?: string;
+}
+
+export interface GetApplicationsResponse {
+  applications: SubmittedApplicationLite[];
+  pages: number;
+  totalApplications: number;
+  totalUndecidedApplications: number;
+}
+
+export interface GetApplicationNumbersResponse {
+  applicationNumbers: number[];
+}
+
 export interface MenuAction {
   type: 'anchor' | 'link' | 'button';
   text: string;
   link?: string;
   onClick?: () => void;
   icon: string;
+}
+
+export interface PageParams {
+  applicationNumberParam?: string;
 }
 
 // The possible decisions for hackathon applications.

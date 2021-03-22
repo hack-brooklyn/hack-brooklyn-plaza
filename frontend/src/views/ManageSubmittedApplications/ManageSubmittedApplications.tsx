@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { Column, useSortBy, useTable } from 'react-table';
@@ -18,26 +18,15 @@ import { refreshAccessToken } from 'util/auth';
 import {
   ApplicationDecisions,
   ConnectionError,
+  GetApplicationsRequestParams,
+  GetApplicationsResponse,
   NoPermissionError,
   RootState,
   SubmittedApplicationLite,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
-
-interface GetApplicationsRequestParams {
-  page?: number;
-  limit?: number;
-  decision?: ApplicationDecisions;
-  searchQuery?: string;
-}
-
-interface GetApplicationsResponse {
-  applications: SubmittedApplicationLite[];
-  pages: number;
-  totalApplications: number;
-  totalUndecidedApplications: number;
-}
+import { enterApplicationReviewMode } from 'actions/applicationReview';
 
 interface DecisionOptionTypes {
   value: ApplicationDecisions;
@@ -64,9 +53,14 @@ const rowsPerPageOptions: RowsPerPageOptionTypes[] = [
 ];
 
 const ManageSubmittedApplications = (): JSX.Element => {
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
+  const reviewModeLoading = useSelector((state: RootState) => state.applicationReview.loading);
+  const reviewModeEnabled = useSelector((state: RootState) => state.applicationReview.enabled);
+  const reviewModeApplications = useSelector((state: RootState) => state.applicationReview.applicationNumbers);
+
   const [tableReady, setTableReady] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   // Request parameters
@@ -83,6 +77,13 @@ const ManageSubmittedApplications = (): JSX.Element => {
       toast.error(err.message);
     });
   }, [currentRequestParams]);
+
+  useEffect(() => {
+    if (reviewModeEnabled) {
+      const firstApplication = reviewModeApplications[0];
+      history.push(`/admin/applications/${firstApplication}`);
+    }
+  }, [reviewModeEnabled]);
 
   const tableColumns: Array<Column<SubmittedApplicationLite>> = useMemo(() => [
     {
@@ -189,7 +190,22 @@ const ManageSubmittedApplications = (): JSX.Element => {
               ? `${totalUndecidedApplications} Undecided Application${totalUndecidedApplications === 1 ? '' : 's'}`
               : 'Loading...'}
           </ApplicationCount>
-          {tableReady && <ReviewButton>Enter Review Mode</ReviewButton>}
+
+          {tableReady &&
+          <EnterReviewModeButton
+            onClick={() => {
+              try {
+                dispatch(enterApplicationReviewMode());
+              } catch (err) {
+                console.error(err);
+                toast.error(err.message);
+              }
+            }}
+            disabled={reviewModeLoading || totalUndecidedApplications < 1}
+          >
+            {reviewModeLoading ? 'Loading...' : 'Enter Review Mode'}
+          </EnterReviewModeButton>
+          }
         </ReviewModeContainer>
       </HeadingSection>
 
@@ -326,7 +342,7 @@ const ApplicationCount = styled.div`
   font-weight: bold;
 `;
 
-const ReviewButton = styled(Button)`
+const EnterReviewModeButton = styled(Button)`
   margin-left: 1rem;
 `;
 

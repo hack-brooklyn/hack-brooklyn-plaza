@@ -80,6 +80,7 @@ const LinksSection = (props: LinksSectionProps): JSX.Element => {
       {applicationData.resumeKeyS3 ? (
         <ResumeLinkContents
           to={`/admin/applications/${applicationNumber}/resume`}
+          target="_blank"
         >
           <img src={getResumeIcon()} alt="Download resume" />
           <SubmittedLinkUrl>
