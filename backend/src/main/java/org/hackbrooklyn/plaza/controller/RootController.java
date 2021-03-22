@@ -20,7 +20,7 @@ public class RootController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_READ)")
+    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_READ_PUBLIC)")
     @GetMapping("restrictedRoute")
     public ResponseEntity<Void> restrictedRoute(@AuthenticationPrincipal User user) {
         log.info(String.valueOf(user));
