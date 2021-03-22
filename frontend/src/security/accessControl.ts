@@ -82,9 +82,9 @@ const grants = {
       'read:any': ['*']
     },
     [Resources.SavedEvents]: {
-      'create:any': ['*'],
-      'read:any': ['*'],
-      'delete:any': ['*']
+      'create:own': ['*'],
+      'read:own': ['*'],
+      'delete:own': ['*']
     }
   },
   [Roles.Applicant]: {
