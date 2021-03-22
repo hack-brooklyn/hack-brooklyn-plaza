@@ -162,6 +162,11 @@ public class SubmittedApplication {
     @Column(name = "decision")
     private Decision decision;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "activated_user", referencedColumnName = "id", unique = true)
+    @JsonIgnore
+    private User activatedUser;
+
     @Getter
     @AllArgsConstructor
     public enum Decision {
