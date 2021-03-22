@@ -30,7 +30,7 @@ public class AnnouncementsController {
         this.announcementService = announcementService;
     }
 
-    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_READ)")
+    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_READ_PUBLIC)")
     @GetMapping
     public ResponseEntity<Collection<Announcement>> getAnnouncements(
             @RequestParam(defaultValue = "1") int page,
