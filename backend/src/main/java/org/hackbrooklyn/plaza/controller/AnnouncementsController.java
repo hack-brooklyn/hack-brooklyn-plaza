@@ -58,6 +58,14 @@ public class AnnouncementsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_DELETE)")
+    @DeleteMapping("/{announcementId}")
+    public ResponseEntity<Void> deleteAnnouncement(@PathVariable @Positive int announcementId) {
+        announcementService.deleteAnnouncement(announcementId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @Data
     private static class AnnouncementBodyRequest {
 
