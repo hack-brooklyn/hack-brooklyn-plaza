@@ -390,3 +390,12 @@ export class InvalidPathParametersError extends Error {
       : 'There is invalid data in the URL! Please try going back to where you were before and perform the action again.';
   }
 }
+
+// Thrown when an unknown error occurs, such as an unhandled response status.
+export class RoleNotFoundError extends Error {
+  constructor() {
+    super();
+    this.name = 'RoleNotFoundError';
+    this.message = 'A user role hasn\'t been assigned to you. Please contact us for further assistance.';
+  }
+}
