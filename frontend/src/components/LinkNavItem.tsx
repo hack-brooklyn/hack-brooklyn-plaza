@@ -1,6 +1,7 @@
 import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import { StyledNavLink } from 'commonStyles';
+import styled from 'styled-components/macro';
 
 interface NavLinkContainerProps {
   to: string;
@@ -11,15 +12,19 @@ const LinkNavItem = (props: NavLinkContainerProps): JSX.Element => {
   const { to, children } = props;
 
   return (
-    <li>
+    <StyledLi>
       <LinkContainer to={to}>
         <StyledNavLink>
           {children}
         </StyledNavLink>
       </LinkContainer>
-    </li>
+    </StyledLi>
   );
 };
+
+const StyledLi = styled.li`
+  list-style: none;
+`;
 
 
 export default LinkNavItem;
