@@ -63,6 +63,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
   const reviewModeLoading = useSelector((state: RootState) => state.applicationReview.loading);
   const reviewModeEnabled = useSelector((state: RootState) => state.applicationReview.enabled);
   const reviewModeApplications = useSelector((state: RootState) => state.applicationReview.applicationNumbers);
+  const userRole = useSelector((state: RootState) => state.user.role);
 
   const [tableReady, setTableReady] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,6 +76,14 @@ const ManageSubmittedApplications = (): JSX.Element => {
   const [totalUndecidedApplications, setTotalUndecidedApplications] = useState(0);
 
   useEffect(() => {
+    try {
+      const permission = acCan(userRole).readAny(Resources.Applications);
+      if (!permission.granted) throw new NoPermissionError();
+    } catch (err) {
+      handleErrorAndPush(err, history);
+      return;
+    }
+
     getApplications(currentRequestParams).catch(err => {
       handleError(err);
     });
