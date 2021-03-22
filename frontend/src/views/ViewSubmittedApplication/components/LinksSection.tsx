@@ -82,14 +82,14 @@ const LinksSection = (props: LinksSectionProps): JSX.Element => {
           to={`/admin/applications/${applicationNumber}/resume`}
           target="_blank"
         >
-          <img src={getResumeIcon()} alt="Download resume" />
+          <ResumeIcon src={getResumeIcon()} alt="Download resume" />
           <SubmittedLinkUrl>
             Download Resume ({getResumeType(applicationData.resumeKeyS3)})
           </SubmittedLinkUrl>
         </ResumeLinkContents>
       ) : (
         <SubmittedLinkNotProvided>
-          <img src={fileMissingIcon} alt={'Resume not uploaded'} />
+          <ResumeIcon src={fileMissingIcon} alt={'Resume not uploaded'} />
           <SubmittedLinkUrl>Resume Not Uploaded</SubmittedLinkUrl>
         </SubmittedLinkNotProvided>
       )}
@@ -107,7 +107,7 @@ const SubmittedLink = (props: SubmittedLinkProps) => {
         rel="noopener noreferrer"
         target="_blank"
       >
-        <img src={icon} alt={`Link to ${type}`} />
+        <LinkIcon src={icon} alt={`Link to ${type}`} />
         <SubmittedLinkUrl>
           {link.replace(/^(?:https?:\/\/)?(?:www\.)?/i, '')}
         </SubmittedLinkUrl>
@@ -116,7 +116,7 @@ const SubmittedLink = (props: SubmittedLinkProps) => {
   } else {
     return (
       <SubmittedLinkNotProvided>
-        <img src={missingIcon} alt={`${type} not provided`} />
+        <LinkIcon src={missingIcon} alt={`${type} not provided`} />
         <SubmittedLinkUrl>{type} Not Provided</SubmittedLinkUrl>
       </SubmittedLinkNotProvided>
     );
@@ -159,6 +159,16 @@ const SubmittedLinkNotProvided = styled.div`
 const SubmittedLinkUrl = styled.div`
   margin-left: 0.5rem;
   font-size: 1.25rem;
+`;
+
+const LinkIcon = styled.img`
+  width: 2rem;
+  height: 2rem;
+`;
+
+const ResumeIcon = styled.img`
+  width: 1.625rem;
+  height: 2rem;
 `;
 
 export default LinksSection;
