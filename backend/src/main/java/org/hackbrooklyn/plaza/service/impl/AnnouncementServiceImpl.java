@@ -19,7 +19,7 @@ import java.util.Collection;
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final EntityManager entityManager;
-    private AnnouncementRepository announcementRepository;
+    private final AnnouncementRepository announcementRepository;
 
     @Autowired
     public AnnouncementServiceImpl(EntityManager entityManager, AnnouncementRepository announcementRepository) {
@@ -59,4 +59,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setLastUpdated(LocalDateTime.now());
         announcementRepository.save(announcement);
     }
+
+    @Override
+    public void deleteAnnouncement(int id) {
+        Announcement announcement = announcementRepository.getOne(id);
+        announcementRepository.delete(announcement);
+    }
+
 }
