@@ -1,5 +1,6 @@
 package org.hackbrooklyn.plaza.controller;
 
+import com.sendgrid.Response;
 import lombok.Data;
 import org.hackbrooklyn.plaza.model.Announcement;
 import org.hackbrooklyn.plaza.model.User;
@@ -54,6 +55,14 @@ public class AnnouncementsController {
     @PutMapping("/{announcementId}")
     public ResponseEntity<Void> updateAnnouncement(@PathVariable @Positive int announcementId, @RequestBody @Valid AnnouncementBodyRequest reqBody) {
         announcementService.updateAnnouncement(announcementId, reqBody.getBody());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_DELETE)")
+    @DeleteMapping("/{announcementId}")
+    public ResponseEntity<Void> deleteAnnouncement(@PathVariable @Positive int announcementId) {
+        announcementService.deleteAnnouncement(announcementId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
