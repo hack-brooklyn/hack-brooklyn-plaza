@@ -5,11 +5,12 @@ import styled from 'styled-components/macro';
 
 import { LinkButton } from 'components';
 import { ButtonActiveOverrideStyles } from 'commonStyles';
-import { refreshAccessToken } from 'util/auth';
-import { ConnectionError, NoPermissionError, PageParams, RootState, UnknownError } from 'types';
-import { API_ROOT } from 'index';
+import { acCan, refreshAccessToken } from 'util/auth';
 import { checkApplicationPageParams } from 'util/applications';
-import { handleError } from 'util/plazaUtils';
+import { handleError, handleErrorAndPush } from 'util/plazaUtils';
+import { Resources } from 'security/accessControl';
+import { Breakpoints, ConnectionError, NoPermissionError, PageParams, RootState, UnknownError } from 'types';
+import { API_ROOT } from 'index';
 
 interface GenerateResumeLinkResponse {
   link: string;
@@ -20,12 +21,21 @@ const SubmittedApplicationResume = (): JSX.Element => {
   const { applicationNumberParam } = useParams<PageParams>();
 
   const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
+  const userRole = useSelector((state: RootState) => state.user.role);
 
   const [applicationNumber, setApplicationNumber] = useState(-1);
   const [resumeLink, setResumeLink] = useState('');
   const [downloadReady, setDownloadReady] = useState(false);
 
   useEffect(() => {
+    try {
+      const permission = acCan(userRole).readAny(Resources.Applications);
+      if (!permission.granted) throw new NoPermissionError();
+    } catch (err) {
+      handleErrorAndPush(err, history);
+      return;
+    }
+
     let parsedApplicationNumber: number;
     try {
       parsedApplicationNumber = checkApplicationPageParams(applicationNumberParam);
