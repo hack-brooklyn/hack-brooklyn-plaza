@@ -9,24 +9,27 @@ export enum Roles {
 }
 
 export enum Resources {
-  Applications,
-  Users,
-  Announcements,
-  Events,
-  SavedEvents
+  Announcements = 'ANNOUNCEMENTS',
+  Applications = 'APPLICATIONS',
+  Events = 'EVENTS',
+  MentorMatcher = 'MENTOR_MATCHER',
+  SavedEvents = 'SAVED_EVENTS',
+  ScheduleBuilder = 'SCHEDULE_BUILDER',
+  TeamFormation = 'TEAM_FORMATION',
+  Users = 'USERS'
 }
 
 export enum AnnouncementsAttributes {
-  Public,
-  ParticipantsOnly
+  Public = 'PUBLIC',
+  ParticipantsOnly = 'PARTICIPANTS_ONLY'
 }
 
 export enum ApplicationsAttributes {
-  Decisions
+  Decisions = 'DECISIONS'
 }
 
 export enum UsersAttributes {
-  Roles
+  Roles = 'ROLES'
 }
 
 const grants = {
@@ -48,10 +51,19 @@ const grants = {
       'update:any': ['*'],
       'delete:any': ['*']
     },
+    [Resources.MentorMatcher]: {
+      'read:any': ['*']
+    },
     [Resources.SavedEvents]: {
-      'create:any': ['*'],
-      'read:any': ['*'],
-      'delete:any': ['*']
+      'create:own': ['*'],
+      'read:own': ['*'],
+      'delete:own': ['*']
+    },
+    [Resources.ScheduleBuilder]: {
+      'read:any': ['*']
+    },
+    [Resources.TeamFormation]: {
+      'read:any': ['*']
     },
     [Resources.Users]: {
       'create:any': ['*'],
