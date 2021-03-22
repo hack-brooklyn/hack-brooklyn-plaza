@@ -2,9 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { HeadingActions } from 'components';
-import { ChecklistSection, CountdownSection } from './components';
+import { ApplicationStatusSection, ChecklistSection, CountdownSection } from './components';
 import { HeadingSection, StyledH1 } from 'commonStyles';
-import { Roles } from 'security/accessControl';
+import ac, { AnnouncementsAttributes, Resources, Roles } from 'security/accessControl';
 import { MenuAction, RootState } from 'types';
 
 import listIcon from 'assets/icons/list.svg';
@@ -35,6 +35,12 @@ const dashboardActions: MenuAction[] = [
 const Dashboard = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
 
+  const isUserAtLeastParticipant = (): boolean => {
+    return userRole !== null && ac.can(userRole)
+      .readAny(Resources.Announcements).attributes
+      .includes(AnnouncementsAttributes.ParticipantsOnly);
+  };
+
   return (
     <>
       <HeadingSection>
@@ -45,8 +51,9 @@ const Dashboard = (): JSX.Element => {
         )}
       </HeadingSection>
 
-      <CountdownSection />
-      <ChecklistSection />
+      {isUserAtLeastParticipant() && <CountdownSection />}
+      <ApplicationStatusSection />
+      {isUserAtLeastParticipant() && <ChecklistSection />}
     </>
   );
 };
