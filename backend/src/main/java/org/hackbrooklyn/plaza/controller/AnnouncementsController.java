@@ -1,6 +1,5 @@
 package org.hackbrooklyn.plaza.controller;
 
-import com.sendgrid.Response;
 import lombok.Data;
 import org.hackbrooklyn.plaza.model.Announcement;
 import org.hackbrooklyn.plaza.model.User;
