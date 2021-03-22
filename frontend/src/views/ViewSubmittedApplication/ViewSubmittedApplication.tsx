@@ -21,10 +21,6 @@ import {
   UnknownError
 } from 'types';
 
-interface HeadingButtonsProps {
-  pageReady: boolean;
-}
-
 const ViewSubmittedApplication = (): JSX.Element => {
   const dispatch = useDispatch();
   const history = useHistory();
