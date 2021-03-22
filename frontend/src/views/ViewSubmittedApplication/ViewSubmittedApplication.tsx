@@ -13,6 +13,7 @@ import { advanceApplicationIndex, exitApplicationReviewMode } from 'actions/appl
 import { API_ROOT } from 'index';
 import {
   ApplicationDecisions,
+  Breakpoints,
   ConnectionError,
   NoPermissionError,
   PageParams,
@@ -320,14 +321,29 @@ const LoadingText = styled.div`
 
 const HeadingButtons = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  margin-top: 2.5rem;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-top: 0;
+  }
 `;
 
 const CommonButtonStyles = css`
-  &:not(:first-child) {
-    margin-left: 1rem;
+  margin-bottom: 0.75rem;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    margin-bottom: 0;
+
+    &:not(:first-child) {
+      margin-left: 1rem;
+    }
   }
 `;
 
