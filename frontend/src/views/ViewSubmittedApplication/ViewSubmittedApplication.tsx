@@ -50,14 +50,14 @@ const ViewSubmittedApplication = (): JSX.Element => {
       return;
     }
 
-    // Application number must be an integer to be sent to the backend
-    const parsedApplicationNumber = parseInt(applicationNumberParam);
-    if (isNaN(parsedApplicationNumber)) {
-      toast.error('The application number in the URL is invalid.');
+    let parsedApplicationNumber: number;
+    try {
+      parsedApplicationNumber = checkApplicationPageParams(applicationNumberParam);
+    } catch (err) {
+      handleError(err);
       return;
     }
 
-    // Set and retrieve the current application data
     setApplicationNumber(parsedApplicationNumber);
     getApplicationData(parsedApplicationNumber)
       .catch((err) => handleError(err));
