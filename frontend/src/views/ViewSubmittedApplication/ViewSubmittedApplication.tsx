@@ -8,9 +8,11 @@ import Button from 'react-bootstrap/Button';
 import { LinkButton } from 'components';
 import { LinksSection, ProfileSection, ShortResponseSection, SummarySection } from './components';
 import { ButtonActiveOverrideStyles, HeadingSection, StyledH1 } from 'commonStyles';
-import { refreshAccessToken } from 'util/auth';
 import { advanceApplicationIndex, exitApplicationReviewMode } from 'actions/applicationReview';
-import { API_ROOT } from 'index';
+import { acCan, refreshAccessToken } from 'util/auth';
+import { handleError, handleErrorAndPush } from 'util/plazaUtils';
+import { checkApplicationPageParams } from 'util/applications';
+import { Resources } from 'security/accessControl';
 import {
   ApplicationDecisions,
   Breakpoints,
@@ -21,6 +23,7 @@ import {
   SubmittedApplication,
   UnknownError
 } from 'types';
+import { API_ROOT } from 'index';
 
 const ViewSubmittedApplication = (): JSX.Element => {
   const dispatch = useDispatch();
@@ -28,6 +31,7 @@ const ViewSubmittedApplication = (): JSX.Element => {
   const { applicationNumberParam } = useParams<PageParams>();
 
   const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
+  const userRole = useSelector((state: RootState) => state.user.role);
   const reviewModeOn = useSelector((state: RootState) => state.applicationReview.enabled);
   const appNumbers = useSelector((state: RootState) => state.applicationReview.applicationNumbers);
   const currentIndex = useSelector((state: RootState) => state.applicationReview.currentIndex);
@@ -38,9 +42,11 @@ const ViewSubmittedApplication = (): JSX.Element => {
   const [actionProcessing, setActionProcessing] = useState(false);
 
   useEffect(() => {
-    // Try to parse application number from path
-    if (applicationNumberParam === undefined) {
-      toast.error('Please specify an application number in the URL.');
+    try {
+      const permission = acCan(userRole).readAny(Resources.Applications);
+      if (!permission.granted) throw new NoPermissionError();
+    } catch (err) {
+      handleErrorAndPush(err, history);
       return;
     }
 
