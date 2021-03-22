@@ -91,7 +91,8 @@ const grants = {
     [Resources.Announcements]: {
       'read:any': [AnnouncementsAttributes.Public]
     }
-  }
+  },
+  [Roles.None]: {}
 };
 
 const ac = new AccessControl(grants).lock();
