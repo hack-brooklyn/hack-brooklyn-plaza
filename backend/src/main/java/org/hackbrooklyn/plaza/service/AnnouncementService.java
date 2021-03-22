@@ -13,4 +13,6 @@ public interface AnnouncementService {
 
     void updateAnnouncement(int id, String body);
 
+    void deleteAnnouncement(int id);
+
 }
