@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import { Column, useSortBy, useTable } from 'react-table';
 import Select from 'react-select';
-import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -14,9 +13,12 @@ import queryString from 'query-string';
 import dayjs from 'dayjs';
 
 import { HeadingSection, StyledH1 } from 'commonStyles';
-import { refreshAccessToken } from 'util/auth';
+import { acCan, refreshAccessToken } from 'util/auth';
+import { handleError, handleErrorAndPush } from 'util/plazaUtils';
+import { Resources } from 'security/accessControl';
 import {
   ApplicationDecisions,
+  Breakpoints,
   ConnectionError,
   GetApplicationsRequestParams,
   GetApplicationsResponse,
@@ -27,6 +29,7 @@ import {
 } from 'types';
 import { API_ROOT } from 'index';
 import { enterApplicationReviewMode } from 'actions/applicationReview';
+import { toast } from 'react-toastify';
 
 interface DecisionOptionTypes {
   value: ApplicationDecisions;
@@ -211,7 +214,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
       <FilterSection>
         <Row>
-          <Col lg={6}>
+          <StyledCol lg={6}>
             <SearchForm onSubmit={(e: React.FormEvent) => {
               e.preventDefault();
               setCurrentRequestParams({ ...currentRequestParams, searchQuery: searchQuery });
@@ -225,9 +228,9 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
               <SearchButton variant="secondary" type="submit">Search</SearchButton>
             </SearchForm>
-          </Col>
+          </StyledCol>
 
-          <Col lg={3}>
+          <StyledCol lg={3}>
             <Select
               options={decisionOptions}
               placeholder="Filter by decision"
@@ -238,9 +241,9 @@ const ManageSubmittedApplications = (): JSX.Element => {
               }}
               isClearable
             />
-          </Col>
+          </StyledCol>
 
-          <Col lg={3}>
+          <StyledCol lg={3}>
             <Select
               options={rowsPerPageOptions}
               placeholder="Rows per page"
@@ -251,7 +254,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
               }}
               isClearable
             />
-          </Col>
+          </StyledCol>
         </Row>
       </FilterSection>
 
@@ -333,21 +336,48 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
 const ReviewModeContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
+  margin-top: 1rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    flex-direction: row;
+    margin-top: 0;
+  }
 `;
 
 const ApplicationCount = styled.div`
   font-size: 1.25rem;
   font-weight: bold;
+  margin-bottom: 1rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-bottom: 0;
+  }
 `;
 
 const EnterReviewModeButton = styled(Button)`
-  margin-left: 1rem;
+  width: 100%;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    width: auto;
+  }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-left: 1rem;
+  }
 `;
 
 const FilterSection = styled.section`
   margin-bottom: 1rem;
+`;
+
+const StyledCol = styled(Col)`
+  margin-bottom: 0.5rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-bottom: 0;
+  }
 `;
 
 const SearchForm = styled(Form)`
@@ -371,12 +401,22 @@ const ApplicationRow = styled.tr`
 
 const PageControls = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
 
 const PageIndicator = styled.div`
+  margin-bottom: 1rem;
   font-weight: bold;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    margin-bottom: 0;
+  }
 `;
 
 const PageButtonContainer = styled.div`
