@@ -159,8 +159,7 @@ export const handleLogOut = async (history: History<LocationState>): Promise<voi
     history.push('/');
     toast.success('You have been logged out of Hack Brooklyn Plaza.');
   } catch (err) {
-    console.error(err);
-    toast.error(err.message);
+    handleError(err);
   }
 };
 
