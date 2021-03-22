@@ -54,10 +54,7 @@ const ViewSubmittedApplication = (): JSX.Element => {
     // Set and retrieve the current application data
     setApplicationNumber(parsedApplicationNumber);
     getApplicationData(parsedApplicationNumber)
-      .catch((err) => {
-        console.error(err);
-        toast.error(err.message);
-      });
+      .catch((err) => handleError(err));
   }, [applicationNumberParam]);
 
   const getApplicationData = async (appNumber: number, overriddenAccessToken?: string) => {
@@ -164,14 +161,14 @@ const ViewSubmittedApplication = (): JSX.Element => {
         setActionProcessing(true);
         await deleteApplication();
         toast.success('The application has been deleted.');
+
         if (reviewModeOn) {
           goToNextApplication();
         } else {
           history.push('/admin/applications');
         }
       } catch (err) {
-        console.error(err);
-        toast.error(err.message);
+        handleError(err);
       } finally {
         setActionProcessing(false);
       }
@@ -190,8 +187,7 @@ const ViewSubmittedApplication = (): JSX.Element => {
         goToNextApplication();
       }
     } catch (err) {
-      console.error(err);
-      toast.error(err.message);
+      handleError(err);
     } finally {
       setActionProcessing(false);
     }
