@@ -76,8 +76,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
   useEffect(() => {
     getApplications(currentRequestParams).catch(err => {
-      console.error(err);
-      toast.error(err.message);
+      handleError(err);
     });
   }, [currentRequestParams]);
 
@@ -171,9 +170,8 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
       setTableReady(true);
     } else if (res.status === 401) {
-      refreshAccessToken(history)
-        .then((refreshedToken) => getApplications(options, refreshedToken))
-        .catch(err => toast.error(err.message));
+      const refreshedToken = await refreshAccessToken(history);
+      await getApplications(options, refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
