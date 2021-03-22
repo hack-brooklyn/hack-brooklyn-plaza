@@ -1,7 +1,13 @@
 import { History, LocationState } from 'history';
+import { Query } from 'accesscontrol';
+import { toast } from 'react-toastify';
 
-import store from 'store';
 import { logIn, logOut, setJwtAccessToken } from 'actions/auth';
+import { setUserData } from 'actions/user';
+import { initialUserState } from 'reducers/user';
+import { handleError } from 'util/plazaUtils';
+import ac, { Roles } from 'security/accessControl';
+import store from 'store';
 import {
   AuthenticationError,
   AuthResponse,
@@ -9,14 +15,12 @@ import {
   InvalidCredentialsError,
   MismatchedPasswordError,
   PasswordTooShortError,
+  RoleNotFoundError,
   SetPasswordData,
   TokenExpiredError,
   UserState
 } from 'types';
 import { API_ROOT } from 'index';
-import { setUserData } from 'actions/user';
-import { initialUserState } from 'reducers/user';
-import { toast } from 'react-toastify';
 
 export interface LoginData {
   email: string;
@@ -168,4 +172,14 @@ export const validatePassword = (passwordData: SetPasswordData): void => {
   if (password.length < 12) {
     throw new PasswordTooShortError();
   }
+};
+
+/**
+ * Equivalent to AccessControl's ac.can() but with a null check.
+ * Will throw an error if `role` is null.
+ * @param role The role to check.
+ */
+export const acCan = (role: Roles | null): Query => {
+  if (role === null) throw new RoleNotFoundError();
+  return ac.can(role);
 };
