@@ -219,7 +219,7 @@ const ViewSubmittedApplication = (): JSX.Element => {
         <HeadingActions>
           <RemainingApplications>
             {reviewModeOn && currentIndex !== null &&
-            `${appNumbers.length - currentIndex}4 Remaining`}
+            `${appNumbers.length - currentIndex} Remaining`}
           </RemainingApplications>
 
           <HeadingButtons>
