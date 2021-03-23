@@ -23,7 +23,6 @@ import org.hackbrooklyn.plaza.repository.UserRepository;
 import org.hackbrooklyn.plaza.security.Roles;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
