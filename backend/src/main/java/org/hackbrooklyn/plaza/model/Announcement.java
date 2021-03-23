@@ -29,10 +29,12 @@ public class Announcement {
     @NotNull
     private User author;
 
+    @Column(name= "participants_only")
+    private boolean participantsOnly;
+
     @Column(name = "time_created")
     @CreationTimestamp
     private LocalDateTime timeCreated;
-
 
     @Column(name = "last_updated")
     @CreationTimestamp
