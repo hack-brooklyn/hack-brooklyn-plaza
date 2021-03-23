@@ -53,8 +53,10 @@ const HeadingActions = (props: HeadingActionsProps): JSX.Element => {
 
 const ActionToggle = styled(Dropdown.Toggle)`
   margin-top: 1.5rem;
-  display: block;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledDropdownMenu = styled(Dropdown.Menu)`
