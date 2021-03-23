@@ -14,6 +14,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Slf4j
 @Configuration
@@ -35,9 +37,13 @@ public class ApplicationContext {
         return template;
     }
 
+    S3Client s3Client() {
+        return S3Client.builder().build();
+    }
+
     @Bean
-    AwsS3Utils awsS3Utils() {
-        return new AwsS3Utils();
+    S3Presigner s3Presigner() {
+        return S3Presigner.create();
     }
 
     @Bean
