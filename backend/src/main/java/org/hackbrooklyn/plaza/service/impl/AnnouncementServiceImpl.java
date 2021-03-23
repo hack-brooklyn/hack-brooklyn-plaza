@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -28,13 +29,17 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Collection<Announcement> getMultipleAnnouncements(int page, int limit) {
+    public Collection<Announcement> getMultipleAnnouncements(boolean participant, int page, int limit) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Announcement> criteriaQuery = criteriaBuilder.createQuery(Announcement.class);
         Root<Announcement> from = criteriaQuery.from(Announcement.class);
         CriteriaQuery<Announcement> select = criteriaQuery.select(from);
-        CriteriaQuery<Announcement> sorted = select.orderBy(criteriaBuilder.desc(from.get("lastUpdated")));
+
+        Predicate participantOnlyPredicate = criteriaBuilder.equal(from.get("participantsOnly"), participant);
+        CriteriaQuery<Announcement> filter = participant ? select : select.where(participantOnlyPredicate);
+
+        CriteriaQuery<Announcement> sorted = filter.orderBy(criteriaBuilder.desc(from.get("lastUpdated")));
         TypedQuery<Announcement> typedQuery = entityManager.createQuery(sorted);
         typedQuery.setFirstResult((page - 1) * limit);
         typedQuery.setMaxResults(limit);
@@ -43,19 +48,21 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public int createNewAnnouncement(String body, User author) {
+    public int createNewAnnouncement(String body, boolean participantsOnly, User author) {
         Announcement announcement = new Announcement();
         announcement.setBody(body);
         announcement.setAuthor(author);
+        announcement.setParticipantsOnly(participantsOnly);
         Announcement newAnnouncement = announcementRepository.save(announcement);
 
         return newAnnouncement.getId();
     }
 
     @Override
-    public void updateAnnouncement(int id, String body) {
+    public void updateAnnouncement(int id, String body, boolean participantsOnly) {
         Announcement announcement = announcementRepository.getOne(id);
         announcement.setBody(body);
+        announcement.setParticipantsOnly(participantsOnly);
         announcement.setLastUpdated(LocalDateTime.now());
         announcementRepository.save(announcement);
     }
