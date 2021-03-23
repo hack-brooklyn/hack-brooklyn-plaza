@@ -37,6 +37,7 @@ public class Roles {
 
                 // Applications
                 Authorities.APPLICATIONS_READ,
+                Authorities.APPLICATIONS_RESUME_DOWNLOAD,
                 Authorities.APPLICATIONS_UPDATE_DECISION,
                 Authorities.APPLICATIONS_DELETE,
 
