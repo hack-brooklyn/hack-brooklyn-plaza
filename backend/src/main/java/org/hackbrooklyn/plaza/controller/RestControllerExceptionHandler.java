@@ -178,4 +178,13 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ResumeNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleResumeNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No uploaded resume was found for the requested application.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
 }
