@@ -313,6 +313,7 @@ const HeadingButtonsText = css`
 const RemainingApplications = styled.div`
   ${HeadingButtonsText};
   margin-right: 0.25rem;
+  align-self: center;
 `;
 
 const LoadingText = styled.div`
