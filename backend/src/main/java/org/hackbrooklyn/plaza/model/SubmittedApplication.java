@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.opencsv.bean.CsvIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -130,6 +131,7 @@ public class SubmittedApplication {
     @Transient
     @NotNull
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @CsvIgnore
     private boolean acceptTocAndCoc;
 
     @Column(name = "share_resume_with_sponsors")
@@ -175,5 +177,15 @@ public class SubmittedApplication {
         UNDECIDED("UNDECIDED");
 
         private final String decision;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum ExportFormat {
+        CSV("CSV"),
+        JSON("JSON"),
+        XML("XML");
+
+        private final String exportType;
     }
 }

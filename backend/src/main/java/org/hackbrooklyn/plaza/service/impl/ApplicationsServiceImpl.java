@@ -1,6 +1,12 @@
 package org.hackbrooklyn.plaza.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.primitives.Ints;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.hackbrooklyn.plaza.dto.ApplicationManagerEntryDTO;
 import org.hackbrooklyn.plaza.dto.ApplicationNumbersDTO;
 import org.hackbrooklyn.plaza.dto.LinkDTO;
@@ -28,6 +34,9 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +44,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.hackbrooklyn.plaza.model.SubmittedApplication.Decision;
+import static org.hackbrooklyn.plaza.model.SubmittedApplication.ExportFormat;
 import static org.hackbrooklyn.plaza.repository.SubmittedApplicationRepository.ApplicationNumbersOnly;
 
 @Service
@@ -46,6 +56,9 @@ public class ApplicationsServiceImpl implements ApplicationsService {
     @Value("${AWS_SIGNED_URL_DURATION_MS}")
     private long AWS_SIGNED_URL_DURATION_MS;
 
+    private final ObjectMapper objectMapper;
+    // Autowiring the XmlMapper would turn all Spring responses into XML instead of JSON
+    private final XmlMapper xmlMapper = new XmlMapper();
     private final SubmittedApplicationRepository submittedApplicationRepository;
     private final UserRepository userRepository;
     private final EntityManager entityManager;
@@ -53,7 +66,8 @@ public class ApplicationsServiceImpl implements ApplicationsService {
     private final UsersUtils usersUtils;
 
     @Autowired
-    public ApplicationsServiceImpl(SubmittedApplicationRepository submittedApplicationRepository, UserRepository userRepository, EntityManager entityManager, S3Presigner s3Presigner, UsersUtils usersUtils) {
+    public ApplicationsServiceImpl(ObjectMapper objectMapper, SubmittedApplicationRepository submittedApplicationRepository, UserRepository userRepository, EntityManager entityManager, S3Presigner s3Presigner, UsersUtils usersUtils) {
+        this.objectMapper = objectMapper;
         this.submittedApplicationRepository = submittedApplicationRepository;
         this.userRepository = userRepository;
         this.entityManager = entityManager;
@@ -198,5 +212,39 @@ public class ApplicationsServiceImpl implements ApplicationsService {
                 .collect(Collectors.toList());
 
         return new ApplicationNumbersDTO(Ints.toArray(applicationNumbers));
+    }
+
+    @Override
+    public byte[] exportApplications(ExportFormat exportType) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+        List<SubmittedApplication> applications = submittedApplicationRepository.findAll();
+
+        byte[] exportedFile;
+        switch (exportType) {
+            case CSV:
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream);
+                StatefulBeanToCsv<SubmittedApplication> beanToCsv = new StatefulBeanToCsvBuilder<SubmittedApplication>(outputStreamWriter).build();
+
+                beanToCsv.write(applications);
+                outputStreamWriter.close();
+
+                exportedFile = byteArrayOutputStream.toByteArray();
+                break;
+            case JSON:
+                exportedFile = objectMapper
+                        .writerWithDefaultPrettyPrinter()
+                        .writeValueAsBytes(applications);
+                break;
+            case XML:
+                exportedFile = xmlMapper
+                        .writerWithDefaultPrettyPrinter()
+                        .withRootName("applications")
+                        .writeValueAsBytes(applications);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + exportType);
+        }
+
+        return exportedFile;
     }
 }
