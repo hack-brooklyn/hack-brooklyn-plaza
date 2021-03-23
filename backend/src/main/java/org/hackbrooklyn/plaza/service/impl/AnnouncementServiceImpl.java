@@ -37,7 +37,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         CriteriaQuery<Announcement> select = criteriaQuery.select(from);
 
         Predicate participantOnlyPredicate = criteriaBuilder.equal(from.get("participantsOnly"), participant);
-        CriteriaQuery<Announcement> filter = !participant ? select.where(participantOnlyPredicate) : select;
+        CriteriaQuery<Announcement> filter = participant ? select : select.where(participantOnlyPredicate);
 
         CriteriaQuery<Announcement> sorted = filter.orderBy(criteriaBuilder.desc(from.get("lastUpdated")));
         TypedQuery<Announcement> typedQuery = entityManager.createQuery(sorted);
