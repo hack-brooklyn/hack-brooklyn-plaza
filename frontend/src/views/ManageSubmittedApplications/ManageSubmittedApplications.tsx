@@ -1,7 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
+import queryString from 'query-string';
+import { saveAs } from 'file-saver';
+import dayjs from 'dayjs';
+import { toast } from 'react-toastify';
 import { Column, useSortBy, useTable } from 'react-table';
 import Select from 'react-select';
 import Button from 'react-bootstrap/Button';
@@ -9,8 +13,7 @@ import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import queryString from 'query-string';
-import dayjs from 'dayjs';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 import { HeadingSection, StyledH1 } from 'commonStyles';
 import { acCan, refreshAccessToken } from 'util/auth';
@@ -18,6 +21,7 @@ import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { Resources } from 'security/accessControl';
 import {
   ApplicationDecisions,
+  ApplicationExportTypes,
   Breakpoints,
   ConnectionError,
   GetApplicationsRequestParams,
@@ -29,7 +33,6 @@ import {
 } from 'types';
 import { API_ROOT } from 'index';
 import { enterApplicationReviewMode } from 'actions/applicationReview';
-import { toast } from 'react-toastify';
 
 interface DecisionOptionTypes {
   value: ApplicationDecisions;
@@ -66,6 +69,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
 
   const [tableReady, setTableReady] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   // Request parameters
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,6 +77,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
   // Table data
   const [applications, setApplications] = useState<SubmittedApplicationLite[]>([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalFoundApplications, setTotalFoundApplications] = useState(0);
   const [totalUndecidedApplications, setTotalUndecidedApplications] = useState(0);
 
   useEffect(() => {
@@ -175,6 +180,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
       setApplications(resBody.applications);
       setTotalPages(resBody.pages);
+      setTotalFoundApplications(resBody.totalFoundApplications);
       setTotalUndecidedApplications(resBody.totalUndecidedApplications);
 
       setTableReady(true);
@@ -189,34 +195,100 @@ const ManageSubmittedApplications = (): JSX.Element => {
     }
   };
 
+  const exportApplications = async (type: ApplicationExportTypes, overriddenAccessToken?: string) => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
+
+    let res;
+    try {
+      res = await fetch(`${API_ROOT}/applications/export?type=${type}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    } catch (err) {
+      throw new ConnectionError();
+    }
+
+    if (res.status === 200) {
+      const exportedFileBlob = await res.blob();
+      saveAs(exportedFileBlob, `exported-applications.${type.toLowerCase()}`);
+    } else if (res.status === 401) {
+      refreshAccessToken(history)
+        .then((refreshedToken) => exportApplications(type, refreshedToken))
+        .catch(err => toast.error(err.message));
+    } else if (res.status === 403) {
+      history.push('/');
+      throw new NoPermissionError();
+    } else {
+      throw new UnknownError();
+    }
+  };
+
+  const handleExportApplications = async (type: ApplicationExportTypes) => {
+    setIsExporting(true);
+
+    try {
+      await exportApplications(type);
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <>
       <HeadingSection>
         <StyledH1>Manage Applications</StyledH1>
 
-        <ReviewModeContainer>
+        <ManageActions>
           <ApplicationCount>
             {tableReady
-              ? `${totalUndecidedApplications} Undecided Application${totalUndecidedApplications === 1 ? '' : 's'}`
+              ? `${totalUndecidedApplications} Awaiting Review`
               : 'Loading...'}
           </ApplicationCount>
 
           {tableReady &&
-          <EnterReviewModeButton
-            onClick={() => {
-              try {
-                dispatch(enterApplicationReviewMode());
-              } catch (err) {
-                console.error(err);
-                toast.error(err.message);
-              }
-            }}
-            disabled={reviewModeLoading || totalUndecidedApplications < 1}
-          >
-            {reviewModeLoading ? 'Loading...' : 'Enter Review Mode'}
-          </EnterReviewModeButton>
+          <ActionButtons>
+            <EnterReviewModeButton
+              onClick={() => {
+                try {
+                  dispatch(enterApplicationReviewMode());
+                } catch (err) {
+                  handleError(err);
+                }
+              }}
+              disabled={reviewModeLoading || totalUndecidedApplications < 1}
+            >
+              {reviewModeLoading ? 'Loading...' : 'Enter Review Mode'}
+            </EnterReviewModeButton>
+
+            <Dropdown>
+              <ExportDropdownButton
+                variant="secondary"
+                disabled={isExporting}
+              >
+                Export
+              </ExportDropdownButton>
+
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => handleExportApplications(ApplicationExportTypes.CSV)}>
+                  CSV
+                </Dropdown.Item>
+
+                <Dropdown.Item onClick={() => handleExportApplications(ApplicationExportTypes.JSON)}>
+                  JSON
+                </Dropdown.Item>
+
+                <Dropdown.Item onClick={() => handleExportApplications(ApplicationExportTypes.XML)}>
+                  XML
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </ActionButtons>
           }
-        </ReviewModeContainer>
+        </ManageActions>
       </HeadingSection>
 
       <FilterSection>
@@ -305,7 +377,10 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
       <PageControls>
         <PageIndicator>
-          Page {currentPage} of {totalPages}
+          {totalFoundApplications > 0
+            ? `Page ${currentPage} of ${totalPages} (${totalFoundApplications} result${totalFoundApplications === 1 ? '' : 's'} found)`
+            : 'No results found'
+          }
         </PageIndicator>
 
         <PageButtonContainer>
@@ -341,7 +416,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
   );
 };
 
-const ReviewModeContainer = styled.div`
+const ManageActions = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -360,19 +435,45 @@ const ApplicationCount = styled.div`
 
   @media screen and (min-width: ${Breakpoints.Large}px) {
     margin-bottom: 0;
+    margin-right: 1rem;
   }
 `;
 
-const EnterReviewModeButton = styled(Button)`
+const ActionButtons = styled.div`
+  width: 100%;
+  display: block;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    width: auto;
+    display: flex;
+    flex-direction: row;
+  }
+`;
+
+const ButtonStyles = css`
   width: 100%;
 
   @media screen and (min-width: ${Breakpoints.Medium}px) {
     width: auto;
   }
+`;
+
+const EnterReviewModeButton = styled(Button)`
+  ${ButtonStyles};
+  margin-bottom: 0.75rem;
 
   @media screen and (min-width: ${Breakpoints.Large}px) {
-    margin-left: 1rem;
+    margin-bottom: 0;
+    margin-right: 1rem;
   }
+`;
+
+const ExportDropdownButton = styled(Dropdown.Toggle)`
+  ${ButtonStyles};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 `;
 
 const FilterSection = styled.section`
