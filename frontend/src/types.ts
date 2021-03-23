@@ -263,7 +263,7 @@ export interface GetApplicationsRequestParams {
 export interface GetApplicationsResponse {
   applications: SubmittedApplicationLite[];
   pages: number;
-  totalApplications: number;
+  totalFoundApplications: number;
   totalUndecidedApplications: number;
 }
 
@@ -288,6 +288,12 @@ export enum ApplicationDecisions {
   Accepted = 'ACCEPTED',
   Rejected = 'REJECTED',
   Undecided = 'UNDECIDED'
+}
+
+export enum ApplicationExportTypes {
+  CSV = 'CSV',
+  JSON = 'JSON',
+  XML = 'XML'
 }
 
 // The Bootstrap breakpoints in pixels.

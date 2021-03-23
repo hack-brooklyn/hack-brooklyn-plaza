@@ -167,6 +167,7 @@ public class SubmittedApplication {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "activated_user", referencedColumnName = "id", unique = true)
     @JsonIgnore
+    @CsvIgnore
     private User activatedUser;
 
     @Getter
