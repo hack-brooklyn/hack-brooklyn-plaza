@@ -263,7 +263,7 @@ export interface GetApplicationsRequestParams {
 export interface GetApplicationsResponse {
   applications: SubmittedApplicationLite[];
   pages: number;
-  totalApplications: number;
+  totalFoundApplications: number;
   totalUndecidedApplications: number;
 }
 
@@ -288,13 +288,6 @@ export enum ApplicationDecisions {
   Accepted = 'ACCEPTED',
   Rejected = 'REJECTED',
   Undecided = 'UNDECIDED'
-}
-
-// The possible user roles for activated users.
-export enum Roles {
-  Admin = 'ROLE_ADMIN',
-  Volunteer = 'ROLE_VOLUNTEER',
-  Participant = 'ROLE_PARTICIPANT'
 }
 
 export enum ApplicationExportTypes {
