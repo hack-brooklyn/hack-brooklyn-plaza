@@ -2,7 +2,6 @@ package org.hackbrooklyn.plaza;
 
 import com.sendgrid.SendGrid;
 import lombok.extern.slf4j.Slf4j;
-import org.hackbrooklyn.plaza.util.AwsS3Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +36,7 @@ public class ApplicationContext {
         return template;
     }
 
+    @Bean
     S3Client s3Client() {
         return S3Client.builder().build();
     }
