@@ -216,63 +216,67 @@ const ViewSubmittedApplication = (): JSX.Element => {
       <HeadingSection>
         <StyledH1>View Application</StyledH1>
 
-        <HeadingButtons>
+        <HeadingActions>
           <RemainingApplications>
             {reviewModeOn && currentIndex !== null &&
-            `${appNumbers.length - currentIndex} application${appNumbers.length - currentIndex === 1 ? '' : 's'} remaining`}
+            `${appNumbers.length - currentIndex}4 Remaining`}
           </RemainingApplications>
 
-          {pageReady ? (
-            <>
-              <StyledButton
-                variant="success"
-                onClick={() => updateDecision(ApplicationDecisions.Accepted)}
-                disabled={actionProcessing}
-              >
-                {reviewModeOn ? 'Accept' : 'Set Accepted'}
-              </StyledButton>
+          <HeadingButtons>
+            <DecisionButtons>
+              {pageReady ? (
+                <>
+                  <StyledButton
+                    variant="success"
+                    onClick={() => updateDecision(ApplicationDecisions.Accepted)}
+                    disabled={actionProcessing}
+                  >
+                    Accept
+                  </StyledButton>
 
-              <StyledButton
-                variant="danger"
-                onClick={() => updateDecision(ApplicationDecisions.Rejected)}
-                disabled={actionProcessing}
-              >
-                {reviewModeOn ? 'Reject' : 'Set Rejected'}
-              </StyledButton>
+                  <StyledButton
+                    variant="danger"
+                    onClick={() => updateDecision(ApplicationDecisions.Rejected)}
+                    disabled={actionProcessing}
+                  >
+                    Reject
+                  </StyledButton>
 
-              <StyledButton
-                variant="secondary"
-                onClick={() => updateDecision(ApplicationDecisions.Undecided)}
-                disabled={actionProcessing}
-              >
-                {reviewModeOn ? 'Skip' : 'Set Undecided'}
-              </StyledButton>
-            </>
-          ) : (
-            <LoadingText>
-              Loading...
-            </LoadingText>
-          )}
+                  <StyledButton
+                    variant="secondary"
+                    onClick={() => updateDecision(ApplicationDecisions.Undecided)}
+                    disabled={actionProcessing}
+                  >
+                    Skip
+                  </StyledButton>
+                </>
+              ) : (
+                <LoadingText>
+                  Loading...
+                </LoadingText>
+              )}
+            </DecisionButtons>
 
-          {reviewModeOn ? (
-            <StyledButton
-              variant="primary"
-              onClick={() => {
-                dispatch(exitApplicationReviewMode());
-                history.push('/admin/applications');
-              }}
-            >
-              Exit Review Mode
-            </StyledButton>
-          ) : (
-            <StyledLinkButton
-              to="/admin/applications"
-              variant="primary"
-            >
-              Back to Applications
-            </StyledLinkButton>
-          )}
-        </HeadingButtons>
+            {reviewModeOn ? (
+              <StyledButton
+                variant="primary"
+                onClick={() => {
+                  dispatch(exitApplicationReviewMode());
+                  history.push('/admin/applications');
+                }}
+              >
+                Exit Review Mode
+              </StyledButton>
+            ) : (
+              <StyledLinkButton
+                to="/admin/applications"
+                variant="primary"
+              >
+                Back to Applications
+              </StyledLinkButton>
+            )}
+          </HeadingButtons>
+        </HeadingActions>
       </HeadingSection>
 
       {pageReady && applicationData && (
@@ -310,44 +314,80 @@ const HeadingButtonsText = css`
   font-weight: bold;
 `;
 
+const CommonButtonStyles = css`
+  margin-bottom: 0.75rem;
+  width: 100%;
+
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    margin-bottom: 0;
+    width: auto;
+
+    &:not(:last-child) {
+      margin-right: 1rem;
+    }
+  }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-right: 1rem;
+  }
+`;
+
+const HeadingActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    flex-direction: row;
+    margin-top: 0;
+  }
+`;
+
+const HeadingButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 0;
+  }
+`;
+
+const DecisionButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    width: auto;
+    flex-direction: row;
+    margin-bottom: 1rem;
+  }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-bottom: 0;
+  }
+`;
+
 const RemainingApplications = styled.div`
   ${HeadingButtonsText};
-  margin-right: 0.25rem;
+  margin-bottom: 1rem;
   align-self: center;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    display: block;
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
 `;
 
 const LoadingText = styled.div`
   ${HeadingButtonsText};
   margin-left: 5.75rem;
   margin-right: 5rem;
-`;
-
-const HeadingButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 2.5rem;
-
-  @media screen and (min-width: ${Breakpoints.Medium}px) {
-    flex-direction: row;
-    justify-content: center;
-    margin-top: 2rem;
-  }
-
-  @media screen and (min-width: ${Breakpoints.Large}px) {
-    margin-top: 0;
-  }
-`;
-
-const CommonButtonStyles = css`
-  margin-bottom: 0.75rem;
-
-  @media screen and (min-width: ${Breakpoints.Medium}px) {
-    margin-bottom: 0;
-
-    &:not(:first-child) {
-      margin-left: 1rem;
-    }
-  }
 `;
 
 const StyledButton = styled(Button)`
