@@ -441,11 +441,15 @@ const ApplicationCount = styled.div`
 
 const ActionButtons = styled.div`
   width: 100%;
-  display: block;
+  display: flex;
+  flex-direction: column;
 
   @media screen and (min-width: ${Breakpoints.Medium}px) {
     width: auto;
-    display: flex;
+    align-items: center;
+  }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
     flex-direction: row;
   }
 `;
