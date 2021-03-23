@@ -54,7 +54,7 @@ const SubmittedApplicationResume = (): JSX.Element => {
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/applications/${appNumber}/generateResumeLinks`, {
+      res = await fetch(`${API_ROOT}/applications/${appNumber}/generateResumeLink`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
