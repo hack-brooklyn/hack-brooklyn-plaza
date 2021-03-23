@@ -7,11 +7,11 @@ import java.util.Collection;
 
 public interface AnnouncementService {
 
-    Collection<Announcement> getMultipleAnnouncements(int page, int limit);
+    Collection<Announcement> getMultipleAnnouncements(boolean participant, int page, int limit);
 
-    int createNewAnnouncement(String body, User author);
+    int createNewAnnouncement(String body, boolean participantsOnly, User author);
 
-    void updateAnnouncement(int id, String body);
+    void updateAnnouncement(int id, String body, boolean participantsOnly);
 
     void deleteAnnouncement(int id);
 
