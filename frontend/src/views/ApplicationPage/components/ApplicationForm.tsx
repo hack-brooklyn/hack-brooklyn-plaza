@@ -1,16 +1,16 @@
 import React from 'react';
-import styled from 'styled-components/macro';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import cloneDeep from 'lodash.clonedeep';
 import { toast } from 'react-toastify';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 
 import { Agreements, PartFour, PartOne, PartThree, PartTwo } from './FormParts';
+import { StyledSubmitButton } from 'commonStyles';
 import { toastValidationErrors } from 'util/toastValidationErrors';
 import { SubmittingApplication } from 'types';
-import countries from 'assets/data/countries.json';
 import { API_ROOT, PRIORITY_APPLICATIONS_ACTIVE } from 'index';
+
+import countries from 'assets/data/countries.json';
 
 export interface FormPartProps {
   formik: FormikProps<SubmittingApplication>;
@@ -153,10 +153,5 @@ export const countryOptions = countries.map((country) => ({
   value: country.country,
   label: country.country
 }));
-
-export const StyledSubmitButton = styled(Button)`
-  display: block;
-  margin: 2rem auto;
-`;
 
 export default ApplicationForm;

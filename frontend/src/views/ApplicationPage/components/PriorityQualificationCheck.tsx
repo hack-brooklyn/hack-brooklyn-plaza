@@ -6,8 +6,8 @@ import Alert from 'react-bootstrap/Alert';
 import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';
+import { StyledSubmitButton } from 'commonStyles';
 import { toastValidationErrors } from 'util/toastValidationErrors';
-import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
 import { API_ROOT } from 'index';
 
 interface PriorityQualificationCheckProps {

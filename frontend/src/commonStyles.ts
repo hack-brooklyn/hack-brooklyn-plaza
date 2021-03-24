@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components/macro';
+import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import NavLink from 'react-bootstrap/NavLink';
 
@@ -104,6 +105,11 @@ export const HeadingSection = styled.section`
     justify-content: space-between;
     align-items: center;
   }
+`;
+
+export const StyledSubmitButton = styled(Button)`
+  display: block;
+  margin: 2rem auto;
 `;
 
 export const ButtonActiveOverrideStyles = css`
