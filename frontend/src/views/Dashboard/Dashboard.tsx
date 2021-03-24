@@ -2,17 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { AnnouncementBrowser, HeadingActions } from 'components';
-import {
-  ApplicationStatusSection,
-  ChecklistSection,
-  CountdownSection,
-} from './components';
+import { ApplicationStatusSection, ChecklistSection, CountdownSection } from './components';
 import { HeadingSection, StyledCenteredMarginH2, StyledH1 } from 'commonStyles';
-import ac, {
-  AnnouncementsAttributes,
-  Resources,
-  Roles,
-} from 'security/accessControl';
+import ac, { AnnouncementsAttributes, Resources, Roles } from 'security/accessControl';
 import { MenuAction, RootState } from 'types';
 
 import listIcon from 'assets/icons/list.svg';
