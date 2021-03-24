@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 
 import {
   Activate,
+  AnnouncementView,
   ApplicationLanding,
   ApplicationPage,
   Dashboard,
@@ -12,12 +13,14 @@ import {
   Login,
   ManageApplications,
   SubmittedApplicationResume,
-  ViewSubmittedApplication
+  ViewSubmittedApplication,
 } from 'views';
 import { RootState } from 'types';
 
 const Routes = (): JSX.Element => {
-  const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const userIsLoggedIn = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
 
   return (
     <Switch>
@@ -51,6 +54,10 @@ const Routes = (): JSX.Element => {
 
       <Route path="/resetpassword">
         <ForgotPassword />
+      </Route>
+
+      <Route path="/announcements">
+        <AnnouncementView />
       </Route>
 
       <Route path="/" exact>
