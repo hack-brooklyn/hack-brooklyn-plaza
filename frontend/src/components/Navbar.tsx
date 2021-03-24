@@ -2,6 +2,8 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { action as toggleMenu } from 'redux-burger-menu';
 import styled from 'styled-components/macro';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import { LinkContainer } from 'react-router-bootstrap';
 
 import { LinkButtonNavItem, LinkNavItem, ProfileDropdownMenu } from 'components';
 import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'commonStyles';
@@ -56,11 +58,28 @@ export const LoggedInNavItems = (): JSX.Element => {
 
   return (
     <>
+      {userRole === Roles.Admin && (
+        <StyledNavDropdown title="Admin" id="admin-nav-dropdown">
+          <LinkContainer to="/admin/applications">
+            <NavDropdown.Item>Manage Applications</NavDropdown.Item>
+          </LinkContainer>
+
+          <LinkContainer to="/admin/users/create">
+            <NavDropdown.Item>Create User Account</NavDropdown.Item>
+          </LinkContainer>
+
+          <LinkContainer to="/admin/users/setrole">
+            <NavDropdown.Item>Set User Role</NavDropdown.Item>
+          </LinkContainer>
+        </StyledNavDropdown>
+      )}
+
       {/* Everyone can use the dashboard */}
       <LinkNavItem to="/">Dashboard</LinkNavItem>
 
       {userRole !== null && enumHasValue(Roles, userRole) && (
         <>
+
           {ac.can(userRole).readAny(Resources.Applications).granted &&
           <LinkNavItem to="/announcements">Announcements</LinkNavItem>}
 
@@ -90,9 +109,11 @@ export const LoggedOutNavItems = (): JSX.Element => {
       <LinkButtonNavItem variant="outline-primary" to="/activate">
         Activate Account
       </LinkButtonNavItem>
+
       <LinkButtonNavItem variant="primary" to="/login">
         Log In
       </LinkButtonNavItem>
+
       {APPLICATIONS_ACTIVE && (
         <LinkButtonNavItem variant="success" to="/apply">
           Apply Now
@@ -135,6 +156,12 @@ const NavLinks = styled.div`
 
   ${StyledNavLink}:not(:first-child), .btn {
     margin-left: 0.5rem;
+  }
+`;
+
+const StyledNavDropdown = styled(NavDropdown)`
+  & > a {
+    padding-left: 0;
   }
 `;
 
