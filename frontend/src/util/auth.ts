@@ -18,7 +18,7 @@ import {
   RoleNotFoundError,
   SetPasswordData,
   TokenExpiredError,
-  UserState
+  UserState,
 } from 'types';
 import { API_ROOT } from 'index';
 

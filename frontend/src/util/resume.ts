@@ -10,7 +10,11 @@ export const getResumeType = (resumeKey: string): ResumeType => {
     return ResumeType.Pdf;
   } else if (lastFourChars === '.doc' || lastFiveChars === '.docx') {
     return ResumeType.Word;
-  } else if (lastFourChars === '.jpg' || lastFiveChars === '.jpeg' || lastFourChars === '.png') {
+  } else if (
+    lastFourChars === '.jpg' ||
+    lastFiveChars === '.jpeg' ||
+    lastFourChars === '.png'
+  ) {
     return ResumeType.Image;
   } else {
     return ResumeType.Unknown;
