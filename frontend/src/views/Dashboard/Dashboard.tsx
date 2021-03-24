@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { HeadingActions } from 'components';
+import { AnnouncementBrowser, HeadingActions } from 'components';
 import {
   ApplicationStatusSection,
   ChecklistSection,
@@ -18,7 +18,6 @@ import { MenuAction, RootState } from 'types';
 import listIcon from 'assets/icons/list.svg';
 import announcementIcon from 'assets/icons/announcement.svg';
 import calendarPlusIcon from 'assets/icons/calendar-plus.svg';
-import AnnouncementBrowser from '../../components/AnnouncementBrowser';
 
 const dashboardActions: MenuAction[] = [
   {

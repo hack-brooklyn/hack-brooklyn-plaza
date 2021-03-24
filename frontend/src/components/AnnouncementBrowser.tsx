@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components/macro';
+
+import { Announcement } from './index';
+import { refreshAccessToken } from '../util/auth';
+import { handleError } from '../util/plazaUtils';
+import { API_ROOT } from '../index';
 import {
   ConnectionError,
   NoPermissionError,
   RootState,
   UnknownError,
 } from '../types';
-import { API_ROOT } from '../index';
-import Announcement from './Announcement';
-import styled from 'styled-components/macro';
-import { handleError } from '../util/plazaUtils';
-import { refreshAccessToken } from '../util/auth';
-import { useHistory } from 'react-router-dom';
 
 const AnnouncementBrowser = (): JSX.Element => {
   const history = useHistory();

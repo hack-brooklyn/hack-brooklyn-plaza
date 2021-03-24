@@ -21,15 +21,13 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
   );
 };
 
-export default Announcement;
-
 const AnnouncementContainer = styled.div`
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  
   &:last-child {
     border: none;
   }
-
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
 `;
 
 const BodyText = styled.p`
@@ -39,3 +37,5 @@ const BodyText = styled.p`
 const LastUpdatedText = styled.p`
   font-weight: bold;
 `;
+
+export default Announcement;
