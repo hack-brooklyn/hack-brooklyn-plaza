@@ -17,7 +17,7 @@ interface AnnouncementProps {
   lastUpdated: string;
   displayControls: boolean;
   id: number;
-  toggleRefresh: any;
+  toggleRefresh: () => void;
 }
 
 dayjs.extend(relativeTime);
