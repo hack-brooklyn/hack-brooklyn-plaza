@@ -57,12 +57,15 @@ const BurgerMenu = (): JSX.Element => {
 
                 <LoggedInMenuContainer>
                   <LoggedInNavItems />
-                  <LinkNavItem to="/settings">
-                    Settings
-                  </LinkNavItem>
+
+                  {/*<LinkNavItem to="/settings">*/}
+                  {/*  Settings*/}
+                  {/*</LinkNavItem>*/}
+
                   <StyledNavLink href="mailto:contact@hackbrooklyn.org">
                     Contact Us
                   </StyledNavLink>
+
                   <LogOutButton
                     variant="danger"
                     onClick={() => handleLogOut(history)}
