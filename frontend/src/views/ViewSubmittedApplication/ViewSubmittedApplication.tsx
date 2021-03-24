@@ -247,7 +247,7 @@ const ViewSubmittedApplication = (): JSX.Element => {
                     onClick={() => updateDecision(ApplicationDecisions.Undecided)}
                     disabled={actionProcessing}
                   >
-                    Skip
+                    {reviewModeOn ? 'Skip' : 'Undecided'}
                   </StyledButton>
                 </>
               ) : (
