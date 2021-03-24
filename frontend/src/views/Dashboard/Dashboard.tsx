@@ -2,43 +2,56 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { HeadingActions } from 'components';
-import { ApplicationStatusSection, ChecklistSection, CountdownSection } from './components';
-import { HeadingSection, StyledH1 } from 'commonStyles';
-import ac, { AnnouncementsAttributes, Resources, Roles } from 'security/accessControl';
+import {
+  ApplicationStatusSection,
+  ChecklistSection,
+  CountdownSection,
+} from './components';
+import { HeadingSection, StyledCenteredMarginH2, StyledH1 } from 'commonStyles';
+import ac, {
+  AnnouncementsAttributes,
+  Resources,
+  Roles,
+} from 'security/accessControl';
 import { MenuAction, RootState } from 'types';
 
 import listIcon from 'assets/icons/list.svg';
 import announcementIcon from 'assets/icons/announcement.svg';
 import calendarPlusIcon from 'assets/icons/calendar-plus.svg';
+import AnnouncementBrowser from '../../components/AnnouncementBrowser';
 
 const dashboardActions: MenuAction[] = [
   {
     link: '/admin/applications',
     text: 'Manage Applications',
     type: 'link',
-    icon: listIcon
+    icon: listIcon,
   },
   {
     link: '/announcements/post',
     text: 'Post New Announcement',
     type: 'link',
-    icon: announcementIcon
+    icon: announcementIcon,
   },
   {
     link: '/events/create',
     text: 'Create New Event',
     type: 'link',
-    icon: calendarPlusIcon
-  }
+    icon: calendarPlusIcon,
+  },
 ];
 
 const Dashboard = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
 
   const isUserAtLeastParticipant = (): boolean => {
-    return userRole !== null && ac.can(userRole)
-      .readAny(Resources.Announcements).attributes
-      .includes(AnnouncementsAttributes.ParticipantsOnly);
+    return (
+      userRole !== null &&
+      ac
+        .can(userRole)
+        .readAny(Resources.Announcements)
+        .attributes.includes(AnnouncementsAttributes.ParticipantsOnly)
+    );
   };
 
   return (
@@ -54,6 +67,11 @@ const Dashboard = (): JSX.Element => {
       {isUserAtLeastParticipant() && <CountdownSection />}
       <ApplicationStatusSection />
       {isUserAtLeastParticipant() && <ChecklistSection />}
+
+      <section>
+        <StyledCenteredMarginH2>What&apos;s New</StyledCenteredMarginH2>
+        <AnnouncementBrowser />
+      </section>
     </>
   );
 };
