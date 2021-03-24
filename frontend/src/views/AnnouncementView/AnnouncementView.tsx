@@ -5,7 +5,7 @@ import { AnnouncementBrowser, HeadingButton } from '../../components';
 import { HeadingSection, StyledH1 } from 'commonStyles';
 import { RootState } from '../../types';
 import ac, { Resources } from '../../security/accessControl';
-import penWhiteIcon from 'assets/icons/penWhite.svg';
+import postIcon from 'assets/icons/penWhite.svg';
 
 const AnnouncementView = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
@@ -31,7 +31,7 @@ const AnnouncementView = (): JSX.Element => {
         {isAbleToModify && (
           <HeadingButton
             type={'link'}
-            icon={penWhiteIcon}
+            icon={postIcon}
             text={'Post New'}
             link={'/announcements/post'}
             onClick={() => {

@@ -9,8 +9,8 @@ import { toast } from 'react-toastify';
 import { API_ROOT } from '../index';
 import { RootState } from '../types';
 import { handleError } from '../util/plazaUtils';
-import penBlackIcon from 'assets/icons/penBlack.svg';
-import trashIcon from 'assets/icons/trashIcon.svg';
+import editIcon from 'assets/icons/penBlack.svg';
+import deleteIcon from 'assets/icons/trashIcon.svg';
 
 interface AnnouncementProps {
   body: string;
@@ -54,13 +54,13 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       {displayControls && (
         <ControlContainer>
           <StyledAnchor to={`/announcements/${id}/edit`}>
-            <ButtonIcon src={penBlackIcon} alt={'Pen Icon'} />
+            <ButtonIcon src={editIcon} alt={'Edit Icon'} />
           </StyledAnchor>
           <StyledAnchor to={'/announcements'}>
             <ButtonIcon
-              src={trashIcon}
-              alt={'Trash Icon'}
-              onClick={deleteAnnouncement}
+              src={deleteIcon}
+              alt={'Delete Icon'}
+              onClick={confirmDeleteAnnouncement}
             />
           </StyledAnchor>
         </ControlContainer>
