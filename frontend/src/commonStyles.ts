@@ -21,7 +21,6 @@ export const StyledCenteredH1 = styled(StyledH1)`
 `;
 
 export const StyledCenteredMarginH1 = styled(StyledCenteredH1)`
-  text-align: center;
   margin-bottom: 2rem;
 `;
 
@@ -31,6 +30,14 @@ export const StyledH2 = styled.h2`
   @media screen and (min-width: ${Breakpoints.Large}px) {
     font-size: 2.25rem;
   }
+`;
+
+export const StyledCenteredH2 = styled(StyledH2)`
+  text-align: center;
+`;
+
+export const StyledCenteredMarginH2 = styled(StyledCenteredH2)`
+  margin-bottom: 2rem;
 `;
 
 export const StyledH3 = styled.h3`
