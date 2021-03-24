@@ -6,6 +6,7 @@ import {
   Activate,
   ApplicationLanding,
   ApplicationPage,
+  CreateUser,
   Dashboard,
   ForgotPassword,
   Landing,
@@ -21,6 +22,10 @@ const Routes = (): JSX.Element => {
 
   return (
     <Switch>
+      <Route path="/admin/users/create">
+        <CreateUser />
+      </Route>
+
       <Route path="/admin/applications/:applicationNumberParam/resume">
         <SubmittedApplicationResume />
       </Route>
