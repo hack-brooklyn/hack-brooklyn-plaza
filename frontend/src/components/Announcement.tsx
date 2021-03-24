@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import styled, { css } from 'styled-components/macro';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
@@ -7,7 +8,13 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { toast } from 'react-toastify';
 
 import { API_ROOT } from '../index';
-import { RootState } from '../types';
+import {
+  ConnectionError,
+  NoPermissionError,
+  RootState,
+  UnknownError,
+} from '../types';
+import { refreshAccessToken } from '../util/auth';
 import { handleError } from '../util/plazaUtils';
 import editIcon from 'assets/icons/penBlack.svg';
 import deleteIcon from 'assets/icons/trashIcon.svg';
@@ -24,26 +31,48 @@ dayjs.extend(relativeTime);
 
 const Announcement = (props: AnnouncementProps): JSX.Element => {
   const { body, lastUpdated, displayControls, id, toggleRefresh } = props;
-
+  const history = useHistory();
   const accessToken = useSelector(
     (state: RootState) => state.auth.jwtAccessToken
   );
 
-  const deleteAnnouncement = async () => {
-    if (confirm('Are you sure?')) {
+  const confirmDeleteAnnouncement = async () => {
+    if (confirm('Are you sure you want to delete?')) {
       try {
-        await fetch(`${API_ROOT}/announcements/${id}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        await deleteAnnouncement();
         toast.success('Successfully deleted an announcement');
+        toggleRefresh();
       } catch (err) {
         handleError(err);
-      } finally {
-        toggleRefresh();
       }
+    }
+  };
+
+  const deleteAnnouncement = async (overriddenAccessToken?: string) => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
+
+    let res;
+    try {
+      res = await fetch(`${API_ROOT}/announcements/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (err) {
+      throw new ConnectionError();
+    }
+
+    if (res.status === 200) {
+      return;
+    } else if (res.status === 401) {
+      const refreshToken = await refreshAccessToken(history);
+      await deleteAnnouncement(refreshToken);
+    } else if (res.status === 403) {
+      history.push('/');
+      throw new NoPermissionError();
+    } else {
+      throw new UnknownError();
     }
   };
 
