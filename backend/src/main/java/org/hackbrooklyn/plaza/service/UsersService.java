@@ -1,5 +1,6 @@
 package org.hackbrooklyn.plaza.service;
 
+import org.hackbrooklyn.plaza.dto.CreateUserRequestDTO;
 import org.hackbrooklyn.plaza.dto.DecisionDTO;
 import org.hackbrooklyn.plaza.dto.TokenDTO;
 import org.hackbrooklyn.plaza.dto.UserDataDTO;
@@ -25,4 +26,6 @@ public interface UsersService {
     UserDataDTO getUserData(User user);
 
     DecisionDTO getApplicationDecision(User user);
+
+    void createUser(CreateUserRequestDTO userData);
 }
