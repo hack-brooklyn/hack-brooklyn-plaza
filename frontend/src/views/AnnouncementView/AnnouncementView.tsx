@@ -17,9 +17,7 @@ const AnnouncementView = (): JSX.Element => {
 
   const checkIfAbleToModify = (): boolean => {
     if (userRole !== null) {
-      const permissions = ac.can(userRole).createAny(Resources.Announcements)
-        .attributes;
-      return permissions.includes('*');
+      return ac.can(userRole).createAny(Resources.Announcements).granted;
     }
     return false;
   };
