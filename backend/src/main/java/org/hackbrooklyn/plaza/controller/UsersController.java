@@ -7,7 +7,6 @@ import org.hackbrooklyn.plaza.dto.DecisionDTO;
 import org.hackbrooklyn.plaza.dto.TokenDTO;
 import org.hackbrooklyn.plaza.dto.UserDataDTO;
 import org.hackbrooklyn.plaza.model.User;
-import org.hackbrooklyn.plaza.security.Roles;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Slf4j
