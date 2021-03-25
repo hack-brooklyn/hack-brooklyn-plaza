@@ -47,6 +47,9 @@ public class Roles {
                 Authorities.EVENTS_UPDATE,
                 Authorities.EVENTS_DELETE,
 
+                // Participant checklist
+                Authorities.PARTICIPANT_CHECKLIST_READ,
+
                 // Saved Events
                 Authorities.SAVED_EVENTS_ADD,
                 Authorities.SAVED_EVENTS_REMOVE,
@@ -70,13 +73,16 @@ public class Roles {
                 // Events
                 Authorities.EVENTS_READ,
 
+                // Participant checklist
+                Authorities.PARTICIPANT_CHECKLIST_READ,
+
                 // Saved Events
                 Authorities.SAVED_EVENTS_ADD,
                 Authorities.SAVED_EVENTS_REMOVE,
                 Authorities.SAVED_EVENTS_READ
         );
 
-        // Participants
+        // Applicants
         List<String> applicantAuthorities = Arrays.asList(
                 // Announcements
                 Authorities.ANNOUNCEMENTS_READ_PUBLIC
