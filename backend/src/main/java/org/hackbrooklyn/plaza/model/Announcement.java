@@ -29,7 +29,7 @@ public class Announcement {
     @NotNull
     private User author;
 
-    @Column(name= "participants_only")
+    @Column(name = "participants_only")
     @NotNull
     private boolean participantsOnly;
 
