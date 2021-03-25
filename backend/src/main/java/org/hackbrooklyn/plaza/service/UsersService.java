@@ -1,9 +1,6 @@
 package org.hackbrooklyn.plaza.service;
 
-import org.hackbrooklyn.plaza.dto.CreateUserRequestDTO;
-import org.hackbrooklyn.plaza.dto.DecisionDTO;
-import org.hackbrooklyn.plaza.dto.TokenDTO;
-import org.hackbrooklyn.plaza.dto.UserDataDTO;
+import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.model.User;
 import org.springframework.security.authentication.BadCredentialsException;
 
@@ -28,4 +25,6 @@ public interface UsersService {
     DecisionDTO getApplicationDecision(User user);
 
     void createUser(CreateUserRequestDTO userData);
+
+    void setRole(SetRoleDTO reqBody);
 }

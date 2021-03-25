@@ -8,10 +8,7 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import lombok.extern.slf4j.Slf4j;
-import org.hackbrooklyn.plaza.dto.CreateUserRequestDTO;
-import org.hackbrooklyn.plaza.dto.DecisionDTO;
-import org.hackbrooklyn.plaza.dto.TokenDTO;
-import org.hackbrooklyn.plaza.dto.UserDataDTO;
+import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.PasswordReset;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -316,6 +313,17 @@ public class UsersServiceImpl implements UsersService {
         createdUser.setRole(userData.getRole());
 
         userRepository.save(createdUser);
+    }
+
+    @Override
+    public void setRole(SetRoleDTO reqBody) {
+        User foundUser = userRepository
+                .findByEmail(reqBody.getEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        foundUser.setRole(reqBody.getRole());
+
+        userRepository.save(foundUser);
     }
 
     private void sendDynamicTemplateEmailUsingSendGrid(String templateId, Personalization personalization) throws IOException {
