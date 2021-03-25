@@ -9,8 +9,7 @@ import { RequiredFormLabel } from 'components';
 import { API_ROOT } from 'index';
 import { AuthResponse, KeyPasswordData, SetPasswordData } from 'types';
 import { logInAndRefreshUserData, validatePassword } from 'util/auth';
-import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
-import { StyledAuthForm } from 'commonStyles';
+import { StyledAuthForm, StyledSubmitButton } from 'commonStyles';
 import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
 const ActivateForm = (): JSX.Element => {

@@ -30,6 +30,7 @@ public class Announcement {
     private User author;
 
     @Column(name= "participants_only")
+    @NotNull
     private boolean participantsOnly;
 
     @Column(name = "time_created")

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
@@ -14,7 +14,11 @@ import {
   UnknownError,
 } from '../types';
 
-const AnnouncementBrowser = (): JSX.Element => {
+interface AnnouncementBrowserProps {
+  isAbleToModify?: boolean;
+}
+
+const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
   const history = useHistory();
 
   const accessToken = useSelector(
@@ -22,17 +26,22 @@ const AnnouncementBrowser = (): JSX.Element => {
   );
 
   const [announcements, setAnnouncements] = useState([]);
+  const [refreshAnnouncements, setRefreshAnnouncements] = useState(false);
 
   useEffect(() => {
     getAnnouncements().catch((err) => handleError(err));
-  }, []);
+  }, [refreshAnnouncements]);
+
+  const toggleRefresh = () => {
+    setRefreshAnnouncements(!refreshAnnouncements);
+  };
 
   const getAnnouncements = async (overriddenAccessToken?: string) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/announcements`, {
+      res = await fetch(`${API_ROOT}/announcements?limit=5`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -59,12 +68,15 @@ const AnnouncementBrowser = (): JSX.Element => {
   return (
     <AnnouncementBrowserContainer>
       {announcements.map((e, idx) => (
-        <Announcement key={idx} {...e} />
+        <Announcement key={idx} {...e} displayControls={props.isAbleToModify} toggleRefresh={toggleRefresh}/>
       ))}
     </AnnouncementBrowserContainer>
   );
 };
 
-const AnnouncementBrowserContainer = styled.div``;
+const AnnouncementBrowserContainer = styled.div`
+  margin: 1rem auto;
+  width: 80%;
+`;
 
 export default AnnouncementBrowser;

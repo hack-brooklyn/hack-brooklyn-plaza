@@ -4,23 +4,31 @@ import { Route, Switch } from 'react-router-dom';
 
 import {
   Activate,
+  AnnouncementView,
   ApplicationLanding,
   ApplicationPage,
+  CreateUser,
   Dashboard,
   ForgotPassword,
   Landing,
   Login,
   ManageApplications,
   SubmittedApplicationResume,
-  ViewSubmittedApplication
+  ViewSubmittedApplication,
 } from 'views';
 import { RootState } from 'types';
 
 const Routes = (): JSX.Element => {
-  const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const userIsLoggedIn = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
 
   return (
     <Switch>
+      <Route path="/admin/users/create">
+        <CreateUser />
+      </Route>
+
       <Route path="/admin/applications/:applicationNumberParam/resume">
         <SubmittedApplicationResume />
       </Route>
@@ -51,6 +59,10 @@ const Routes = (): JSX.Element => {
 
       <Route path="/resetpassword">
         <ForgotPassword />
+      </Route>
+
+      <Route path="/announcements">
+        <AnnouncementView />
       </Route>
 
       <Route path="/" exact>

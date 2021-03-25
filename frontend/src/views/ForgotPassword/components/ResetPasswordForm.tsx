@@ -6,12 +6,11 @@ import { toast } from 'react-toastify';
 import { FastField, Formik, FormikHelpers } from 'formik';
 
 import { RequiredFormLabel } from 'components';
-import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
+import { StyledAuthForm, StyledSubmitButton } from 'commonStyles';
 import { logInAndRefreshUserData, validatePassword } from 'util/auth';
+import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 import { API_ROOT } from 'index';
 import { AuthResponse, KeyPasswordData, SetPasswordData } from 'types';
-import { StyledAuthForm } from 'commonStyles';
-import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
 const ResetPasswordForm = (): JSX.Element => {
   const history = useHistory();

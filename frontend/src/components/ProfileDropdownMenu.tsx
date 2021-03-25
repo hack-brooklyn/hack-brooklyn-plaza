@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import { handleLogOut } from 'util/auth';
 import { RootState } from 'types';
@@ -85,22 +84,22 @@ const ProfileMenu = React.forwardRef<HTMLDivElement>(({ children, style, classNa
 });
 ProfileMenu.displayName = 'ProfileMenu';
 
-interface DropdownLinkItemProps {
-  to: string;
-  children: React.ReactNode;
-}
-
-const DropdownLinkItem = (props: DropdownLinkItemProps) => {
-  const { to, children } = props;
-
-  return (
-    <LinkContainer to={to}>
-      <StyledDropdownItem>
-        {children}
-      </StyledDropdownItem>
-    </LinkContainer>
-  );
-};
+// interface DropdownLinkItemProps {
+//   to: string;
+//   children: React.ReactNode;
+// }
+//
+// const DropdownLinkItem = (props: DropdownLinkItemProps) => {
+//   const { to, children } = props;
+//
+//   return (
+//     <LinkContainer to={to}>
+//       <StyledDropdownItem>
+//         {children}
+//       </StyledDropdownItem>
+//     </LinkContainer>
+//   );
+// };
 
 const MenuToggleButton = styled.button`
   border: none;

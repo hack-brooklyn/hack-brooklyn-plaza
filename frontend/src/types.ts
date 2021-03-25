@@ -405,3 +405,21 @@ export class RoleNotFoundError extends Error {
     this.message = 'A user role hasn\'t been assigned to you. Please contact us for further assistance.';
   }
 }
+
+// Thrown when a user account creation request is submitted, but an account already exists with the email provided.
+export class UserAlreadyExistsError extends Error {
+  constructor() {
+    super();
+    this.name = 'UserAlreadyExistsError';
+    this.message = 'An account with this email already exists.';
+  }
+}
+
+// Thrown when a user account creation request is submitted, but an account already exists with the email provided.
+export class InvalidSubmittedDataError extends Error {
+  constructor() {
+    super();
+    this.name = 'InvalidSubmittedDataError';
+    this.message = 'The submitted data failed validation. Please try again.';
+  }
+}

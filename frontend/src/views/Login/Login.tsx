@@ -6,9 +6,8 @@ import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';
-import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
 import { LoginData, logInUser } from 'util/auth';
-import { StyledAuthForm, StyledCenteredMarginH1 } from 'commonStyles';
+import { StyledAuthForm, StyledCenteredMarginH1, StyledSubmitButton } from 'commonStyles';
 
 const Login = (): JSX.Element => {
     const history = useHistory();
