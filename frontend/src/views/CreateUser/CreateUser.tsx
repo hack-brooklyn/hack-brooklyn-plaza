@@ -15,7 +15,7 @@ import {
   ConnectionError,
   InvalidSubmittedDataError,
   NoPermissionError,
-  Option,
+  roleOptions,
   RootState,
   UnknownError,
   UserAlreadyExistsError
@@ -30,16 +30,9 @@ interface CreateUserData {
   role: Roles | null;
 }
 
-const roleOptions: Option[] = [
-  { value: Roles.None, label: 'None' },
-  { value: Roles.Applicant, label: 'Applicant' },
-  { value: Roles.Participant, label: 'Participant' },
-  { value: Roles.Volunteer, label: 'Volunteer' },
-  { value: Roles.Admin, label: 'Admin' }
-];
-
 const CreateUser = (): JSX.Element => {
   const history = useHistory();
+
   const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
   const userRole = useSelector((state: RootState) => state.user.role);
 
@@ -53,9 +46,9 @@ const CreateUser = (): JSX.Element => {
   }, []);
 
   const initialValues: CreateUserData = {
-    email: '',
     firstName: '',
     lastName: '',
+    email: '',
     password: '',
     role: null
   };

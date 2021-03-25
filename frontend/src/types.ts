@@ -283,6 +283,14 @@ export interface PageParams {
   applicationNumberParam?: string;
 }
 
+export const roleOptions: Option[] = [
+  { value: Roles.None, label: 'None' },
+  { value: Roles.Applicant, label: 'Applicant' },
+  { value: Roles.Participant, label: 'Participant' },
+  { value: Roles.Volunteer, label: 'Volunteer' },
+  { value: Roles.Admin, label: 'Admin' }
+];
+
 // The possible decisions for hackathon applications.
 export enum ApplicationDecisions {
   Accepted = 'ACCEPTED',
@@ -421,5 +429,14 @@ export class InvalidSubmittedDataError extends Error {
     super();
     this.name = 'InvalidSubmittedDataError';
     this.message = 'The submitted data failed validation. Please try again.';
+  }
+}
+
+// Thrown when a user account was not found.
+export class UserNotFoundError extends Error {
+  constructor() {
+    super();
+    this.name = 'UserNotFoundError';
+    this.message = 'No user with the data you provided was found.';
   }
 }
