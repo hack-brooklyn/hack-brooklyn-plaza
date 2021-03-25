@@ -27,7 +27,7 @@ interface SetUserRoleData {
   role: Roles | null;
 }
 
-const SetUserRole = () => {
+const SetUserRole = (): JSX.Element => {
   const history = useHistory();
 
   const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
