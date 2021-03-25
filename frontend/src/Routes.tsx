@@ -14,9 +14,10 @@ import {
   Login,
   ManageApplications,
   SubmittedApplicationResume,
-  ViewSubmittedApplication,
+  ViewSubmittedApplication
 } from 'views';
 import { RootState } from 'types';
+import SetUserRole from 'views/SetUserRole';
 
 const Routes = (): JSX.Element => {
   const userIsLoggedIn = useSelector(
@@ -25,6 +26,10 @@ const Routes = (): JSX.Element => {
 
   return (
     <Switch>
+      <Route path="/admin/users/setrole">
+        <SetUserRole />
+      </Route>
+
       <Route path="/admin/users/create">
         <CreateUser />
       </Route>

@@ -8,12 +8,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { toast } from 'react-toastify';
 
 import { API_ROOT } from '../index';
-import {
-  ConnectionError,
-  NoPermissionError,
-  RootState,
-  UnknownError,
-} from '../types';
+import { ConnectionError, NoPermissionError, RootState, UnknownError } from '../types';
 import { refreshAccessToken } from '../util/auth';
 import { handleError } from '../util/plazaUtils';
 import editIcon from 'assets/icons/penBlack.svg';
