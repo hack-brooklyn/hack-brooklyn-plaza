@@ -8,6 +8,7 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import lombok.extern.slf4j.Slf4j;
+import org.hackbrooklyn.plaza.dto.CreateUserRequestDTO;
 import org.hackbrooklyn.plaza.dto.DecisionDTO;
 import org.hackbrooklyn.plaza.dto.TokenDTO;
 import org.hackbrooklyn.plaza.dto.UserDataDTO;
@@ -122,7 +123,7 @@ public class UsersServiceImpl implements UsersService {
             throw new InvalidKeyException();
         }
 
-        // Check if there is already an account activated with the email
+        // Check if there is already an existing account with the email
         SubmittedApplication activatedUserApplication = userActivation.getActivatingApplication();
         if (userRepository.findByEmail(activatedUserApplication.getEmail()).isPresent()) {
             throw new AccountAlreadyActivatedException();
@@ -130,6 +131,7 @@ public class UsersServiceImpl implements UsersService {
 
         // Activation key is valid, proceed to activate the user's account
         User activatedUser = new User();
+
         activatedUser.setFirstName(activatedUserApplication.getFirstName());
         activatedUser.setLastName(activatedUserApplication.getLastName());
         activatedUser.setEmail(activatedUserApplication.getEmail());
@@ -295,6 +297,25 @@ public class UsersServiceImpl implements UsersService {
 
         Decision decision = foundApplication.getDecision();
         return new DecisionDTO(decision);
+    }
+
+    @Override
+    public void createUser(CreateUserRequestDTO userData) {
+        // Check if there is already an existing account with the email
+        if (userRepository.findByEmail(userData.getEmail()).isPresent()) {
+            throw new AccountAlreadyActivatedException();
+        }
+
+        // No user exists, create the account
+        User createdUser = new User();
+
+        createdUser.setFirstName(userData.getFirstName());
+        createdUser.setLastName(userData.getLastName());
+        createdUser.setEmail(userData.getEmail());
+        createdUser.setHashedPassword(passwordEncoder.encode(userData.getPassword()));
+        createdUser.setRole(userData.getRole());
+
+        userRepository.save(createdUser);
     }
 
     private void sendDynamicTemplateEmailUsingSendGrid(String templateId, Personalization personalization) throws IOException {
