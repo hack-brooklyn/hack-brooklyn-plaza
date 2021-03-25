@@ -32,6 +32,11 @@ export enum UsersAttributes {
   Roles = 'ROLES'
 }
 
+export type Attributes =
+  | AnnouncementsAttributes
+  | ApplicationsAttributes
+  | UsersAttributes;
+
 const grants = {
   [Roles.Admin]: {
     [Resources.Announcements]: {

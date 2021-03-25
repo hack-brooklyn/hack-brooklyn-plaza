@@ -21,6 +21,8 @@ public final class Authorities {
     public static final String EVENTS_UPDATE = "EVENTS_UPDATE";
     public static final String EVENTS_DELETE = "EVENTS_DELETE";
 
+    public static final String PARTICIPANT_CHECKLIST_READ = "PARTICIPANT_CHECKLIST_READ";
+
     public static final String SAVED_EVENTS_ADD = "SAVED_EVENTS_ADD";
     public static final String SAVED_EVENTS_READ = "SAVED_EVENTS_READ";
     public static final String SAVED_EVENTS_REMOVE = "SAVED_EVENTS_REMOVE";
