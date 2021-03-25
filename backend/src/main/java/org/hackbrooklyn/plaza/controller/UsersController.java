@@ -2,10 +2,7 @@ package org.hackbrooklyn.plaza.controller;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.hackbrooklyn.plaza.dto.CreateUserRequestDTO;
-import org.hackbrooklyn.plaza.dto.DecisionDTO;
-import org.hackbrooklyn.plaza.dto.TokenDTO;
-import org.hackbrooklyn.plaza.dto.UserDataDTO;
+import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.UsersService;
 import org.hackbrooklyn.plaza.util.JwtUtils;
@@ -148,6 +145,14 @@ public class UsersController {
     @PostMapping("create")
     public ResponseEntity<Void> createUser(@RequestBody @Valid CreateUserRequestDTO reqBody) {
         usersService.createUser(reqBody);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.USERS_UPDATE_ROLE)")
+    @PostMapping("setRole")
+    public ResponseEntity<Void> setRole(@RequestBody @Valid SetRoleDTO reqBody) {
+        usersService.setRole(reqBody);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
