@@ -2,9 +2,18 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { AnnouncementBrowser, HeadingActions } from 'components';
-import { ApplicationStatusSection, ChecklistSection, CountdownSection } from './components';
+import {
+  ApplicationStatusSection,
+  ChecklistSection,
+  CountdownSection
+} from './components';
 import { HeadingSection, StyledCenteredMarginH2, StyledH1 } from 'commonStyles';
-import ac, { AnnouncementsAttributes, Resources, Roles } from 'security/accessControl';
+import { acCan, acHasAttributeAccess } from 'util/auth';
+import {
+  AnnouncementsAttributes,
+  Resources,
+  Roles
+} from 'security/accessControl';
 import { MenuAction, RootState } from 'types';
 
 import listIcon from 'assets/icons/list.svg';
@@ -16,32 +25,29 @@ const dashboardActions: MenuAction[] = [
     link: '/admin/applications',
     text: 'Manage Applications',
     type: 'link',
-    icon: listIcon,
+    icon: listIcon
   },
   {
     link: '/announcements/post',
     text: 'Post New Announcement',
     type: 'link',
-    icon: announcementIcon,
+    icon: announcementIcon
   },
   {
     link: '/events/create',
     text: 'Create New Event',
     type: 'link',
-    icon: calendarPlusIcon,
-  },
+    icon: calendarPlusIcon
+  }
 ];
 
 const Dashboard = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
 
   const isUserAtLeastParticipant = (): boolean => {
-    return (
-      userRole !== null &&
-      ac
-        .can(userRole)
-        .readAny(Resources.Announcements)
-        .attributes.includes(AnnouncementsAttributes.ParticipantsOnly)
+    return acHasAttributeAccess(
+      acCan(userRole).readAny(Resources.Announcements),
+      [AnnouncementsAttributes.ParticipantsOnly]
     );
   };
 
