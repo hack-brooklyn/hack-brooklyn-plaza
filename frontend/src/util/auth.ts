@@ -1,12 +1,12 @@
 import { History, LocationState } from 'history';
-import { Query } from 'accesscontrol';
+import { Permission, Query } from 'accesscontrol';
 import { toast } from 'react-toastify';
 
 import { logIn, logOut, setJwtAccessToken } from 'actions/auth';
 import { setUserData } from 'actions/user';
 import { initialUserState } from 'reducers/user';
 import { handleError } from 'util/plazaUtils';
-import ac, { Roles } from 'security/accessControl';
+import ac, { Attributes, Roles } from 'security/accessControl';
 import store from 'store';
 import {
   AuthenticationError,
@@ -57,7 +57,9 @@ export const logInUser = async (loginData: LoginData): Promise<void> => {
  * Used for logging in, activating accounts, and resetting passwords.
  * @param accessToken The user's access token.
  */
-export const logInAndRefreshUserData = async (accessToken: string): Promise<void> => {
+export const logInAndRefreshUserData = async (
+  accessToken: string
+): Promise<void> => {
   store.dispatch(setJwtAccessToken(accessToken));
   await refreshUserData();
   store.dispatch(logIn());
@@ -96,7 +98,9 @@ export const logOutUser = async (): Promise<void> => {
  * Refreshes the user's access token using their refresh token and saves the new
  * access token in the Redux store.
  */
-export const refreshAccessToken = async (history?: History<LocationState>): Promise<string> => {
+export const refreshAccessToken = async (
+  history?: History<LocationState>
+): Promise<string> => {
   let res;
   try {
     res = await fetch(`${API_ROOT}/users/refreshAccessToken`, {
@@ -134,7 +138,7 @@ export const refreshUserData = async (): Promise<void> => {
     res = await fetch(`${API_ROOT}/users/data`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
       }
     });
@@ -153,7 +157,9 @@ export const refreshUserData = async (): Promise<void> => {
   }
 };
 
-export const handleLogOut = async (history: History<LocationState>): Promise<void> => {
+export const handleLogOut = async (
+  history: History<LocationState>
+): Promise<void> => {
   try {
     await logOutUser();
     history.push('/');
@@ -181,4 +187,23 @@ export const validatePassword = (passwordData: SetPasswordData): void => {
 export const acCan = (role: Roles | null): Query => {
   if (role === null) throw new RoleNotFoundError();
   return ac.can(role);
+};
+
+/**
+ * Checks whether or not an AccessControl permission has a provided attribute.
+ * Includes support for wildcard attributes.
+ * @param permission The permission to check.
+ * @param checkedAttributes The attributes to check.
+ * @return Whether or not the user has access.
+ */
+export const acHasAttributeAccess = (
+  permission: Permission,
+  checkedAttributes: Attributes[]
+): boolean => {
+  const permissionAttributes = permission.attributes;
+  const checkedAttributesWithWildcard = [...checkedAttributes, '*'];
+
+  return permissionAttributes.some((attribute) =>
+    checkedAttributesWithWildcard.includes(attribute)
+  );
 };
