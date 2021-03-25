@@ -8,10 +8,12 @@ import Button from 'react-bootstrap/Button';
 import NavLink from 'react-bootstrap/NavLink';
 
 import { LinkNavItem } from 'components';
-import { LoggedInNavItems, LoggedOutNavItems } from 'components/Navbar';
-import { handleLogOut } from 'util/auth';
 import { Logo } from 'commonStyles';
+import { AdminNavItems, LoggedInNavItems, LoggedOutNavItems } from 'components/Navbar';
+import { handleLogOut } from 'util/auth';
+import { Roles } from 'security/accessControl';
 import { Breakpoints, RootState } from 'types';
+
 import logo from 'assets/logo.png';
 import closeIcon from 'assets/icons/close.svg';
 import profileImage from 'assets/icons/profile.svg';
@@ -58,9 +60,11 @@ const BurgerMenu = (): JSX.Element => {
                 <LoggedInMenuContainer>
                   <LoggedInNavItems />
 
-                  {/*<LinkNavItem to="/settings">*/}
-                  {/*  Settings*/}
-                  {/*</LinkNavItem>*/}
+                  {userData.role === Roles.Admin && <AdminNavItems />}
+
+                  <LinkNavItem to="/settings">
+                    Settings
+                  </LinkNavItem>
 
                   <StyledNavLink href="mailto:contact@hackbrooklyn.org">
                     Contact Us
