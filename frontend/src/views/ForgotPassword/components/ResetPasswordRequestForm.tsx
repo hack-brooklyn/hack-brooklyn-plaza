@@ -6,7 +6,7 @@ import { FastField, Formik, FormikHelpers } from 'formik';
 
 import { API_ROOT } from 'index';
 import { RequiredFormLabel } from 'components';
-import { StyledSubmitButton } from 'views/ApplicationPage/components/ApplicationForm';
+import { StyledSubmitButton } from 'commonStyles';
 import { EmailData } from 'types';
 import { CONNECTION_ERROR_MESSAGE } from '../../../constants';
 
