@@ -46,6 +46,8 @@ const ApplicationStatusSection = (): JSX.Element => {
       const resBody: ApplicationDecisionResponse = await res.json();
       setDecision(resBody.decision);
       setSectionReady(true);
+    } else if (res.status === 404) {
+      // No application was submitted for the user, don't load the section
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
       await getApplicationDecision(refreshedToken);
