@@ -7,13 +7,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,16 +39,8 @@ public class ApplyTests {
         ObjectMapper mapper = new ObjectMapper();
         String reqBody = mapper.writeValueAsString(application);
 
-        MockMultipartFile resBodyMultipart = new MockMultipartFile(
-                "formDataJson",
-                "formDataJson",
-                "application/json",
-                reqBody.getBytes(StandardCharsets.UTF_8)
-        );
-
         mockMvc.perform(multipart("/apply")
-                .file(resBodyMultipart)
-                .accept(MediaType.APPLICATION_JSON))
+                .param("formDataJson", reqBody))
                 .andExpect(status().isOk());
     }
 }
