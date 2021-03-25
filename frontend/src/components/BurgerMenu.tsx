@@ -7,10 +7,13 @@ import { action as toggleMenu, decorator as reduxBurgerMenu } from 'redux-burger
 import Button from 'react-bootstrap/Button';
 import NavLink from 'react-bootstrap/NavLink';
 
-import { LoggedInNavItems, LoggedOutNavItems } from 'components/Navbar';
-import { handleLogOut } from 'util/auth';
+import { LinkNavItem } from 'components';
+import { AdminNavItems, LoggedInNavItems, LoggedOutNavItems } from 'components/Navbar';
 import { Logo } from 'commonStyles';
+import { handleLogOut } from 'util/auth';
+import { Roles } from 'security/accessControl';
 import { Breakpoints, RootState } from 'types';
+
 import logo from 'assets/logo.png';
 import closeIcon from 'assets/icons/close.svg';
 import profileImage from 'assets/icons/profile.svg';
@@ -57,9 +60,11 @@ const BurgerMenu = (): JSX.Element => {
                 <LoggedInMenuContainer>
                   <LoggedInNavItems />
 
-                  {/*<LinkNavItem to="/settings">*/}
-                  {/*  Settings*/}
-                  {/*</LinkNavItem>*/}
+                  {userData.role === Roles.Admin && <AdminNavItems />}
+
+                  <LinkNavItem to="/settings">
+                    Settings
+                  </LinkNavItem>
 
                   <StyledNavLink href="mailto:contact@hackbrooklyn.org">
                     Contact Us

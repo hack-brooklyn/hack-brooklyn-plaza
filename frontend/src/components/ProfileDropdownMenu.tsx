@@ -37,6 +37,7 @@ const ProfileDropdownMenu = (): JSX.Element => {
         {/*<DropdownLinkItem to="/settings">*/}
         {/*  Settings*/}
         {/*</DropdownLinkItem>*/}
+
         <StyledDropdownItem href="mailto:contact@hackbrooklyn.org">
           Contact Us
         </StyledDropdownItem>
