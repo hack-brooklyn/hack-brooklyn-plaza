@@ -8,10 +8,8 @@ import Button from 'react-bootstrap/Button';
 import NavLink from 'react-bootstrap/NavLink';
 
 import { LinkNavItem } from 'components';
-import { LoggedInNavItems, LoggedOutNavItems } from 'components/Navbar';
-import { handleLogOut } from 'util/auth';
-import { Logo } from 'commonStyles';
 import { AdminNavItems, LoggedInNavItems, LoggedOutNavItems } from 'components/Navbar';
+import { Logo } from 'commonStyles';
 import { handleLogOut } from 'util/auth';
 import { Roles } from 'security/accessControl';
 import { Breakpoints, RootState } from 'types';
