@@ -111,6 +111,7 @@ const AnnouncementContainer = styled.div`
 `;
 
 const BodyText = styled.p`
+  width: 100%;
   font-size: 1.1rem;
 `;
 
