@@ -7,7 +7,6 @@ import { action as toggleMenu, decorator as reduxBurgerMenu } from 'redux-burger
 import Button from 'react-bootstrap/Button';
 import NavLink from 'react-bootstrap/NavLink';
 
-import { LinkNavItem } from 'components';
 import { LoggedInNavItems, LoggedOutNavItems } from 'components/Navbar';
 import { handleLogOut } from 'util/auth';
 import { Logo } from 'commonStyles';
