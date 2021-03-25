@@ -54,23 +54,14 @@ const Navbar = (): JSX.Element => {
 };
 
 export const LoggedInNavItems = (): JSX.Element => {
+  const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
   const userRole = useSelector((state: RootState) => state.user.role);
 
   return (
     <>
-      {userRole === Roles.Admin && (
+      {userRole === Roles.Admin && windowWidth >= Breakpoints.Large && (
         <StyledNavDropdown title="Admin" id="admin-nav-dropdown">
-          <LinkContainer to="/admin/applications">
-            <NavDropdown.Item>Manage Applications</NavDropdown.Item>
-          </LinkContainer>
-
-          <LinkContainer to="/admin/users/create">
-            <NavDropdown.Item>Create User Account</NavDropdown.Item>
-          </LinkContainer>
-
-          <LinkContainer to="/admin/users/setrole">
-            <NavDropdown.Item>Set User Role</NavDropdown.Item>
-          </LinkContainer>
+          <AdminNavItems />
         </StyledNavDropdown>
       )}
 
@@ -121,6 +112,44 @@ export const LoggedOutNavItems = (): JSX.Element => {
       )}
     </>
   );
+};
+
+export const AdminNavItems = (): JSX.Element => {
+  const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
+
+  if (windowWidth >= Breakpoints.Large) {
+    return (
+      <>
+        <LinkContainer to="/admin/applications">
+          <NavDropdown.Item>Manage Applications</NavDropdown.Item>
+        </LinkContainer>
+
+        <LinkContainer to="/admin/users/create">
+          <NavDropdown.Item>Create User Account</NavDropdown.Item>
+        </LinkContainer>
+
+        <LinkContainer to="/admin/users/setrole">
+          <NavDropdown.Item>Set User Role</NavDropdown.Item>
+        </LinkContainer>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <LinkNavItem to="/admin/applications">
+          Manage Applications
+        </LinkNavItem>
+
+        <LinkNavItem to="/admin/users/create">
+          Create User Account
+        </LinkNavItem>
+
+        <LinkNavItem to="/admin/users/setrole">
+          Set User Role
+        </LinkNavItem>
+      </>
+    );
+  }
 };
 
 const StyledNavbar = styled.nav`
