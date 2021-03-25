@@ -7,12 +7,7 @@ import { Announcement } from './index';
 import { refreshAccessToken } from '../util/auth';
 import { handleError } from '../util/plazaUtils';
 import { API_ROOT } from '../index';
-import {
-  ConnectionError,
-  NoPermissionError,
-  RootState,
-  UnknownError,
-} from '../types';
+import { ConnectionError, NoPermissionError, RootState, UnknownError } from '../types';
 
 interface AnnouncementBrowserProps {
   isAbleToModify?: boolean;
