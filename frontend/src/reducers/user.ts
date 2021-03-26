@@ -1,11 +1,12 @@
 import { UserActionTypes, UserState } from 'types';
+import { Roles } from '../security/accessControl';
 
 export const initialUserState: UserState = {
   email: '',
   firstName: '',
   lastName: '',
-  role: null,
-  id: -1
+  role: Roles.None,
+  id: -1,
 };
 
 const userReducer = (state = initialUserState, action: UserActionTypes): UserState => {
