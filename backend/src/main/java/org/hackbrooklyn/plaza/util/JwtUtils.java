@@ -105,6 +105,7 @@ public class JwtUtils {
         jwtCookie.setPath("/users/refreshAccessToken");
         jwtCookie.setMaxAge((int) (JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS / 1000));  // Convert milliseconds to seconds
         jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
 
         return jwtCookie;
     }

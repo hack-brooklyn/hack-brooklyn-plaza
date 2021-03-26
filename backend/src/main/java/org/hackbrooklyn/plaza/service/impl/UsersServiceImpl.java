@@ -7,6 +7,9 @@ import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.exception.*;
@@ -33,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManagerFactory;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -107,7 +111,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public TokenDTO activateUser(String activationKey, String password) {
+    public TokenDTOAndUser activateUser(String activationKey, String password) {
         // Find the application via activation key
         UserActivation userActivation = userActivationRepository
                 .findFirstByActivationKey(activationKey)
@@ -155,7 +159,10 @@ public class UsersServiceImpl implements UsersService {
         // Destroy all activation keys from the activating user
         userActivationRepository.deleteAllByActivatingApplication(activatedUserApplication);
 
-        return jwtUtils.generateAccessTokenDTO(activatedUser);
+        // Generate access token to enable the user to log in immediately
+        TokenDTO tokenDTO = jwtUtils.generateAccessTokenDTO(savedActivatedUser);
+
+        return new TokenDTOAndUser(tokenDTO, savedActivatedUser);
     }
 
     @Override
@@ -196,7 +203,7 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     @Transactional
-    public TokenDTO resetPassword(String passwordResetKey, String password) {
+    public TokenDTOAndUser resetPassword(String passwordResetKey, String password) {
         // Find the user via password reset key
         PasswordReset passwordReset = passwordResetRepository.findFirstByPasswordResetKey(passwordResetKey)
                 .orElseThrow(InvalidKeyException::new);
@@ -210,17 +217,18 @@ public class UsersServiceImpl implements UsersService {
 
 
         // Password reset key is valid, proceed to hash and reset the user's password
-        // Hash and set password
-        String newHashedPassword = passwordEncoder.encode(password);
-
         User resettingUser = passwordReset.getResettingUser();
+        String newHashedPassword = passwordEncoder.encode(password);
         resettingUser.setHashedPassword(newHashedPassword);
         userRepository.save(resettingUser);
 
         // Destroy all password reset keys from the activating user
         passwordResetRepository.deleteAllByResettingUser(resettingUser);
 
-        return jwtUtils.generateAccessTokenDTO(resettingUser);
+        // Generate access token to enable the user to log in immediately
+        TokenDTO tokenDTO = jwtUtils.generateAccessTokenDTO(resettingUser);
+
+        return new TokenDTOAndUser(tokenDTO, resettingUser);
     }
 
     @Override
@@ -344,5 +352,17 @@ public class UsersServiceImpl implements UsersService {
         if (sendGridResponse.getStatusCode() != 202) {
             throw new SendGridException();
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    public static class TokenDTOAndUser {
+
+        @NotNull
+        private TokenDTO tokenDTO;
+
+        @NotNull
+        private User user;
     }
 }
