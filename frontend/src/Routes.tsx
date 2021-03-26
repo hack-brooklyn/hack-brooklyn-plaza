@@ -14,7 +14,8 @@ import {
   Login,
   ManageApplications,
   SubmittedApplicationResume,
-  ViewSubmittedApplication
+  PostAnnouncement,
+  ViewSubmittedApplication,
 } from 'views';
 import { RootState } from 'types';
 import SetUserRole from 'views/SetUserRole';
@@ -66,9 +67,14 @@ const Routes = (): JSX.Element => {
         <ForgotPassword />
       </Route>
 
+      <Route path="/announcements/post">
+        <PostAnnouncement />
+      </Route>
+
       <Route path="/announcements">
         <AnnouncementView />
       </Route>
+
 
       <Route path="/" exact>
         {userIsLoggedIn ? <Dashboard /> : <Landing />}
