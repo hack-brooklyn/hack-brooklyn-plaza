@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.UsersService;
+import org.hackbrooklyn.plaza.service.impl.UsersServiceImpl.TokenDTOAndUser;
 import org.hackbrooklyn.plaza.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,6 +76,7 @@ public class UsersController {
         expiredJwtCookie.setPath("/users/refreshAccessToken");
         expiredJwtCookie.setMaxAge(0);
         expiredJwtCookie.setHttpOnly(true);
+        expiredJwtCookie.setSecure(true);
         response.addCookie(expiredJwtCookie);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -85,9 +87,12 @@ public class UsersController {
      */
     @PostMapping("activate")
     public ResponseEntity<TokenDTO> activate(@RequestBody @Valid KeyPasswordBodyRequest reqBody, HttpServletResponse response) {
-        TokenDTO resBody = usersService.activateUser(reqBody.getKey(), reqBody.getPassword());
+        TokenDTOAndUser tokenDTOAndUser = usersService.activateUser(reqBody.getKey(), reqBody.getPassword());
 
-        return new ResponseEntity<>(resBody, HttpStatus.OK);
+        Cookie jwtCookie = jwtUtils.generateRefreshTokenCookie(tokenDTOAndUser.getUser());
+        response.addCookie(jwtCookie);
+
+        return new ResponseEntity<>(tokenDTOAndUser.getTokenDTO(), HttpStatus.OK);
     }
 
     @PostMapping("activate/request")
@@ -102,9 +107,12 @@ public class UsersController {
      */
     @PostMapping("resetPassword")
     public ResponseEntity<TokenDTO> resetPassword(@RequestBody @Valid KeyPasswordBodyRequest reqBody, HttpServletResponse response) {
-        TokenDTO resBody = usersService.resetPassword(reqBody.getKey(), reqBody.getPassword());
+        TokenDTOAndUser tokenDTOAndUser = usersService.resetPassword(reqBody.getKey(), reqBody.getPassword());
 
-        return new ResponseEntity<>(resBody, HttpStatus.OK);
+        Cookie jwtCookie = jwtUtils.generateRefreshTokenCookie(tokenDTOAndUser.getUser());
+        response.addCookie(jwtCookie);
+
+        return new ResponseEntity<>(tokenDTOAndUser.getTokenDTO(), HttpStatus.OK);
     }
 
     @PostMapping("resetPassword/request")
@@ -115,7 +123,7 @@ public class UsersController {
     }
 
     /**
-     * Generates an access token for the user.
+     * Generates a new access token for the user.
      * Accepts a refresh token in the cookie for authentication.
      */
     @PostMapping("refreshAccessToken")
