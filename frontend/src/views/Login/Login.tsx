@@ -7,7 +7,11 @@ import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';
 import { LoginData, logInUser } from 'util/auth';
-import { StyledAuthForm, StyledCenteredMarginH1, StyledSubmitButton } from 'commonStyles';
+import {
+  StyledAuthForm,
+  StyledCenteredMarginH1,
+  StyledSubmitButton,
+} from 'commonStyles';
 
 const Login = (): JSX.Element => {
     const history = useHistory();
@@ -72,7 +76,7 @@ const Login = (): JSX.Element => {
 ;
 
 const StyledLink = styled(Link)`
-  display: block;
+  display: inline-block;
   text-decoration: none;
   margin-top: 0.5rem;
 `;
