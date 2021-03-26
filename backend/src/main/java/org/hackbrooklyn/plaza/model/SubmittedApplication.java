@@ -2,7 +2,13 @@ package org.hackbrooklyn.plaza.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.opencsv.bean.CsvIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import org.hackbrooklyn.plaza.util.LocalDateTimeWithUTCSerializer;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
@@ -30,7 +36,7 @@ public class SubmittedApplication {
 
     @Column(name = "application_timestamp")
     @CreationTimestamp
-    @JsonIgnore
+    @JsonSerialize(using = LocalDateTimeWithUTCSerializer.class)
     private LocalDateTime applicationTimestamp;
 
     // Part 1
@@ -42,7 +48,7 @@ public class SubmittedApplication {
     @NotBlank
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     @NotBlank
     @Email
     private String email;
@@ -103,10 +109,10 @@ public class SubmittedApplication {
     // Uploaded resume file is for the application form only
     // The resume file itself is not saved in the database
     @Transient
+    @JsonIgnore
     private MultipartFile resumeFile;
 
     @Column(name = "resume_key_s3")
-    @JsonIgnore
     private String resumeKeyS3;
 
     // Part 4
@@ -124,33 +130,63 @@ public class SubmittedApplication {
     // accept it to submit the application in the first place.
     @Transient
     @NotNull
-    @AssertTrue
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @CsvIgnore
     private boolean acceptTocAndCoc;
 
     @Column(name = "share_resume_with_sponsors")
     private boolean shareResumeWithSponsors;
 
+    // Additional internal fields
     @Column(name = "priority_applicant")
     @NotNull
-    @JsonIgnore
     private boolean priorityApplicant;
 
-    @Column(name = "priority_applicant_email")
+    @Column(name = "priority_applicant_email", unique = true)
     @Email
     private String priorityApplicantEmail;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "previous_application_id", referencedColumnName = "id")
+    @JoinColumn(name = "previous_application_id", referencedColumnName = "id", unique = true)
     @JsonIgnore
     private PreviousSubmittedApplication previousApplication;
 
     @Column(name = "registered_interest")
     @NotNull
-    @JsonIgnore
     private boolean registeredInterest;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "registered_interest_applicant_id", referencedColumnName = "id")
+    @JoinColumn(name = "registered_interest_applicant_id", referencedColumnName = "id", unique = true)
     @JsonIgnore
     private RegisteredInterestApplicant registeredInterestApplicant;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "decision")
+    private Decision decision;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "activated_user", referencedColumnName = "id", unique = true)
+    @JsonIgnore
+    @CsvIgnore
+    private User activatedUser;
+
+    @Getter
+    @AllArgsConstructor
+    public enum Decision {
+        ACCEPTED("ACCEPTED"),
+        REJECTED("REJECTED"),
+        UNDECIDED("UNDECIDED");
+
+        private final String decision;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum ExportFormat {
+        CSV("CSV"),
+        JSON("JSON"),
+        XML("XML");
+
+        private final String exportType;
+    }
 }

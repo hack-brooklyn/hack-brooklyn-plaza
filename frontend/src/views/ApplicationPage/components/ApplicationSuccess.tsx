@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
 import { PRIORITY_APPLICATIONS_ACTIVE } from 'index';
-import checkmark from 'assets/checkmark.svg';
+import checkmark from 'assets/icons/checkmark.svg';
 
 const ApplicationSuccess = (): JSX.Element => {
   return (
@@ -16,8 +17,17 @@ const ApplicationSuccess = (): JSX.Element => {
         <StyledParagraph>
           Thank you for applying to Hack Brooklyn! We have received your application and look forward to reviewing it.
           {PRIORITY_APPLICATIONS_ACTIVE ? ' As a priority applicant, expect to hear back by ' : ' Application decisions will begin releasing on '}
-          <strong>March 29, 2021</strong>. In the meantime, be sure to
-          spread the word about Hack Brooklyn and encourage your friends to apply as well.
+          <strong>March 29, 2021</strong>.
+        </StyledParagraph>
+
+        <StyledParagraph>
+          To finish the application process,{' '}<Link to="/activate">activate your account by
+          clicking here.</Link>{' '}Application decisions will be released here on Hack Brooklyn Plaza, so check back
+          often to get the latest updates about Hack Brooklyn and to view your decision when they release.
+        </StyledParagraph>
+
+        <StyledParagraph>
+          In the meantime, be sure to spread the word about Hack Brooklyn and encourage your friends to apply as well!
         </StyledParagraph>
 
         <StyledParagraph>See you soon!</StyledParagraph>

@@ -1,0 +1,22 @@
+// Messages
+export const CONNECTION_ERROR_MESSAGE = 'An error occurred while connecting to the server. Please check your Internet connection and try again.';
+
+// Redux
+// App
+export const SET_WINDOW_WIDTH = 'SET_WINDOW_WIDTH';
+
+// Auth
+export const LOG_IN = 'LOG_IN';
+export const LOG_OUT = 'LOG_OUT';
+export const SET_JWT_ACCESS_TOKEN = 'SET_JWT_ACCESS_TOKEN';
+
+// User
+export const SET_USER_DATA = 'SET_USER_DATA';
+
+// Application Review
+export const ENTER_APPLICATION_REVIEW_MODE = 'ENTER_APPLICATION_REVIEW_MODE';
+export const ENTER_APPLICATION_REVIEW_MODE_SUCCESS = 'ENTER_APPLICATION_REVIEW_MODE_SUCCESS';
+export const ENTER_APPLICATION_REVIEW_MODE_FAILURE = 'ENTER_APPLICATION_REVIEW_MODE_FAILURE';
+export const EXIT_APPLICATION_REVIEW_MODE = 'EXIT_APPLICATION_REVIEW_MODE';
+export const ADVANCE_APPLICATION_INDEX = 'ADVANCE_APPLICATION_INDEX';
+export const SET_APPLICATIONS_LOADING = 'SET_APPLICATIONS_LOADING';

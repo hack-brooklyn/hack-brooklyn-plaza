@@ -6,16 +6,6 @@ cache-control = '''
 	max-age=86400,
 	immutable'''
 
-# API Proxy to map the Spring backend to the /api route
-# API root is injected on the Netlify dashboard in the build command
-# https://docs.netlify.com/configure-builds/file-based-configuration/#inject-environment-variable-values
-[[redirects]]
-from = "/api"
-to = "API_ROOT_PLACEHOLDER"
-status = 200
-force = true
-headers = { X-From = "Netlify" }
-
 [[redirects]]
 from = "/*"
 to = "/"
