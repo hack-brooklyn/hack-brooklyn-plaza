@@ -5,7 +5,11 @@ import styled from 'styled-components/macro';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import { LinkButtonNavItem, LinkNavItem, ProfileDropdownMenu } from 'components';
+import {
+  LinkButtonNavItem,
+  LinkNavItem,
+  ProfileDropdownMenu,
+} from 'components';
 import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'commonStyles';
 import { enumHasValue } from 'util/plazaUtils';
 import ac, { Resources, Roles } from 'security/accessControl';
@@ -19,14 +23,18 @@ const Navbar = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
-  const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-  const burgerMenuIsOpen = useSelector((state: RootState) => state.burgerMenu.isOpen);
+  const userIsLoggedIn = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
+  const burgerMenuIsOpen = useSelector(
+    (state: RootState) => state.burgerMenu.isOpen
+  );
 
   return (
     <StyledNavbar>
-      <Logo to="/">
-        <img className="logo-img" src={logo} alt="Hack Brooklyn" />
-        <span className="logo-text">plaza</span>
+      <Logo to'"'">
+        <img className'"logo-im'" src={logo} alt'"Hack Brookly'" />
+        <span className'"logo-tex'">plaza</span>
       </Logo>
 
       {windowWidth >= Breakpoints.Large ? (
@@ -44,7 +52,9 @@ const Navbar = (): JSX.Element => {
         </NavLinks>
       ) : (
         <>
-          <BurgerMenuButton onClick={() => dispatch(toggleMenu(!burgerMenuIsOpen))}>
+          <BurgerMenuButton
+            onClick={() => dispatch(toggleMenu(!burgerMenuIsOpen))}
+          >
             <img src={burgerMenuIcon} alt="Open Menu" />
           </BurgerMenuButton>
         </>
@@ -70,7 +80,6 @@ export const LoggedInNavItems = (): JSX.Element => {
 
       {userRole !== null && enumHasValue(Roles, userRole) && (
         <>
-
           {ac.can(userRole).readAny(Resources.Applications).granted &&
           <LinkNavItem to="/announcements">Announcements</LinkNavItem>}
 
