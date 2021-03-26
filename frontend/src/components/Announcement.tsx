@@ -72,7 +72,7 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       throw new UnknownError();
     }
   };
-  console.log(dayjs.utc(lastUpdated));
+
   return (
     <AnnouncementContainer>
       <BodyText>{body}</BodyText>
