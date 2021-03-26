@@ -4,10 +4,10 @@ import { useHistory } from 'react-router-dom';
 import { FastField, Formik } from 'formik';
 import styled from 'styled-components/macro';
 import { Form } from 'react-bootstrap';
-
-import { StyledH1, StyledH3, StyledSubmitButton } from 'commonStyles';
-import { API_ROOT } from '../../index';
 import { useSelector } from 'react-redux';
+
+import { StyledH1, StyledSubmitButton } from 'commonStyles';
+import { API_ROOT } from '../../index';
 import { refreshAccessToken } from '../../util/auth';
 import {
   ConnectionError,
@@ -16,6 +16,7 @@ import {
   UnknownError,
 } from '../../types';
 import { handleError } from '../../util/plazaUtils';
+import { RequiredFormLabel } from '../../components';
 
 interface AnnouncementData {
   body: string;
@@ -67,7 +68,7 @@ const PostAnnouncement = (): JSX.Element => {
 
     if (res.status === 201) {
       return;
-    } else if (res.status === 401 || res.status === 400) {
+    } else if (res.status === 401) {
       const refreshToken = await refreshAccessToken(history);
       await createAnnouncement(announcementData, refreshToken);
     } else if (res.status === 403) {
@@ -84,30 +85,30 @@ const PostAnnouncement = (): JSX.Element => {
       <Formik initialValues={initialValues} onSubmit={submitPost}>
         {(formik) => (
           <StyledPostAnnouncementForm onSubmit={formik.handleSubmit}>
-            <StyledH3>Announcement Content</StyledH3>
+            <RequiredFormLabel>Announcement Content</RequiredFormLabel>
             <FastField
-              as='textarea'
-              className='form-control'
-              name={'body'}
+              as="textarea"
+              className="form-control"
+              name="body"
               id={'body'}
-              rows='5'
+              rows="5"
               placeholder={
                 'Enter a message under 2000 characters to be announced. The announcement will appear on Hack Brooklyn Plaza and on Discord. Markdown is supported.'
               }
               disabled={formik.isSubmitting}
               required
             />
-            <Form.Check>
+            <StyledCheck>
               <FastField
                 as={Form.Check.Input}
-                name='participantsOnly'
-                id='participantsOnly'
+                name="participantsOnly"
+                id="participantsOnly"
               />
-              <Form.Check.Label htmlFor='participantsOnly'>
-                Make this announcement visible to only accepted participants?
+              <Form.Check.Label htmlFor="participantsOnly">
+                Participants only
               </Form.Check.Label>
-            </Form.Check>
-            <StyledSubmitButton type='submit' size='lg'>
+            </StyledCheck>
+            <StyledSubmitButton type="submit" size="lg">
               Post Announcement
             </StyledSubmitButton>
           </StyledPostAnnouncementForm>
@@ -120,6 +121,10 @@ const PostAnnouncement = (): JSX.Element => {
 const StyledPostAnnouncementForm = styled(Form)`
   margin: 1rem auto;
   max-width: 600px;
+`;
+
+const StyledCheck = styled(Form.Check)`
+  margin-top: 0.5rem;
 `;
 
 export default PostAnnouncement;
