@@ -70,7 +70,7 @@ export interface UserState {
   email: string;
   firstName: string;
   lastName: string;
-  role: Roles | null;
+  role: Roles;
 }
 
 export interface SetUserData {
@@ -78,7 +78,7 @@ export interface SetUserData {
   email?: string;
   firstName?: string;
   lastName?: string;
-  role?: Roles | null;
+  role?: Roles;
 }
 
 interface SetUserDataAction {
