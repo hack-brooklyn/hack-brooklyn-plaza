@@ -1,13 +1,14 @@
 import React from 'react';
-import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Form } from 'react-bootstrap';
 import { FastField, Formik } from 'formik';
 import styled from 'styled-components/macro';
-import { Form } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
 
+import { RequiredFormLabel } from '../../components';
 import { StyledH1, StyledSubmitButton } from 'commonStyles';
-import { API_ROOT } from '../../index';
+import { handleError } from '../../util/plazaUtils';
 import { refreshAccessToken } from '../../util/auth';
 import {
   ConnectionError,
@@ -15,8 +16,7 @@ import {
   RootState,
   UnknownError,
 } from '../../types';
-import { handleError } from '../../util/plazaUtils';
-import { RequiredFormLabel } from '../../components';
+import { API_ROOT } from '../../index';
 
 interface AnnouncementData {
   body: string;
