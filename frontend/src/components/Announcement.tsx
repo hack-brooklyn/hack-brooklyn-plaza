@@ -9,7 +9,12 @@ import utc from 'dayjs/plugin/utc';
 import { toast } from 'react-toastify';
 
 import { API_ROOT } from '../index';
-import { ConnectionError, NoPermissionError, RootState, UnknownError } from '../types';
+import {
+  ConnectionError,
+  NoPermissionError,
+  RootState,
+  UnknownError,
+} from '../types';
 import { refreshAccessToken } from '../util/auth';
 import { handleError } from '../util/plazaUtils';
 import editIcon from 'assets/icons/penBlack.svg';
@@ -28,6 +33,7 @@ dayjs.extend(utc);
 
 const Announcement = (props: AnnouncementProps): JSX.Element => {
   const { body, lastUpdated, displayControls, id, toggleRefresh } = props;
+
   const history = useHistory();
   const accessToken = useSelector(
     (state: RootState) => state.auth.jwtAccessToken
