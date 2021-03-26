@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components/macro';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
 import { toast } from 'react-toastify';
 
 import { API_ROOT } from '../index';
@@ -23,6 +24,7 @@ interface AnnouncementProps {
 }
 
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 const Announcement = (props: AnnouncementProps): JSX.Element => {
   const { body, lastUpdated, displayControls, id, toggleRefresh } = props;
@@ -70,11 +72,11 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       throw new UnknownError();
     }
   };
-
+  console.log(dayjs.utc(lastUpdated));
   return (
     <AnnouncementContainer>
       <BodyText>{body}</BodyText>
-      <LastUpdatedText>{dayjs(lastUpdated).fromNow()}</LastUpdatedText>
+      <LastUpdatedText>{dayjs.utc(lastUpdated).fromNow()}</LastUpdatedText>
       {displayControls && (
         <ControlContainer>
           <StyledAnchor to={`/announcements/${id}/edit`}>
