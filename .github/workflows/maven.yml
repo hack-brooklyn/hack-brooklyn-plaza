@@ -35,6 +35,8 @@ jobs:
           BACKEND_DOMAIN: http://localhost:8080
           USER_ACTIVATION_KEY_EXPIRATION_TIME_MS: 3600000
           USER_PASSWORD_RESET_KEY_EXPIRATION_TIME_MS: 3600000
+          DISCORD_URL: https://discord.com
+          DEVPOST_URL: https://devpost.com
 
           # Security
           BCRYPT_SALT_ROUNDS: 10
@@ -62,6 +64,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: fake_secret_access_key
           AWS_S3_BUCKET: hack_brooklyn_plaza_fake_s3_bucket
           AWS_S3_RESUME_DEST: resume
+          AWS_SIGNED_URL_DURATION_MS: 3600000
 
           # Database
           DB_DRIVER_CLASS_NAME: org.postgresql.Driver
@@ -74,4 +77,9 @@ jobs:
           DB_PASSWORD: fake_password
 
           # Redis Database
+          REDIS_LOGICAL_DATABASE: 0
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          REDIS_PASSWORD: fake_password
+          REDIS_TIMEOUT: 60000
           REDIS_REFRESH_TOKEN_NAMESPACE: token
