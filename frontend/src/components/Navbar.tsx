@@ -75,7 +75,7 @@ export const LoggedInNavItems = (): JSX.Element => {
           <LinkNavItem to="/announcements">Announcements</LinkNavItem>}
 
           {ac.can(userRole).readAny(Resources.TeamFormation).granted &&
-          <LinkNavItem to="/teams">Team Formation</LinkNavItem>}
+          <LinkNavItem to="/teamformation">Team Formation</LinkNavItem>}
 
           {ac.can(userRole).readAny(Resources.ScheduleBuilder).granted &&
           <LinkNavItem to="/schedule">Schedule Builder</LinkNavItem>}

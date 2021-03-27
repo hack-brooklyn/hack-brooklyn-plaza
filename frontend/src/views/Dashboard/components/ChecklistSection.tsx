@@ -94,21 +94,12 @@ const ChecklistSection = (): JSX.Element => {
           <ChecklistItem
             type="link"
             name="2. Find a team to work with"
-            buttonText="Coming Soon..."
-            buttonLink="/"
+            buttonText="Enter Team Formation"
+            buttonLink="/teamformation"
           >
-            <strong>
-              Team Formation is currently under development.
-              <br />
-              We&apos;ll send you an email when it&apos;s ready!
-            </strong>
-            <br />
-            <br />
-            <em>
-              No team? No problem! Head over to <strong>Team Formation</strong>{' '}
-              now to browse teams looking for new members, find like-minded
-              participants to work with, and assemble your dream team.
-            </em>
+            No team? No problem! Head over to <strong>Team Formation</strong>{' '}
+            now to browse teams looking for new members, find like-minded
+            participants to work with, and assemble your dream team.
           </ChecklistItem>
 
           {/* Enable when the event builder is ready */}
