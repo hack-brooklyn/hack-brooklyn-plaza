@@ -63,5 +63,15 @@ jobs:
           AWS_S3_BUCKET: hack_brooklyn_plaza_fake_s3_bucket
           AWS_S3_RESUME_DEST: resume
 
+          # Database
+          DB_DRIVER_CLASS_NAME: org.postgresql.Driver
+          DB_JPA_DATABASE: postgresql
+          DB_PLATFORM: postgres
+          DB_HOST: jdbc:postgresql://localhost
+          DB_PORT: 5432
+          DB_NAME: hack_brooklyn_plaza
+          DB_USERNAME: fake_user
+          DB_PASSWORD: fake_password
+
           # Redis Database
           REDIS_REFRESH_TOKEN_NAMESPACE: token
