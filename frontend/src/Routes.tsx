@@ -16,6 +16,7 @@ import {
   SubmittedApplicationResume,
   PostAnnouncement,
   ViewSubmittedApplication,
+  TeamFormationHome
 } from 'views';
 import { RootState } from 'types';
 import SetUserRole from 'views/SetUserRole';
@@ -27,6 +28,10 @@ const Routes = (): JSX.Element => {
 
   return (
     <Switch>
+      <Route path="/teamformation">
+        <TeamFormationHome />
+      </Route>
+
       <Route path="/admin/users/setrole">
         <SetUserRole />
       </Route>
@@ -74,7 +79,6 @@ const Routes = (): JSX.Element => {
       <Route path="/announcements">
         <AnnouncementView />
       </Route>
-
 
       <Route path="/" exact>
         {userIsLoggedIn ? <Dashboard /> : <Landing />}

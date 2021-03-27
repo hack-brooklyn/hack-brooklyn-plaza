@@ -11,3 +11,4 @@ export { default as SubmittedApplicationResume } from './SubmittedApplicationRes
 export { default as CreateUser } from './CreateUser';
 export { default as AnnouncementView } from './AnnouncementView';
 export { default as PostAnnouncement } from './PostAnnouncement';
+export { default as TeamFormationHome } from './TeamFormationHome';
