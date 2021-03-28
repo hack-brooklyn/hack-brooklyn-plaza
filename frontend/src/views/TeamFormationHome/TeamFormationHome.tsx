@@ -5,10 +5,10 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import { StyledCenteredH2, StyledH1 } from 'commonStyles';
+import { Breakpoints } from 'types';
 
 import lookingForTeamIcon from 'assets/icons/team-formation/looking-for-team.svg';
 import haveATeamIcon from 'assets/icons/team-formation/have-a-team.svg';
-import { Breakpoints } from 'types';
 
 const TeamFormationHome = (): JSX.Element => {
   return (
