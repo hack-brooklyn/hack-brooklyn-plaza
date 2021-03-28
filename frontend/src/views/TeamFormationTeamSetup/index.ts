@@ -1,1 +1,1 @@
-export { default } from 'views/TeamFormationTeamSetup/TeamFormationTeamSetup';
+export { default } from './TeamFormationTeamSetup';

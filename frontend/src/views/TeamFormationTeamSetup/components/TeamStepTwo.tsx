@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 
 import {
   ParticipantObjectiveStatementField,
@@ -12,7 +13,6 @@ import {
   SetupSection
 } from 'commonStyles';
 import { TeamSetupStepProps } from '../TeamFormationTeamSetup';
-import { toast } from 'react-toastify';
 
 const TeamStepTwo = (props: TeamSetupStepProps): JSX.Element => {
   const { formik, setCurrentStep } = props;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 
 import {
   InterestedTopicsAndSkillsSelect,
@@ -14,7 +15,6 @@ import {
   SetupParagraph,
   SetupSection
 } from 'commonStyles';
-import { toast } from 'react-toastify';
 import { TeamSetupStepPropsMultiSelect } from 'views/TeamFormationTeamSetup/TeamFormationTeamSetup';
 
 const TeamStepOne = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {

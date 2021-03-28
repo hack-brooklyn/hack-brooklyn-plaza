@@ -1,5 +1,5 @@
-import { Option } from 'types';
 import { generateSelectOptions } from 'util/plazaUtils';
+import { Option } from 'types';
 
 export const defaultTopicsAndSkills: Option[] = generateSelectOptions([
   'Front-End Development',

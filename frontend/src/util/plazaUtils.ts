@@ -1,5 +1,6 @@
 import { History, LocationState } from 'history';
 import { toast } from 'react-toastify';
+
 import { Option } from 'types';
 
 export const stringToTitleCase = (input: string): string => {

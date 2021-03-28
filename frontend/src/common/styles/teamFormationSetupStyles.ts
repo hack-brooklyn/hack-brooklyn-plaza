@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro';
-import { Breakpoints } from 'types';
+
 import { LinkButton } from 'components';
+import { Breakpoints } from 'types';
 
 export const TopSection = styled.section`
   margin: 2rem auto;

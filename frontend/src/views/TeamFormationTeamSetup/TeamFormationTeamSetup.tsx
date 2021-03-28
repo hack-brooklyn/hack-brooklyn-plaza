@@ -3,19 +3,19 @@ import { Formik, FormikHelpers, FormikProps } from 'formik';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
-import { StyledCenteredH2, StyledH1 } from 'commonStyles';
+import { TeamStepOne, TeamStepThree, TeamStepTwo } from './components';
 import {
   SetupOption,
   SetupOptionDescription,
   SetupOptionIcon,
   TopSection
 } from 'common/styles/teamFormationSetupStyles';
-
-import haveATeamIcon from 'assets/icons/team-formation/have-a-team.svg';
-import { TeamStepOne, TeamStepThree, TeamStepTwo } from './components';
+import { StyledCenteredH2, StyledH1 } from 'commonStyles';
 import { validateInterestedTopicsAndSkills } from 'views/TeamFormationParticipantSetup/components/ParticipantStepOne';
 import { defaultTopicsAndSkills } from 'common/defaultTopicsAndSkills';
 import { Option } from 'types';
+
+import haveATeamIcon from 'assets/icons/team-formation/have-a-team.svg';
 
 export interface TeamSetupData {
   // Participant
