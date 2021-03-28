@@ -1,5 +1,8 @@
+import React from 'react';
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { FormikProps } from 'formik';
+
 import { Roles } from 'security/accessControl';
 import {
   ADVANCE_APPLICATION_INDEX,
@@ -25,8 +28,12 @@ export interface RootState {
   burgerMenu: { isOpen: boolean };
 }
 
-export type AppThunk<ReturnType = void> =
-  ThunkAction<ReturnType, RootState, unknown, Action<string>>
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;
 
 // General app state
 export interface AppState {
@@ -125,7 +132,7 @@ interface SetApplicationsLoadingAction {
 }
 
 export type ApplicationReviewActionTypes =
-  EnterApplicationReviewModeAction
+  | EnterApplicationReviewModeAction
   | EnterApplicationReviewModeSuccessAction
   | EnterApplicationReviewModeFailureAction
   | ExitApplicationReviewModeAction
@@ -279,8 +286,25 @@ export interface MenuAction {
   icon: string;
 }
 
+export interface ModularFieldProps {
+  controlId: string;
+  fieldName: string;
+  children?: React.ReactNode;
+  placeholder?: string;
+}
+
+export interface FormikModularFieldProps extends ModularFieldProps {
+  formik: FormikProps<any>;
+}
+
 export interface PageParams {
   applicationNumberParam?: string;
+}
+
+export interface ParticipantProfileData {
+  interestedTopicsAndSkills: string[];
+  specialization: string;
+  objectiveStatement: string;
 }
 
 export const roleOptions: Option[] = [
@@ -327,7 +351,8 @@ export class ConnectionError extends Error {
   constructor() {
     super();
     this.name = 'ConnectionError';
-    this.message = 'An error occurred while connecting to the server. Please check your Internet connection and try again.';
+    this.message =
+      'An error occurred while connecting to the server. Please check your Internet connection and try again.';
   }
 }
 
@@ -336,7 +361,8 @@ export class AuthenticationError extends Error {
   constructor() {
     super();
     this.name = 'AuthenticationError';
-    this.message = 'An error occurred while trying to authenticate your account. Please refresh the page or log out and in and try again.';
+    this.message =
+      'An error occurred while trying to authenticate your account. Please refresh the page or log out and in and try again.';
   }
 }
 
@@ -345,7 +371,8 @@ export class InvalidCredentialsError extends Error {
   constructor() {
     super();
     this.name = 'InvalidCredentialsError';
-    this.message = 'The email or password you entered is incorrect. Please try again.';
+    this.message =
+      'The email or password you entered is incorrect. Please try again.';
   }
 }
 
@@ -372,7 +399,8 @@ export class PasswordTooShortError extends Error {
   constructor() {
     super();
     this.name = 'PasswordTooShortError';
-    this.message = 'The password you entered is too short. Please choose a password that is 12 characters or longer.';
+    this.message =
+      'The password you entered is too short. Please choose a password that is 12 characters or longer.';
   }
 }
 
@@ -381,7 +409,8 @@ export class NoPermissionError extends Error {
   constructor() {
     super();
     this.name = 'NoPermissionError';
-    this.message = 'You do not have access to this part of Hack Brooklyn Plaza.';
+    this.message =
+      'You do not have access to this part of Hack Brooklyn Plaza.';
   }
 }
 
@@ -410,7 +439,8 @@ export class RoleNotFoundError extends Error {
   constructor() {
     super();
     this.name = 'RoleNotFoundError';
-    this.message = 'A user role hasn\'t been assigned to you. Please contact us for further assistance.';
+    this.message =
+      "A user role hasn't been assigned to you. Please contact us for further assistance.";
   }
 }
 
@@ -438,5 +468,14 @@ export class UserNotFoundError extends Error {
     super();
     this.name = 'UserNotFoundError';
     this.message = 'No user with the data you provided was found.';
+  }
+}
+
+// Thrown when a user account was not found.
+export class TeamFormationParticipantAlreadyExistsError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantAlreadyExistsError';
+    this.message = 'You already have a team formation participant profile.';
   }
 }
