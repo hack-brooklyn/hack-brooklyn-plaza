@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-public class CreateTFParticipantProfileDTO {
+public class CreateTFParticipantDTO {
 
     @NotNull
     @Size(min = 1, max = 5)
