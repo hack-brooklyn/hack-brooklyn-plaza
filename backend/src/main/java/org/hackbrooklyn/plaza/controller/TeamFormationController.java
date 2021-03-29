@@ -1,7 +1,9 @@
 package org.hackbrooklyn.plaza.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hackbrooklyn.plaza.dto.CreateTFParticipantProfileDTO;
+import org.hackbrooklyn.plaza.dto.CreateTFParticipantAndTeamDTO;
+import org.hackbrooklyn.plaza.dto.CreateTFParticipantDTO;
+import org.hackbrooklyn.plaza.dto.CreateTFTeamDTO;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +33,34 @@ public class TeamFormationController {
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_CREATE_PARTICIPANT)")
     @PostMapping("/participants")
-    public ResponseEntity<Void> createParticipantProfile(
+    public ResponseEntity<Void> createParticipant(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreateTFParticipantProfileDTO reqBody) {
-        teamFormationService.createParticipantProfile(user, reqBody);
+            @RequestBody @Valid CreateTFParticipantDTO reqBody) {
+        teamFormationService.createParticipant(user, reqBody);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_CREATE_TEAM)")
+    @PostMapping("/teams")
+    public ResponseEntity<Void> createTeam(
+            @AuthenticationPrincipal User user,
+            @RequestBody @Valid CreateTFTeamDTO reqBody) {
+        teamFormationService.createTeam(user, reqBody);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Creates a new participant profile and a new team at the same time, intended for a user's initial team formation setup.
+     * Rolls back both actions if either participant creation or team creation fails.
+     */
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_CREATE_PARTICIPANT) and hasAuthority(@authorities.TEAM_FORMATION_CREATE_TEAM)")
+    @PostMapping("/createParticipantAndTeam")
+    public ResponseEntity<Void> createParticipantAndTeam(
+            @AuthenticationPrincipal User user,
+            @RequestBody @Valid CreateTFParticipantAndTeamDTO reqBody) {
+        teamFormationService.createParticipantAndTeam(user, reqBody);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

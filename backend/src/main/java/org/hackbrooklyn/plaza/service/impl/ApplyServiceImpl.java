@@ -1,10 +1,10 @@
 package org.hackbrooklyn.plaza.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hackbrooklyn.plaza.exception.ApplicationTermsNotAcceptedException;
 import org.hackbrooklyn.plaza.exception.FoundDataConflictException;
 import org.hackbrooklyn.plaza.exception.PriorityApplicantIneligibleException;
 import org.hackbrooklyn.plaza.exception.RejectedFileTypeException;
-import org.hackbrooklyn.plaza.exception.TermsNotAcceptedException;
 import org.hackbrooklyn.plaza.model.PreviousSubmittedApplication;
 import org.hackbrooklyn.plaza.model.RegisteredInterestApplicant;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -77,7 +77,7 @@ public class ApplyServiceImpl implements ApplyService {
 
         // Check if the participant accepted the Terms and Conditions and Code of Conduct
         if (!parsedApplication.isAcceptTocAndCoc()) {
-            throw new TermsNotAcceptedException();
+            throw new ApplicationTermsNotAcceptedException();
         }
 
         // Check if an application was already submitted with the applicant's submitted email.

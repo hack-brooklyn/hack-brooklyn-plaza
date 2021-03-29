@@ -11,30 +11,25 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
-@Table(name = "team_formation_participants")
+@Table(name = "team_formation_teams")
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class TeamFormationParticipant {
+public class TeamFormationTeam {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @NotNull
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    private TeamFormationTeam team;
-
-    @Column(name = "specialization")
+    @Column(name = "name", unique = true)
     @NotBlank
     @NotNull
-    private String specialization;
+    private String name;
+
+    @OneToMany(mappedBy = "team")
+    @NotNull
+    private Set<TeamFormationParticipant> members;
 
     @Column(name = "objective_statement")
     @Size(min = 1, max = 200)
@@ -48,8 +43,8 @@ public class TeamFormationParticipant {
 
     @ManyToMany
     @JoinTable(
-            name = "team_formation_participant_topics_and_skills",
-            joinColumns = {@JoinColumn(name = "user_id")},
+            name = "team_formation_team_topics_and_skills",
+            joinColumns = {@JoinColumn(name = "team_id")},
             inverseJoinColumns = {@JoinColumn(name = "topic_or_skill_id")}
     )
     @NotNull

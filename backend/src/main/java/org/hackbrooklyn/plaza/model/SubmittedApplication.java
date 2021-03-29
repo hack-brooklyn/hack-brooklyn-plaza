@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.opencsv.bean.CsvIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hackbrooklyn.plaza.util.LocalDateTimeWithUTCSerializer;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Range;
@@ -21,9 +22,11 @@ import java.time.LocalDateTime;
  * Represents a submitted application for the hackathon.
  */
 @Entity
-@Data
 @Table(name = "applications")
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class SubmittedApplication {
 
     // Internal data

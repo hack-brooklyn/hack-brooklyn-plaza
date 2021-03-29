@@ -301,10 +301,17 @@ export interface PageParams {
   applicationNumberParam?: string;
 }
 
-export interface ParticipantProfileData {
+export interface TeamFormationParticipantData {
   interestedTopicsAndSkills: string[];
   specialization: string;
   objectiveStatement: string;
+}
+
+export interface TeamFormationTeamData {
+  name: string;
+  interestedTopicsAndSkills: string[];
+  objectiveStatement: string;
+  size: number;
 }
 
 export const roleOptions: Option[] = [
