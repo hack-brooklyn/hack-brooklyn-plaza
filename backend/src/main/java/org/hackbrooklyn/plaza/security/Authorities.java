@@ -27,6 +27,14 @@ public final class Authorities {
     public static final String SAVED_EVENTS_READ = "SAVED_EVENTS_READ";
     public static final String SAVED_EVENTS_REMOVE = "SAVED_EVENTS_REMOVE";
 
+    public static final String TEAM_FORMATION_CREATE_TEAM = "TEAM_FORMATION_READ_PARTICIPANTS";
+    public static final String TEAM_FORMATION_CREATE_PARTICIPANT = "TEAM_FORMATION_READ_PARTICIPANTS";
+    public static final String TEAM_FORMATION_READ_TEAM = "TEAM_FORMATION_READ_TEAMS";
+    public static final String TEAM_FORMATION_READ_PARTICIPANT = "TEAM_FORMATION_READ_PARTICIPANTS";
+    public static final String TEAM_FORMATION_UPDATE_TEAM = "TEAM_FORMATION_READ_TEAMS";
+    public static final String TEAM_FORMATION_UPDATE_PARTICIPANT = "TEAM_FORMATION_READ_PARTICIPANTS";
+    public static final String TEAM_FORMATION_DELETE_TEAM = "TEAM_FORMATION_READ_TEAMS";
+
     public static final String USERS_CREATE = "USERS_CREATE";
     public static final String USERS_UPDATE_ROLE = "USERS_UPDATE_ROLE";
 }
