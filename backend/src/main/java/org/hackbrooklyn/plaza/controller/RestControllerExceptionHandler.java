@@ -198,4 +198,13 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TeamFormationParticipantAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantAlreadyExistsException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "You have already created a team formation participant profile.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
 }
