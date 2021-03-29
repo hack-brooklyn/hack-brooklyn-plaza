@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
-@Table(name = "team_formation_team")
+@Table(name = "team_formation_teams")
 @Getter
 @Setter
 @RequiredArgsConstructor
