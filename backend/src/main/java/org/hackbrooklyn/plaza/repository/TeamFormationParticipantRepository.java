@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface TeamFormationParticipantRepository extends JpaRepository<TeamFormationParticipant, User> {
+public interface TeamFormationParticipantRepository extends JpaRepository<TeamFormationParticipant, Integer> {
 
     Optional<TeamFormationParticipant> findFirstByUser(User user);
 }
