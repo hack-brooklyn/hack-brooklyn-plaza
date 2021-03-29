@@ -439,8 +439,7 @@ export class RoleNotFoundError extends Error {
   constructor() {
     super();
     this.name = 'RoleNotFoundError';
-    this.message =
-      "A user role hasn't been assigned to you. Please contact us for further assistance.";
+    this.message = `A user role hasn't been assigned to you. Please contact us for further assistance.`;
   }
 }
 
