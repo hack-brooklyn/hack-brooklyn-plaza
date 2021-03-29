@@ -107,6 +107,15 @@ export const HeadingSection = styled.section`
   }
 `;
 
+export const CenteredButton = styled(Button)`
+  display: block;
+  margin: 0 auto;
+`;
+
+export const CenteredButtonWithMarginBottom = styled(CenteredButton)`
+  margin-bottom: 1rem;
+`;
+
 export const StyledSubmitButton = styled(Button)`
   display: block;
   margin: 2rem auto;
@@ -156,4 +165,25 @@ export const ButtonActiveOverrideStyles = css`
       border-color: #13653f;
     }
   }
+`;
+
+export const SetupParagraph = styled.p`
+  margin: 0 auto 1rem;
+  max-width: 600px;
+  font-size: 1.1rem;
+  text-align: center;
+`;
+
+export const SetupSection = styled.section`
+  margin: 0 auto;
+  max-width: 800px;
+`;
+
+export const SetupFormGroup = styled(Form.Group)`
+  margin: 0 auto;
+  max-width: 600px;
+`;
+
+export const SetupContent = styled.div`
+  margin-bottom: 1rem;
 `;

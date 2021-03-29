@@ -16,7 +16,9 @@ import {
   SubmittedApplicationResume,
   PostAnnouncement,
   ViewSubmittedApplication,
-  TeamFormationHome
+  TeamFormationHome,
+  TeamFormationParticipantSetup,
+  TeamFormationTeamSetup
 } from 'views';
 import { RootState } from 'types';
 import SetUserRole from 'views/SetUserRole';
@@ -28,6 +30,14 @@ const Routes = (): JSX.Element => {
 
   return (
     <Switch>
+      <Route path="/teamformation/teams/setup">
+        <TeamFormationTeamSetup />
+      </Route>
+
+      <Route path="/teamformation/participants/setup">
+        <TeamFormationParticipantSetup />
+      </Route>
+
       <Route path="/teamformation">
         <TeamFormationHome />
       </Route>

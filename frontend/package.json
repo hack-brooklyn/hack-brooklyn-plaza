@@ -19,6 +19,7 @@
     "dayjs": "^1.10.4",
     "file-saver": "^2.0.5",
     "formik": "^2.2.6",
+    "lodash": "^4.17.21",
     "lodash.clonedeep": "^4.5.0",
     "lodash.startcase": "^4.4.0",
     "normalize.css": "^8.0.1",
