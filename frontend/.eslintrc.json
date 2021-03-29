@@ -28,7 +28,11 @@
     ],
     "quotes": [
       "warn",
-      "single"
-    ]
+      "single",
+      {
+        "allowTemplateLiterals": true
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }
