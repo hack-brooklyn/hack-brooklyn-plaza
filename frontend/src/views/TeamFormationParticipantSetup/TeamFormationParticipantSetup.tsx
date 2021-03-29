@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components/macro';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import { ParticipantStepOne, ParticipantStepTwo } from './components';
 import { StyledCenteredH2, StyledH1 } from 'commonStyles';
+import {
+  SetupOption,
+  SetupOptionDescription,
+  SetupOptionIcon,
+  TopSection
+} from 'common/styles/teamFormationSetupStyles';
 import { acCan, refreshAccessToken } from 'util/auth';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { Resources } from 'security/accessControl';
 import { defaultTopicsAndSkills } from 'common/defaultTopicsAndSkills';
 import {
-  Breakpoints,
   ConnectionError,
   InvalidSubmittedDataError,
   NoPermissionError,
   Option,
-  ParticipantProfileData,
   RootState,
   TeamFormationParticipantAlreadyExistsError,
+  TeamFormationParticipantData,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
@@ -28,7 +32,7 @@ import { API_ROOT } from 'index';
 import lookingForTeamIcon from 'assets/icons/team-formation/looking-for-team.svg';
 
 export interface ParticipantSetupStepProps {
-  formik: FormikProps<ParticipantProfileData>;
+  formik: FormikProps<TeamFormationParticipantData>;
   setCurrentStep: React.Dispatch<React.SetStateAction<1 | 2>>;
 }
 
@@ -51,7 +55,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
     ...defaultTopicsAndSkills
   ]);
 
-  const initialValues: ParticipantProfileData = {
+  const initialValues: TeamFormationParticipantData = {
     interestedTopicsAndSkills: [],
     specialization: '',
     objectiveStatement: ''
@@ -59,7 +63,9 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
 
   useEffect(() => {
     try {
-      const permission = acCan(userRole).createOwn(Resources.TeamFormationParticipants);
+      const permission = acCan(userRole).createOwn(
+        Resources.TeamFormationParticipants
+      );
       if (!permission.granted) throw new NoPermissionError();
     } catch (err) {
       handleErrorAndPush(err, history);
@@ -67,8 +73,8 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
   }, []);
 
   const createProfile = async (
-    profileData: ParticipantProfileData,
-    { setSubmitting }: FormikHelpers<ParticipantProfileData>
+    profileData: TeamFormationParticipantData,
+    { setSubmitting }: FormikHelpers<TeamFormationParticipantData>
   ) => {
     try {
       await sendCreateProfileRequest(profileData);
@@ -81,7 +87,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
   };
 
   const sendCreateProfileRequest = async (
-    profileData: ParticipantProfileData,
+    profileData: TeamFormationParticipantData,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
@@ -158,33 +164,5 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
     </>
   );
 };
-
-const TopSection = styled.section`
-  margin: 2rem auto;
-`;
-
-const SetupOption = styled.div`
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const SetupOptionIcon = styled.img`
-  height: 4rem;
-  width: 4rem;
-`;
-
-const SetupOptionDescription = styled.div`
-  margin-left: 1rem;
-  max-width: 275px;
-  font-size: 1.3rem;
-  font-weight: bold;
-
-  @media screen and (min-width: ${Breakpoints.Medium}px) {
-    text-align: center;
-  }
-`;
 
 export default TeamFormationParticipantSetup;
