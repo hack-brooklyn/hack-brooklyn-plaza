@@ -1,7 +1,9 @@
 package org.hackbrooklyn.plaza.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hackbrooklyn.plaza.security.Roles;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,8 +19,10 @@ import java.util.Collection;
  * Represents an activated user account.
  */
 @Entity
-@Data
 @Table(name = "users")
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class User implements UserDetails {
 
     @Id

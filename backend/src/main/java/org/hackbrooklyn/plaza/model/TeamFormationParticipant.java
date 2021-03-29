@@ -1,6 +1,8 @@
 package org.hackbrooklyn.plaza.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -9,9 +11,11 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Entity
-@Data
 @Table(name = "team_formation_participants")
-public class TeamFormationParticipant implements Serializable {
+@Getter
+@Setter
+@RequiredArgsConstructor
+public class TeamFormationParticipant {
 
     @Id
     @Column(name = "participant_id")
