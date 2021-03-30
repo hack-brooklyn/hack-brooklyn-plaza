@@ -55,6 +55,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
 
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
+  const [setupComplete, setSetupComplete] = useState(false);
   const [multiSelectOptions, setMultiSelectOptions] = useState([
     ...defaultTopicsAndSkills
   ]);
@@ -114,6 +115,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
       toast.success(
         'Your team formation profile has been successfully created!'
       );
+      setSetupComplete(true);
     } else if (res.status === 409) {
       throw new TeamFormationParticipantAlreadyExistsError();
     } else if (res.status === 400) {
@@ -139,32 +141,36 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
         <SetupOption>
           <SetupOptionIcon src={lookingForTeamIcon} alt="Looking for team" />
           <SetupOptionDescription>
-            I don’t have a team yet and am looking for a team to join
+            I don’t have a team yet and am currently looking for a team to join
           </SetupOptionDescription>
         </SetupOption>
       </TopSection>
 
-      <Formik initialValues={initialValues} onSubmit={createProfile}>
-        {(formik) => (
-          <Form onSubmit={formik.handleSubmit}>
-            {currentStep === 1 && (
-              <ParticipantStepOne
-                formik={formik}
-                setCurrentStep={setCurrentStep}
-                multiSelectOptions={multiSelectOptions}
-                setMultiSelectOptions={setMultiSelectOptions}
-              />
-            )}
+      {!setupComplete ? (
+        <ParticipantSetupComplete />
+      ) : (
+        <Formik initialValues={initialValues} onSubmit={createProfile}>
+          {(formik) => (
+            <Form onSubmit={formik.handleSubmit}>
+              {currentStep === 1 && (
+                <ParticipantStepOne
+                  formik={formik}
+                  setCurrentStep={setCurrentStep}
+                  multiSelectOptions={multiSelectOptions}
+                  setMultiSelectOptions={setMultiSelectOptions}
+                />
+              )}
 
-            {currentStep === 2 && (
-              <ParticipantStepTwo
-                formik={formik}
-                setCurrentStep={setCurrentStep}
-              />
-            )}
-          </Form>
-        )}
-      </Formik>
+              {currentStep === 2 && (
+                <ParticipantStepTwo
+                  formik={formik}
+                  setCurrentStep={setCurrentStep}
+                />
+              )}
+            </Form>
+          )}
+        </Formik>
+      )}
     </>
   );
 };
