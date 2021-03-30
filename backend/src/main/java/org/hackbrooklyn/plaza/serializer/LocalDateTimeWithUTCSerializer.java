@@ -1,4 +1,4 @@
-package org.hackbrooklyn.plaza.util;
+package org.hackbrooklyn.plaza.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

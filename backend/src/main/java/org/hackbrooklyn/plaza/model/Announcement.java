@@ -3,7 +3,7 @@ package org.hackbrooklyn.plaza.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
-import org.hackbrooklyn.plaza.util.LocalDateTimeWithUTCSerializer;
+import org.hackbrooklyn.plaza.serializer.LocalDateTimeWithUTCSerializer;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;

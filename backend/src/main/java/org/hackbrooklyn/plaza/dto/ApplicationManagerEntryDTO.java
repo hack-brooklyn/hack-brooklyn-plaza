@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
-import org.hackbrooklyn.plaza.util.LocalDateTimeWithUTCSerializer;
+import org.hackbrooklyn.plaza.serializer.LocalDateTimeWithUTCSerializer;
 
 import java.time.LocalDateTime;
 
