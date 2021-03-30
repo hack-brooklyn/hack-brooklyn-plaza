@@ -1,8 +1,10 @@
 package org.hackbrooklyn.plaza.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hackbrooklyn.plaza.serializer.TopicOrSkillSerializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -12,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@JsonSerialize(using = TopicOrSkillSerializer.class)
 public class TopicOrSkill {
 
     @Id
