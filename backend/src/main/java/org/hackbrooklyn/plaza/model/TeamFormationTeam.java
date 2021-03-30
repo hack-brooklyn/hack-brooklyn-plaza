@@ -33,6 +33,7 @@ public class TeamFormationTeam {
 
     @OneToMany(mappedBy = "team")
     @NotNull
+    @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
     private Set<TeamFormationParticipant> members;
 
     @Column(name = "objective_statement")

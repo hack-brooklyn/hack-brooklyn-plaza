@@ -30,10 +30,12 @@ public class TeamFormationParticipant {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @NotNull
+    @JsonIgnore
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "team_id")
+    @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
     private TeamFormationTeam team;
 
     @Column(name = "specialization")
