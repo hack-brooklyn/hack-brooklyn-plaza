@@ -37,7 +37,8 @@ const TeamFormationHome = (): JSX.Element => {
                 alt="I am looking for a team"
               />
               <OptionDescription>
-                I don’t have a team yet and am looking for a team to join
+                I don’t have a team yet and am currently looking for a team to
+                join
               </OptionDescription>
             </Option>
           </Col>
