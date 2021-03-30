@@ -5,7 +5,11 @@ import { Formik, FormikHelpers, FormikProps } from 'formik';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
-import { ParticipantStepOne, ParticipantStepTwo } from './components';
+import {
+  ParticipantSetupComplete,
+  ParticipantStepOne,
+  ParticipantStepTwo
+} from './components';
 import { StyledCenteredH2, StyledH1 } from 'commonStyles';
 import {
   SetupOption,
@@ -24,7 +28,7 @@ import {
   Option,
   RootState,
   TeamFormationParticipantAlreadyExistsError,
-  TeamFormationParticipantData,
+  TeamFormationParticipantSetupData,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
@@ -32,7 +36,7 @@ import { API_ROOT } from 'index';
 import lookingForTeamIcon from 'assets/icons/team-formation/looking-for-team.svg';
 
 export interface ParticipantSetupStepProps {
-  formik: FormikProps<TeamFormationParticipantData>;
+  formik: FormikProps<TeamFormationParticipantSetupData>;
   setCurrentStep: React.Dispatch<React.SetStateAction<1 | 2>>;
 }
 
@@ -55,7 +59,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
     ...defaultTopicsAndSkills
   ]);
 
-  const initialValues: TeamFormationParticipantData = {
+  const initialValues: TeamFormationParticipantSetupData = {
     interestedTopicsAndSkills: [],
     specialization: '',
     objectiveStatement: ''
@@ -73,8 +77,8 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
   }, []);
 
   const createProfile = async (
-    profileData: TeamFormationParticipantData,
-    { setSubmitting }: FormikHelpers<TeamFormationParticipantData>
+    profileData: TeamFormationParticipantSetupData,
+    { setSubmitting }: FormikHelpers<TeamFormationParticipantSetupData>
   ) => {
     try {
       await sendCreateProfileRequest(profileData);
@@ -87,7 +91,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
   };
 
   const sendCreateProfileRequest = async (
-    profileData: TeamFormationParticipantData,
+    profileData: TeamFormationParticipantSetupData,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;

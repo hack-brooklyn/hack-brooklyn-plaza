@@ -1,4 +1,5 @@
 export { default as BurgerMenu } from './BurgerMenu';
+export { default as BadgeBS5 } from './BadgeBS5';
 export { default as Date } from './Date';
 export { default as HeadingActions } from './HeadingActions';
 export { default as HeadingButton } from './HeadingButton';
@@ -12,3 +13,4 @@ export { default as RequiredFormLabel } from './RequiredFormLabel';
 export { default as Announcement } from './Announcement';
 export { default as AnnouncementBrowser } from './AnnouncementBrowser';
 export { default as MultiSelect } from './MultiSelect';
+export { default as TeamFormationParticipantCard } from './TeamFormationParticipantCard';

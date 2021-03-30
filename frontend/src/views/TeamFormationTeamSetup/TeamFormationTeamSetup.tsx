@@ -25,8 +25,8 @@ import {
   Option,
   RootState,
   TeamFormationParticipantAlreadyExistsError,
-  TeamFormationParticipantData,
-  TeamFormationTeamData,
+  TeamFormationParticipantSetupData,
+  TeamFormationTeamSetupData,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
@@ -57,8 +57,8 @@ export interface TeamSetupStepPropsMultiSelect extends TeamSetupStepProps {
 }
 
 interface CreateParticipantAndTeamRequest {
-  participant: TeamFormationParticipantData;
-  team: TeamFormationTeamData;
+  participant: TeamFormationParticipantSetupData;
+  team: TeamFormationTeamSetupData;
 }
 
 const TeamFormationTeamSetup = (): JSX.Element => {
