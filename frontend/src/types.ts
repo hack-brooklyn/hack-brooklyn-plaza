@@ -301,17 +301,36 @@ export interface PageParams {
   applicationNumberParam?: string;
 }
 
-export interface TeamFormationParticipantData {
+export interface TeamFormationSetupCommon {
   interestedTopicsAndSkills: string[];
-  specialization: string;
   objectiveStatement: string;
 }
 
-export interface TeamFormationTeamData {
+export interface TeamFormationCommon {
+  id: number;
+  visibleInBrowser: boolean;
+}
+
+export interface TeamFormationParticipantSetupData
+  extends TeamFormationSetupCommon {
+  specialization: string;
+}
+
+export interface TeamFormationTeamSetupData extends TeamFormationSetupCommon {
   name: string;
-  interestedTopicsAndSkills: string[];
-  objectiveStatement: string;
   size: number;
+}
+
+export interface TeamFormationParticipant
+  extends TeamFormationParticipantSetupData,
+    TeamFormationCommon {
+  team: TeamFormationTeam;
+}
+
+export interface TeamFormationTeam
+  extends TeamFormationTeamSetupData,
+    TeamFormationCommon {
+  members: TeamFormationParticipant[];
 }
 
 export const roleOptions: Option[] = [
