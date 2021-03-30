@@ -5,7 +5,11 @@ import styled from 'styled-components/macro';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import { LinkButtonNavItem, LinkNavItem, ProfileDropdownMenu } from 'components';
+import {
+  LinkButtonNavItem,
+  LinkNavItem,
+  ProfileDropdownMenu
+} from 'components';
 import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'commonStyles';
 import { enumHasValue } from 'util/plazaUtils';
 import ac, { Resources, Roles } from 'security/accessControl';
@@ -19,8 +23,12 @@ const Navbar = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
-  const userIsLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-  const burgerMenuIsOpen = useSelector((state: RootState) => state.burgerMenu.isOpen);
+  const userIsLoggedIn = useSelector(
+    (state: RootState) => state.auth.isLoggedIn
+  );
+  const burgerMenuIsOpen = useSelector(
+    (state: RootState) => state.burgerMenu.isOpen
+  );
 
   return (
     <StyledNavbar>
@@ -44,7 +52,9 @@ const Navbar = (): JSX.Element => {
         </NavLinks>
       ) : (
         <>
-          <BurgerMenuButton onClick={() => dispatch(toggleMenu(!burgerMenuIsOpen))}>
+          <BurgerMenuButton
+            onClick={() => dispatch(toggleMenu(!burgerMenuIsOpen))}
+          >
             <img src={burgerMenuIcon} alt="Open Menu" />
           </BurgerMenuButton>
         </>
@@ -65,23 +75,26 @@ export const LoggedInNavItems = (): JSX.Element => {
         </StyledNavDropdown>
       )}
 
-      {/* Everyone can use the dashboard */}
+      {/* Everyone can use the dashboard and view announcements */}
       <LinkNavItem to="/">Dashboard</LinkNavItem>
+      <LinkNavItem to="/announcements">Announcements</LinkNavItem>
 
       {userRole !== null && enumHasValue(Roles, userRole) && (
         <>
+          {/* If a user is able to create a team formation profile, they have access to team formation */}
+          {ac.can(userRole).createOwn(Resources.TeamFormationParticipants)
+            .granted && (
+            <LinkNavItem to="/teamformation">Team Formation</LinkNavItem>
+          )}
 
-          {ac.can(userRole).readAny(Resources.Applications).granted &&
-          <LinkNavItem to="/announcements">Announcements</LinkNavItem>}
+          {ac.can(userRole).readAny(Resources.ScheduleBuilder).granted && (
+            <LinkNavItem to="/schedule">Schedule Builder</LinkNavItem>
+          )}
 
-          {ac.can(userRole).readAny(Resources.TeamFormation).granted &&
-          <LinkNavItem to="/teamformation">Team Formation</LinkNavItem>}
-
-          {ac.can(userRole).readAny(Resources.ScheduleBuilder).granted &&
-          <LinkNavItem to="/schedule">Schedule Builder</LinkNavItem>}
-
-          {HACKATHON_ACTIVE && ac.can(userRole).readAny(Resources.MentorMatcher).granted &&
-          <LinkNavItem to="/mentorship">Mentor Matcher</LinkNavItem>}
+          {HACKATHON_ACTIVE &&
+            ac.can(userRole).readAny(Resources.MentorMatcher).granted && (
+              <LinkNavItem to="/mentorship">Mentor Matcher</LinkNavItem>
+            )}
         </>
       )}
     </>
@@ -136,17 +149,11 @@ export const AdminNavItems = (): JSX.Element => {
   } else {
     return (
       <>
-        <LinkNavItem to="/admin/applications">
-          Manage Applications
-        </LinkNavItem>
+        <LinkNavItem to="/admin/applications">Manage Applications</LinkNavItem>
 
-        <LinkNavItem to="/admin/users/create">
-          Create User Account
-        </LinkNavItem>
+        <LinkNavItem to="/admin/users/create">Create User Account</LinkNavItem>
 
-        <LinkNavItem to="/admin/users/setrole">
-          Set User Role
-        </LinkNavItem>
+        <LinkNavItem to="/admin/users/setrole">Set User Role</LinkNavItem>
       </>
     );
   }
