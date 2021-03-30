@@ -207,4 +207,13 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TeamFormationParticipantNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No team formation participant was found.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
 }
