@@ -49,6 +49,10 @@ export const StyledH3 = styled.h3`
   }
 `;
 
+export const StyledCenteredH3 = styled(StyledH3)`
+  text-align: center;
+`;
+
 export const MonoHeading = styled.h1`
   font-family: 'Anonymous Pro', monospace;
   font-weight: bold;
