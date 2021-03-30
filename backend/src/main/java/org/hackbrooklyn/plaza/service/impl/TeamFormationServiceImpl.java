@@ -106,6 +106,18 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         createTeam(user, submittedData.getTeam());
     }
 
+    @Override
+    public TeamFormationParticipant getLoggedInParticipantData(User user) {
+        return teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+    }
+
+    @Override
+    public TeamFormationTeam getLoggedInParticipantTeamData(User user) {
+        return getLoggedInParticipantData(user).getTeam();
+    }
+
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {
         Set<TopicOrSkill> topicsAndSkills = new HashSet<>(topicAndSkillNames.size());
         for (String providedTopicOrSkillName : topicAndSkillNames) {

@@ -1,8 +1,12 @@
 package org.hackbrooklyn.plaza.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hackbrooklyn.plaza.serializer.TopicOrSkillSetSerializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -29,6 +33,7 @@ public class TeamFormationTeam {
 
     @OneToMany(mappedBy = "team")
     @NotNull
+    @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
     private Set<TeamFormationParticipant> members;
 
     @Column(name = "objective_statement")
@@ -48,5 +53,6 @@ public class TeamFormationTeam {
             inverseJoinColumns = {@JoinColumn(name = "topic_or_skill_id")}
     )
     @NotNull
+    @JsonSerialize(using = TopicOrSkillSetSerializer.class)
     private Set<TopicOrSkill> interestedTopicsAndSkills;
 }

@@ -1,8 +1,13 @@
 package org.hackbrooklyn.plaza.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hackbrooklyn.plaza.serializer.TopicOrSkillSetSerializer;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -25,10 +30,12 @@ public class TeamFormationParticipant {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @NotNull
+    @JsonIgnore
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "team_id")
+    @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
     private TeamFormationTeam team;
 
     @Column(name = "specialization")
@@ -53,5 +60,6 @@ public class TeamFormationParticipant {
             inverseJoinColumns = {@JoinColumn(name = "topic_or_skill_id")}
     )
     @NotNull
+    @JsonSerialize(using = TopicOrSkillSetSerializer.class)
     private Set<TopicOrSkill> interestedTopicsAndSkills;
 }
