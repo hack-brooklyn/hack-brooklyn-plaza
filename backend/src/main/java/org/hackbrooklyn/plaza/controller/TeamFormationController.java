@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.CreateTFParticipantAndTeamDTO;
 import org.hackbrooklyn.plaza.dto.CreateTFParticipantDTO;
 import org.hackbrooklyn.plaza.dto.CreateTFTeamDTO;
+import org.hackbrooklyn.plaza.model.TeamFormationParticipant;
+import org.hackbrooklyn.plaza.model.TeamFormationTeam;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -63,5 +62,23 @@ public class TeamFormationController {
         teamFormationService.createParticipantAndTeam(user, reqBody);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_PARTICIPANT)")
+    @GetMapping("/participants/userData")
+    public ResponseEntity<TeamFormationParticipant> getLoggedInParticipantData(
+            @AuthenticationPrincipal User user) {
+        TeamFormationParticipant foundParticipant = teamFormationService.getLoggedInParticipantData(user);
+
+        return new ResponseEntity<>(foundParticipant, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")
+    @GetMapping("/teams/userData")
+    public ResponseEntity<TeamFormationTeam> getLoggedInParticipantTeamData(
+            @AuthenticationPrincipal User user) {
+        TeamFormationTeam foundTeam = teamFormationService.getLoggedInParticipantTeamData(user);
+
+        return new ResponseEntity<>(foundTeam, HttpStatus.OK);
     }
 }
