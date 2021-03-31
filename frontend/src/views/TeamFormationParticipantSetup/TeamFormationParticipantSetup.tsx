@@ -146,7 +146,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
         </SetupOption>
       </TopSection>
 
-      {!setupComplete ? (
+      {setupComplete ? (
         <ParticipantSetupComplete />
       ) : (
         <Formik initialValues={initialValues} onSubmit={createProfile}>
