@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-import {
-  InterestedTopicsAndSkillsSelect,
-  validateInterestedTopicsAndSkills
-} from 'views/TeamFormationParticipantSetup/components/ParticipantStepOne';
+import TopicsAndSkillsSelect, {
+  validateTopicsAndSkills
+} from 'components/TeamFormation/TopicsAndSkillsSelect';
 import {
   TFHomeButton,
   TFLinkButtonContainer
@@ -31,21 +30,17 @@ const TeamStepOne = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {
     setIsProceeding(true);
 
     try {
-      validateInterestedTopicsAndSkills(
+      validateTopicsAndSkills(
         formik.values.participantInterestedTopicsAndSkills
       );
     } catch (err) {
-      handleInvalidFormData(err.message);
+      toast.warning(err.message);
+      setIsProceeding(false);
       return;
     }
 
     setIsProceeding(false);
     setCurrentStep(2);
-  };
-
-  const handleInvalidFormData = (message: string) => {
-    toast.warning(message);
-    setIsProceeding(false);
   };
 
   return (
@@ -63,7 +58,7 @@ const TeamStepOne = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {
           topic/skill to add one.
         </SetupParagraph>
 
-        <InterestedTopicsAndSkillsSelect
+        <TopicsAndSkillsSelect
           controlId="tftsParticipantInterestedTopicsAndSkills"
           fieldName="participantInterestedTopicsAndSkills"
           multiSelectOptions={multiSelectOptions}

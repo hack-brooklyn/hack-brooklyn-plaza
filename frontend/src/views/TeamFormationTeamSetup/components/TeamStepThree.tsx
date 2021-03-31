@@ -3,7 +3,7 @@ import { FastField } from 'formik';
 import Form from 'react-bootstrap/Form';
 
 import { RequiredFormLabel } from 'components';
-import { InterestedTopicsAndSkillsSelect } from 'views/TeamFormationParticipantSetup/components/ParticipantStepOne';
+import TopicsAndSkillsSelect from 'components/TeamFormation/TopicsAndSkillsSelect';
 import {
   CenteredButton,
   CenteredButtonWithMarginBottom,
@@ -41,7 +41,7 @@ const TeamStepThree = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {
           />
         </SetupFormGroup>
 
-        <InterestedTopicsAndSkillsSelect
+        <TopicsAndSkillsSelect
           controlId="tftsTeamInterestedTopicsAndSkills"
           fieldName="teamInterestedTopicsAndSkills"
           multiSelectOptions={multiSelectOptions}
@@ -49,7 +49,7 @@ const TeamStepThree = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {
           placeholder="Pick or enter 1 to 5 topics/skills that your team is interested in."
         >
           <RequiredFormLabel>Interested Topics and Skills</RequiredFormLabel>
-        </InterestedTopicsAndSkillsSelect>
+        </TopicsAndSkillsSelect>
 
         <SetupFormGroup controlId="tftsTeamObjectiveStatement">
           <RequiredFormLabel>Team Objective Statement</RequiredFormLabel>
