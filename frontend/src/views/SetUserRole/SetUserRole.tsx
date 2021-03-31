@@ -7,7 +7,11 @@ import Select from 'react-select';
 import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';
-import { StyledAuthForm, StyledCenteredMarginH1, StyledSubmitButton } from 'commonStyles';
+import {
+  StyledAuthForm,
+  StyledCenteredMarginH1,
+  StyledSubmitButton
+} from 'commonStyles';
 import { acCan, refreshAccessToken } from 'util/auth';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { Resources, Roles, UsersAttributes } from 'security/accessControl';
