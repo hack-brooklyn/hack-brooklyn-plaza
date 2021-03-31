@@ -9,9 +9,7 @@ import lombok.Setter;
 import org.hackbrooklyn.plaza.serializer.TopicOrSkillSetSerializer;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.Set;
 
 @Entity
@@ -30,6 +28,12 @@ public class TeamFormationTeam {
     @NotBlank
     @NotNull
     private String name;
+
+    @Column(name = "size")
+    @Min(2)
+    @Max(4)
+    @NotNull
+    private int size;
 
     @OneToMany(mappedBy = "team")
     @NotNull

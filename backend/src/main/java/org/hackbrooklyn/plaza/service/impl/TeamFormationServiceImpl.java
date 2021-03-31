@@ -78,6 +78,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         // Create and save the team
         TeamFormationTeam newTeam = new TeamFormationTeam();
         newTeam.setName(submittedData.getName());
+        newTeam.setSize(submittedData.getSize());
         newTeam.setObjectiveStatement(submittedData.getObjectiveStatement());
         newTeam.setVisibleInBrowser(true);
 
