@@ -11,6 +11,7 @@ import {
   TeamStepThree,
   TeamStepTwo
 } from './components';
+import { validateTopicsAndSkills } from 'components/TeamFormation/TopicsAndSkillsSelect';
 import {
   SetupOption,
   SetupOptionDescription,
@@ -18,7 +19,6 @@ import {
   TopSection
 } from 'common/styles/teamFormationSetupStyles';
 import { StyledCenteredH2, StyledH1 } from 'commonStyles';
-import { validateInterestedTopicsAndSkills } from 'views/TeamFormationParticipantSetup/components/ParticipantStepOne';
 import { defaultTopicsAndSkills } from 'common/defaultTopicsAndSkills';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { acCan, refreshAccessToken } from 'util/auth';
@@ -114,7 +114,7 @@ const TeamFormationTeamSetup = (): JSX.Element => {
   ) => {
     // Validate and warn the user if the form data is bad before sending the request
     try {
-      validateInterestedTopicsAndSkills(formData.teamInterestedTopicsAndSkills);
+      validateTopicsAndSkills(formData.teamInterestedTopicsAndSkills);
       if (formData.teamSize === null) {
         throw new Error('Please provide a valid team size.');
       }
