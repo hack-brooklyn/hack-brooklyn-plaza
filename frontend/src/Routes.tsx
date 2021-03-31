@@ -14,15 +14,15 @@ import {
   Landing,
   Login,
   ManageApplications,
-  SubmittedApplicationResume,
   PostAnnouncement,
-  ViewSubmittedApplication,
+  SetUserRole,
+  SubmittedApplicationResume,
   TeamFormationHome,
   TeamFormationParticipantSetup,
-  TeamFormationTeamSetup
+  TeamFormationTeamSetup,
+  ViewSubmittedApplication
 } from 'views';
 import { RootState } from 'types';
-import SetUserRole from 'views/SetUserRole';
 
 const Routes = (): JSX.Element => {
   const userIsLoggedIn = useSelector(
