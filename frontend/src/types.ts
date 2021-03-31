@@ -329,6 +329,7 @@ export interface TeamFormationParticipant
   extends TeamFormationParticipantSetupData,
     TeamFormationCommon {
   team: TeamFormationTeam;
+  user: UserFullName;
 }
 
 export interface TeamFormationTeam
