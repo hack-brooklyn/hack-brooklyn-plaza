@@ -18,6 +18,7 @@ import {
   SubmittedApplicationResume,
   TeamFormationHome,
   TeamFormationParticipantSetup,
+  TeamFormationTeamBrowser,
   TeamFormationTeamSetup,
   ViewSubmittedApplication
 } from 'views';
@@ -30,6 +31,10 @@ const Routes = (): JSX.Element => {
 
   return (
     <Switch>
+      <Route path="/teamformation/teams" exact>
+        <TeamFormationTeamBrowser />
+      </Route>
+
       <Route path="/teamformation/teams/setup">
         <TeamFormationTeamSetup />
       </Route>
