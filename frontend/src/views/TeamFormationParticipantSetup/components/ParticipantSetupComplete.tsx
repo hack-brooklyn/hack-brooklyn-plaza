@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components/macro';
 
 import { LinkButton, TeamFormationParticipantCard } from 'components';
-import { TFLinkButtonContainer } from 'common/styles/teamFormationSetupStyles';
-import { SetupParagraph, SetupSection, StyledCenteredH3 } from 'commonStyles';
+import {
+  CompletedViewMessage,
+  CompleteViewSection,
+  TFLinkButtonContainer
+} from 'common/styles/teamFormationSetupStyles';
+import { SetupParagraph, StyledCenteredH3 } from 'commonStyles';
 import { handleError } from 'util/plazaUtils';
 import { refreshAccessToken } from 'util/auth';
 import {
@@ -68,20 +71,21 @@ const ParticipantSetupComplete = (): JSX.Element => {
   };
 
   return (
-    <SetupSection>
-      <StyledSetupParagraph>
-        Your profile has been created and is now visible on the participant
-        browser! Below is a preview of what your profile will look like to other
-        teams.
-      </StyledSetupParagraph>
+    <>
+      <CompleteViewSection>
+        <CompletedViewMessage>
+          Your profile has been created and is now visible on the participant
+          browser!{' '}
+          {participantData !== undefined &&
+            'Below is a preview of what your profile will look like to other teams.'}
+        </CompletedViewMessage>
 
-      {participantData !== undefined && (
-        <PreviewCardContainer>
+        {participantData !== undefined && (
           <TeamFormationParticipantCard data={participantData} />
-        </PreviewCardContainer>
-      )}
+        )}
+      </CompleteViewSection>
 
-      <div>
+      <CompleteViewSection>
         <StyledCenteredH3>Browse for Teams</StyledCenteredH3>
         <SetupParagraph>
           Ready to find a team to join? Head on over to the team browser to
@@ -91,23 +95,15 @@ const ParticipantSetupComplete = (): JSX.Element => {
         <TFLinkButtonContainer>
           <LinkButton
             variant="primary"
-            to="/teamformation"
+            to="/teamformation/teams"
             overrideActiveStyles
           >
             Browse Teams
           </LinkButton>
         </TFLinkButtonContainer>
-      </div>
-    </SetupSection>
+      </CompleteViewSection>
+    </>
   );
 };
-
-const StyledSetupParagraph = styled(SetupParagraph)`
-  margin-bottom: 2rem;
-`;
-
-const PreviewCardContainer = styled.div`
-  margin-bottom: 2rem;
-`;
 
 export default ParticipantSetupComplete;

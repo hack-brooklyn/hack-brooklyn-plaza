@@ -1,10 +1,15 @@
 import styled from 'styled-components/macro';
 
 import { LinkButton } from 'components';
+import { SetupParagraph } from 'commonStyles';
 import { Breakpoints } from 'types';
 
 export const TopSection = styled.section`
   margin: 2rem auto;
+`;
+
+export const CompleteViewSection = styled.section`
+  margin-bottom: 2rem;
 `;
 
 export const SetupOption = styled.div`
@@ -48,4 +53,8 @@ export const TFHomeButton = styled(LinkButton)`
     background-color: #6c757d;
     border-color: #6c757d;
   }
+`;
+
+export const CompletedViewMessage = styled(SetupParagraph)`
+  margin-bottom: 2rem;
 `;
