@@ -81,7 +81,7 @@ const ParticipantSetupComplete = (): JSX.Element => {
         </CompletedViewMessage>
 
         {participantData !== undefined && (
-          <TeamFormationParticipantCard data={participantData} />
+          <TeamFormationParticipantCard participantData={participantData} />
         )}
       </CompleteViewSection>
 
