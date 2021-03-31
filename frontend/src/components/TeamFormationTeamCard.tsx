@@ -16,6 +16,7 @@ import openSeatImage from 'assets/icons/team-formation/open-seat.svg';
 
 interface TeamFormationTeamCardProps {
   teamData: TeamFormationTeam;
+  className?: string;
 }
 
 interface MemberImagesAreaProps {
@@ -25,10 +26,10 @@ interface MemberImagesAreaProps {
 const TeamFormationTeamCard = (
   props: TeamFormationTeamCardProps
 ): JSX.Element => {
-  const { teamData } = props;
+  const { teamData, className } = props;
 
   return (
-    <StyledCardArticle>
+    <StyledCardArticle className={className}>
       <TopHalf>
         <NameAndTopicsAndSkillsContainer>
           <NameArea>

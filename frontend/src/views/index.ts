@@ -15,3 +15,4 @@ export { default as SetUserRole } from './SetUserRole';
 export { default as TeamFormationHome } from './TeamFormationHome';
 export { default as TeamFormationParticipantSetup } from './TeamFormationParticipantSetup';
 export { default as TeamFormationTeamSetup } from './TeamFormationTeamSetup';
+export { default as TeamFormationTeamBrowser } from './TeamFormationTeamBrowser';
