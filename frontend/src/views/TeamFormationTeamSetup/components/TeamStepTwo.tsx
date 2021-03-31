@@ -9,13 +9,10 @@ import {
   CenteredButton,
   CenteredButtonWithMarginBottom,
   SetupContent,
-  SetupFormGroup,
   SetupParagraph,
   SetupSection
 } from 'commonStyles';
 import { TeamSetupStepProps } from '../TeamFormationTeamSetup';
-import { RequiredFormLabel } from 'components';
-import { FastField } from 'formik';
 
 const TeamStepTwo = (props: TeamSetupStepProps): JSX.Element => {
   const { formik, setCurrentStep } = props;
