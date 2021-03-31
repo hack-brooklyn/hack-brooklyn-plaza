@@ -1,12 +1,12 @@
 package org.hackbrooklyn.plaza.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hackbrooklyn.plaza.serializer.ParticipantUserSerializer;
 import org.hackbrooklyn.plaza.serializer.TopicOrSkillSetSerializer;
 
 import javax.persistence.*;
@@ -30,7 +30,7 @@ public class TeamFormationParticipant {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @NotNull
-    @JsonIgnore
+    @JsonSerialize(using = ParticipantUserSerializer.class)
     private User user;
 
     @ManyToOne
