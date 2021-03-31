@@ -5,7 +5,12 @@ import { Formik, FormikHelpers, FormikProps } from 'formik';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
-import { TeamStepOne, TeamStepThree, TeamStepTwo } from './components';
+import {
+  TeamSetupComplete,
+  TeamStepOne,
+  TeamStepThree,
+  TeamStepTwo
+} from './components';
 import {
   SetupOption,
   SetupOptionDescription,
@@ -70,6 +75,7 @@ const TeamFormationTeamSetup = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
 
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [setupComplete, setSetupComplete] = useState(false);
   const [
     participantMultiSelectOptions,
     setParticipantMultiSelectOptions
@@ -166,7 +172,7 @@ const TeamFormationTeamSetup = (): JSX.Element => {
 
     if (res.status === 200) {
       toast.success('Your profile and team have been successfully created!');
-      // TODO: Add team formation dashboard redirect
+      setSetupComplete(true);
     } else if (res.status === 409) {
       throw new TeamFormationParticipantAlreadyExistsError();
     } else if (res.status === 400) {
@@ -197,33 +203,40 @@ const TeamFormationTeamSetup = (): JSX.Element => {
         </SetupOption>
       </TopSection>
 
-      <Formik initialValues={initialValues} onSubmit={createParticipantAndTeam}>
-        {(formik) => (
-          <Form onSubmit={formik.handleSubmit}>
-            {currentStep === 1 && (
-              <TeamStepOne
-                formik={formik}
-                setCurrentStep={setCurrentStep}
-                multiSelectOptions={participantMultiSelectOptions}
-                setMultiSelectOptions={setParticipantMultiSelectOptions}
-              />
-            )}
+      {setupComplete ? (
+        <TeamSetupComplete />
+      ) : (
+        <Formik
+          initialValues={initialValues}
+          onSubmit={createParticipantAndTeam}
+        >
+          {(formik) => (
+            <Form onSubmit={formik.handleSubmit}>
+              {currentStep === 1 && (
+                <TeamStepOne
+                  formik={formik}
+                  setCurrentStep={setCurrentStep}
+                  multiSelectOptions={participantMultiSelectOptions}
+                  setMultiSelectOptions={setParticipantMultiSelectOptions}
+                />
+              )}
 
-            {currentStep === 2 && (
-              <TeamStepTwo formik={formik} setCurrentStep={setCurrentStep} />
-            )}
+              {currentStep === 2 && (
+                <TeamStepTwo formik={formik} setCurrentStep={setCurrentStep} />
+              )}
 
-            {currentStep === 3 && (
-              <TeamStepThree
-                formik={formik}
-                setCurrentStep={setCurrentStep}
-                multiSelectOptions={teamMultiSelectOptions}
-                setMultiSelectOptions={setTeamMultiSelectOptions}
-              />
-            )}
-          </Form>
-        )}
-      </Formik>
+              {currentStep === 3 && (
+                <TeamStepThree
+                  formik={formik}
+                  setCurrentStep={setCurrentStep}
+                  multiSelectOptions={teamMultiSelectOptions}
+                  setMultiSelectOptions={setTeamMultiSelectOptions}
+                />
+              )}
+            </Form>
+          )}
+        </Formik>
+      )}
     </>
   );
 };
