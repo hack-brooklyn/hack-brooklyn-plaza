@@ -151,14 +151,18 @@ export interface Option {
   label: string;
 }
 
-// A user's full name with their email address.
-export interface UserIdentity {
+// A user's first and last name.
+export interface UserFullName {
   firstName: string;
   lastName: string;
+}
+
+// A user's full name with their email address.
+export interface UserIdentity extends UserFullName {
   email: string;
 }
 
-// The form data for submitting an email as a request.
+// Holds an email only.
 export interface EmailData {
   email: string;
 }
