@@ -12,6 +12,7 @@ export { default as CreateUser } from './CreateUser';
 export { default as AnnouncementView } from './AnnouncementView';
 export { default as PostAnnouncement } from './PostAnnouncement';
 export { default as EditAnnouncement } from './EditAnnouncement';
+export { default as SetUserRole } from './SetUserRole';
 export { default as TeamFormationHome } from './TeamFormationHome';
 export { default as TeamFormationParticipantSetup } from './TeamFormationParticipantSetup';
 export { default as TeamFormationTeamSetup } from './TeamFormationTeamSetup';
