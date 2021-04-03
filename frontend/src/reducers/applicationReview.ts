@@ -8,7 +8,10 @@ const initialState: ApplicationReviewState = {
   currentIndex: -1
 };
 
-const applicationReviewReducer = (state = initialState, action: ApplicationReviewActionTypes): ApplicationReviewState => {
+const applicationReviewReducer = (
+  state = initialState,
+  action: ApplicationReviewActionTypes
+): ApplicationReviewState => {
   switch (action.type) {
     case 'ENTER_APPLICATION_REVIEW_MODE':
       return {
@@ -40,10 +43,12 @@ const applicationReviewReducer = (state = initialState, action: ApplicationRevie
 
     case 'ADVANCE_APPLICATION_INDEX': {
       let nextIndex: number | null;
-      if (state.currentIndex !== null && state.currentIndex < state.applicationNumbers.length - 1) {
+      if (
+        state.currentIndex !== null &&
+        state.currentIndex < state.applicationNumbers.length - 1
+      ) {
         nextIndex = state.currentIndex + 1;
       } else {
-        console.log('Next index is null');
         nextIndex = null;
       }
 
