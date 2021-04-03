@@ -40,7 +40,10 @@ const TeamFormationTeamCard = (
             {teamData.interestedTopicsAndSkills.map(
               (interestedTopicOrSkill, index) => {
                 return (
-                  <TopicOrSkillBadge key={index}>
+                  <TopicOrSkillBadge
+                    to={`/teamformation/teams/search?query=tos%3A${interestedTopicOrSkill}`}
+                    key={index}
+                  >
                     {interestedTopicOrSkill}
                   </TopicOrSkillBadge>
                 );
