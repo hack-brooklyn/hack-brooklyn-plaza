@@ -216,4 +216,13 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TeamFormationParticipantNotInTeamException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantNotInTeamException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "You are not in a team formation team.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
 }
