@@ -91,8 +91,10 @@ public class TeamFormationServiceImpl implements TeamFormationService {
 
         TeamFormationTeam savedNewTeam = teamFormationTeamRepository.save(newTeam);
 
-        // Set the user's team to the new one and save it
+        // Set the creating user's team to the new one and gide the user from the participant browser since they're now in a team
         userParticipant.setTeam(savedNewTeam);
+        userParticipant.setVisibleInBrowser(false);
+
         teamFormationParticipantRepository.save(userParticipant);
     }
 
