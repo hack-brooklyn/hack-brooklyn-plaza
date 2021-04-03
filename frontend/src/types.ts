@@ -356,6 +356,12 @@ export interface TeamFormationTeamSearchResponse {
   totalFoundTeams: number;
 }
 
+export interface TeamFormationParticipantSearchResponse {
+  participants: TeamFormationParticipant[];
+  pages: number;
+  totalFoundParticipants: number;
+}
+
 export const roleOptions: Option[] = [
   { value: Roles.None, label: 'None' },
   { value: Roles.Applicant, label: 'Applicant' },
