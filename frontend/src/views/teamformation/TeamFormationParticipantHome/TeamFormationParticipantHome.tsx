@@ -13,7 +13,7 @@ import {
   PersonalizedResultsSection,
   ResultsGrid,
   SearchForm,
-  StyledTeamCard
+  StyledParticipantCard
 } from 'common/styles/teamformation/teamFormationBrowserStyles';
 import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { handleError } from 'util/plazaUtils';
@@ -23,13 +23,13 @@ import {
   ConnectionError,
   NoPermissionError,
   RootState,
-  TeamFormationTeamSearchResponse,
+  TeamFormationParticipantSearchResponse,
   UnknownError
 } from 'types';
 
 import loadingIcon from 'assets/icons/loading.svg';
 
-const TeamFormationTeamHome = (): JSX.Element => {
+const TeamFormationParticipantHome = (): JSX.Element => {
   const history = useHistory();
 
   const accessToken = useSelector(
@@ -39,38 +39,43 @@ const TeamFormationTeamHome = (): JSX.Element => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [
-    personalizedTeams,
-    setPersonalizedTeams
-  ] = useState<TeamFormationTeamSearchResponse>();
+    personalizedParticipants,
+    setPersonalizedParticipants
+  ] = useState<TeamFormationParticipantSearchResponse>();
   const [submitting, setSubmitting] = useState(false);
-  const [teamsLoaded, setTeamsLoaded] = useState(false);
+  const [participantsLoaded, setParticipantsLoaded] = useState(false);
 
   useEffect(() => {
-    getPersonalizedTeams().catch((err) => handleError(err));
+    getPersonalizedParticipants().catch((err) => handleError(err));
   }, []);
 
-  const getPersonalizedTeams = async (overriddenAccessToken?: string) => {
+  const getPersonalizedParticipants = async (
+    overriddenAccessToken?: string
+  ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/teams?personalized=true`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
+      res = await fetch(
+        `${API_ROOT}/teamFormation/participants?personalized=true`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      });
+      );
     } catch (err) {
       throw new ConnectionError();
     }
 
     if (res.status === 200) {
       const resBody = await res.json();
-      setPersonalizedTeams(resBody);
-      setTeamsLoaded(true);
+      setPersonalizedParticipants(resBody);
+      setParticipantsLoaded(true);
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
-      await getPersonalizedTeams(refreshedToken);
+      await getPersonalizedParticipants(refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -79,12 +84,14 @@ const TeamFormationTeamHome = (): JSX.Element => {
     }
   };
 
-  const searchTeams = (e: FormEvent<HTMLFormElement>) => {
+  const searchParticipants = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
 
     const encodedSearchQuery = encodeURIComponent(searchQuery);
-    history.push(`/teamformation/teams/search?query=${encodedSearchQuery}`);
+    history.push(
+      `/teamformation/participants/search?query=${encodedSearchQuery}`
+    );
 
     setSubmitting(false);
   };
@@ -94,14 +101,14 @@ const TeamFormationTeamHome = (): JSX.Element => {
       <ParticipantHeadingSection />
 
       <PersonalizedResultsSection>
-        <StyledCenteredH2>Teams for You</StyledCenteredH2>
+        <StyledCenteredH2>Participants for You</StyledCenteredH2>
 
-        <SearchForm onSubmit={searchTeams}>
-          <Form.Group controlId="tfTeamBrowserSearch">
+        <SearchForm onSubmit={searchParticipants}>
+          <Form.Group controlId="tfParticipantBrowserSearch">
             <Form.Control
               name="query"
               type="text"
-              placeholder="Search teams..."
+              placeholder="Search participants..."
               onChange={(e) => setSearchQuery(e.target.value)}
               value={searchQuery}
               disabled={submitting}
@@ -110,40 +117,46 @@ const TeamFormationTeamHome = (): JSX.Element => {
           </Form.Group>
         </SearchForm>
 
-        {teamsLoaded ? (
+        {participantsLoaded ? (
           <>
-            {personalizedTeams && personalizedTeams.teams.length > 0 ? (
+            {personalizedParticipants &&
+            personalizedParticipants.participants.length > 0 ? (
               <ResultsGrid>
-                {personalizedTeams.teams.map((team) => (
-                  <StyledTeamCard teamData={team} key={team.id} />
+                {personalizedParticipants.participants.map((participant) => (
+                  <StyledParticipantCard
+                    participantData={participant}
+                    key={participant.id}
+                  />
                 ))}
               </ResultsGrid>
             ) : (
               <MessageText>
-                No teams were found that match your interests at this time.
+                No participants were found that match your interests at this
+                time.
                 <br />
-                Please check back later or try browsing all the other teams for
-                now!
+                Please check back later or try browsing all the other
+                participants for now!
               </MessageText>
             )}
           </>
         ) : (
           <LoadingSection>
             <MessageText>
-              Finding teams that best match your interests, please wait...
+              Finding participants that best match your interests, please
+              wait...
             </MessageText>
 
-            <LoadingSpinner src={loadingIcon} alt="Loading teams..." />
+            <LoadingSpinner src={loadingIcon} alt="Loading participants..." />
           </LoadingSection>
         )}
 
         <LinkButtonContainer>
           <LinkButton
-            to="/teamformation/teams/search"
+            to="/teamformation/participants/search"
             variant="secondary"
             size="lg"
           >
-            Browse All Teams
+            Browse All Participants
           </LinkButton>
         </LinkButtonContainer>
       </PersonalizedResultsSection>
@@ -151,4 +164,4 @@ const TeamFormationTeamHome = (): JSX.Element => {
   );
 };
 
-export default TeamFormationTeamHome;
+export default TeamFormationParticipantHome;
