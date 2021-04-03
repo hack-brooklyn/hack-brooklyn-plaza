@@ -1,17 +1,19 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
 
 import { ParticipantHeadingSection } from 'components/teamformation';
 import { LinkButton } from 'components';
 import {
+  LinkButtonContainer,
+  LoadingSection,
+  LoadingSpinner,
+  MessageText,
   PersonalizedResultsSection,
   ResultsGrid,
   SearchForm,
-  StyledTeamCard,
-  MessageText
+  StyledTeamCard
 } from 'common/styles/teamformation/teamFormationBrowserStyles';
 import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { handleError } from 'util/plazaUtils';
@@ -148,23 +150,5 @@ const TeamFormationTeamHome = (): JSX.Element => {
     </>
   );
 };
-
-const LinkButtonContainer = styled.div`
-  margin: 2rem auto 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const LoadingSection = styled.section`
-  margin: 0 auto 3rem;
-  text-align: center;
-`;
-
-const LoadingSpinner = styled.img`
-  margin-top: 2rem;
-  width: 4rem;
-  height: 4rem;
-`;
 
 export default TeamFormationTeamHome;
