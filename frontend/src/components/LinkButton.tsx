@@ -15,6 +15,7 @@ export interface LinkButtonProps extends StyledButtonProps {
   size?: 'sm' | 'lg' | undefined;
   variant?: ButtonVariant;
   children?: React.ReactNode;
+  className?: string;
 }
 
 const LinkButton = (props: LinkButtonProps): JSX.Element => {
