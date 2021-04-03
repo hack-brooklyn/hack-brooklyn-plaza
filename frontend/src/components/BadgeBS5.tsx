@@ -1,7 +1,7 @@
 import React from 'react';
 import Badge from 'react-bootstrap/Badge';
 
-interface BadgeBS5Props {
+export interface BadgeBS5Props {
   children?: React.ReactNode;
 }
 
