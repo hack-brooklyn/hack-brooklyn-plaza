@@ -350,6 +350,12 @@ export interface AnnouncementData {
   participantsOnly: boolean;
 }
 
+export interface TeamFormationTeamSearchResponse {
+  teams: TeamFormationTeam[];
+  pages: number;
+  totalFoundTeams: number;
+}
+
 export const roleOptions: Option[] = [
   { value: Roles.None, label: 'None' },
   { value: Roles.Applicant, label: 'Applicant' },
