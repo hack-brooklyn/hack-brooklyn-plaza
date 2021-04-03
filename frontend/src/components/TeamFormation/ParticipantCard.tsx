@@ -6,7 +6,7 @@ import {
   ActionButtonContainer,
   ObjectiveStatementText,
   StyledActionButton,
-  StyledCardArticle,
+  CardArticle,
   TopicOrSkillBadge,
   TopicsAndSkillsArea
 } from 'common/styles/teamFormationCardStyles';
@@ -18,7 +18,7 @@ interface TeamFormationParticipantCardProps {
   participantData: TeamFormationParticipant;
 }
 
-const TeamFormationParticipantCard = (
+const ParticipantCard = (
   props: TeamFormationParticipantCardProps
 ): JSX.Element => {
   const { participantData } = props;
@@ -27,7 +27,7 @@ const TeamFormationParticipantCard = (
   const lastName = useSelector((state: RootState) => state.user.lastName);
 
   return (
-    <StyledCardArticle>
+    <CardArticle>
       <TopHalf>
         <ProfileArea>
           <StyledProfileImage
@@ -70,7 +70,7 @@ const TeamFormationParticipantCard = (
           <StyledActionButton>Invite to Team</StyledActionButton>
         </ActionButtonContainer>
       </BottomHalf>
-    </StyledCardArticle>
+    </CardArticle>
   );
 };
 
@@ -130,4 +130,4 @@ const SpecializationText = styled.div`
   font-size: 1.25rem;
 `;
 
-export default TeamFormationParticipantCard;
+export default ParticipantCard;

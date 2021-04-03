@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { LinkBadge } from 'components';
 import { Breakpoints } from 'types';
 
-export const StyledCardArticle = styled.article`
+export const CardArticle = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { LinkButton, TeamFormationParticipantCard } from 'components';
+import { ParticipantCard } from 'components/TeamFormation';
+import { LinkButton } from 'components';
 import {
   CompletedViewMessage,
   CompleteViewSection,
@@ -81,7 +82,7 @@ const ParticipantSetupComplete = (): JSX.Element => {
         </CompletedViewMessage>
 
         {participantData !== undefined && (
-          <TeamFormationParticipantCard participantData={participantData} />
+          <ParticipantCard participantData={participantData} />
         )}
       </CompleteViewSection>
 

@@ -14,5 +14,3 @@ export { default as RequiredFormLabel } from './RequiredFormLabel';
 export { default as Announcement } from './Announcement';
 export { default as AnnouncementBrowser } from './AnnouncementBrowser';
 export { default as MultiSelect } from './MultiSelect';
-export { default as TeamFormationParticipantCard } from './TeamFormationParticipantCard';
-export { default as TeamFormationTeamCard } from './TeamFormationTeamCard';
