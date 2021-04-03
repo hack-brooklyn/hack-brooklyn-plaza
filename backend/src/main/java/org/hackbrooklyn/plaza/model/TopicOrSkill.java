@@ -10,7 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "topic_or_skill")
+@Table(name = "topics_and_skills")
 @Getter
 @Setter
 @RequiredArgsConstructor
