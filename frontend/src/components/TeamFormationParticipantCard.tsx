@@ -38,7 +38,9 @@ const TeamFormationParticipantCard = (
             <NameText>
               {firstName} {lastName}
             </NameText>
-            <SpecializationText>{participantData.specialization}</SpecializationText>
+            <SpecializationText>
+              {participantData.specialization}
+            </SpecializationText>
           </NameAndTitleContainer>
         </ProfileArea>
 
@@ -46,7 +48,10 @@ const TeamFormationParticipantCard = (
           {participantData.interestedTopicsAndSkills.map(
             (interestedTopicOrSkill, index) => {
               return (
-                <TopicOrSkillBadge key={index}>
+                <TopicOrSkillBadge
+                  to={`/teamformation/teams/search?query=tos%3A${interestedTopicOrSkill}`}
+                  key={index}
+                >
                   {interestedTopicOrSkill}
                 </TopicOrSkillBadge>
               );

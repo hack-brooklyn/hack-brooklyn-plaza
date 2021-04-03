@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 import Button from 'react-bootstrap/Button';
 
-import { BadgeBS5 as Badge } from 'components';
+import { LinkBadge } from 'components';
 import { Breakpoints } from 'types';
 
 export const StyledCardArticle = styled.article`
@@ -31,11 +31,17 @@ export const TopicsAndSkillsArea = styled.div`
   }
 `;
 
-export const TopicOrSkillBadge = styled(Badge)`
+export const TopicOrSkillBadge = styled(LinkBadge)`
   padding: 0.35rem 0.65rem;
   margin-right: 0.4rem;
   margin-bottom: 0.4rem;
   background-color: #8540f5;
+  transition: 0.175s;
+  transition-timing-function: ease-in-out;
+
+  &:hover {
+    background-color: #9459fc;
+  }
 `;
 
 export const ObjectiveStatementText = styled.p`
