@@ -3,6 +3,7 @@ package org.hackbrooklyn.plaza.service;
 import org.hackbrooklyn.plaza.dto.CreateTFParticipantAndTeamDTO;
 import org.hackbrooklyn.plaza.dto.CreateTFParticipantDTO;
 import org.hackbrooklyn.plaza.dto.CreateTFTeamDTO;
+import org.hackbrooklyn.plaza.dto.TeamFormationTeamSearchResponse;
 import org.hackbrooklyn.plaza.model.TeamFormationParticipant;
 import org.hackbrooklyn.plaza.model.TeamFormationTeam;
 import org.hackbrooklyn.plaza.model.User;
@@ -18,4 +19,6 @@ public interface TeamFormationService {
     TeamFormationParticipant getLoggedInParticipantData(User user);
 
     TeamFormationTeam getLoggedInParticipantTeamData(User user);
+
+    TeamFormationTeamSearchResponse getTeams(int page, int limit, boolean personalized, String searchQuery, User user);
 }
