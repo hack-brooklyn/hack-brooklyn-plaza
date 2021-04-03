@@ -3,15 +3,17 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import queryString from 'query-string';
-import styled from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
 
 import { ParticipantHeadingSection } from 'components/teamformation';
 import {
+  LoadingIndicator,
+  MessageText,
   ResultsGrid,
   SearchForm,
-  StyledTeamCard,
-  MessageText
+  SearchLoadingSpinner,
+  SearchSection,
+  StyledTeamCard
 } from 'common/styles/teamformation/teamFormationBrowserStyles';
 import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { handleError } from 'util/plazaUtils';
@@ -191,7 +193,7 @@ const TeamFormationTeamSearch = (): JSX.Element => {
           loader={
             <LoadingIndicator>
               <div>Loading...</div>
-              <LoadingSpinner src={loadingIcon} alt="Loading teams..." />
+              <SearchLoadingSpinner src={loadingIcon} alt="Loading teams..." />
             </LoadingIndicator>
           }
           endMessage={null}
@@ -211,21 +213,5 @@ const TeamFormationTeamSearch = (): JSX.Element => {
     </>
   );
 };
-
-const SearchSection = styled.section``;
-
-const LoadingIndicator = styled.div`
-  margin-top: 1.5rem;
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: gray;
-`;
-
-const LoadingSpinner = styled.img`
-  margin-top: 0.5rem;
-  width: 2rem;
-  height: 2rem;
-`;
 
 export default TeamFormationTeamSearch;
