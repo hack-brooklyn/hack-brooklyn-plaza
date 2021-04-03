@@ -2,14 +2,8 @@ package org.hackbrooklyn.plaza.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.hackbrooklyn.plaza.dto.CreateTFParticipantAndTeamDTO;
-import org.hackbrooklyn.plaza.dto.CreateTFParticipantDTO;
-import org.hackbrooklyn.plaza.dto.CreateTFTeamDTO;
-import org.hackbrooklyn.plaza.dto.TeamFormationTeamSearchResponse;
-import org.hackbrooklyn.plaza.exception.TeamFormationParticipantAlreadyExistsException;
-import org.hackbrooklyn.plaza.exception.TeamFormationParticipantAlreadyInTeamException;
-import org.hackbrooklyn.plaza.exception.TeamFormationParticipantNotFoundException;
-import org.hackbrooklyn.plaza.exception.TeamFormationTeamNameConflictException;
+import org.hackbrooklyn.plaza.dto.*;
+import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.*;
 import org.hackbrooklyn.plaza.repository.TeamFormationParticipantRepository;
 import org.hackbrooklyn.plaza.repository.TeamFormationTeamRepository;
@@ -195,6 +189,92 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 foundTeams,
                 totalPages,
                 foundTeamsSize
+        );
+    }
+
+    /**
+     * The `personalized` feature will only work if the user is in a team since the feature relies on the user's team's
+     * interested topics and skills to determine personalized results
+     */
+    @Override
+    public TeamFormationParticipantSearchResponse getParticipants(int page, int limit, boolean personalized, String searchQuery, User user) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TeamFormationParticipant> query = cb.createQuery(TeamFormationParticipant.class);
+
+        // Query for participants and apply sorting and filters if provided
+        Root<TeamFormationParticipant> participants = query.from(TeamFormationParticipant.class);
+        query.select(participants);
+        query.distinct(true);
+
+        // Compute predicates depending on the user's options
+        List<Predicate> predicates = new ArrayList<>();
+        if (personalized) {
+            // Return personalized participants based on the team's interested topics and skills
+            TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                    .findFirstByUser(user)
+                    .orElseThrow(TeamFormationParticipantNotFoundException::new);
+            if (userParticipant.getTeam() == null) {
+                throw new TeamFormationParticipantNotInTeamException();
+            }
+
+            Set<TopicOrSkill> teamTopicsAndSkills = userParticipant.getTeam().getInterestedTopicsAndSkills();
+
+            for (TopicOrSkill topicOrSkill : teamTopicsAndSkills) {
+                predicates.add(
+                        cb.equal(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills).get(TopicOrSkill_.name), topicOrSkill.getName())
+                );
+            }
+        } else if (searchQuery != null) {
+            if (StringUtils.substring(searchQuery, 0, 4).equals("tos:")) {
+                // Do an exact search for the topic or skill when the tos: operator is used
+                // Exact meaning case sensitive and with unprocessed input
+                String searchedTopicOrSkill = StringUtils.substring(searchQuery, 4);
+
+                predicates.add(
+                        cb.equal(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills).get(TopicOrSkill_.name), searchedTopicOrSkill)
+                );
+            } else {
+                // Search for an occurrence on the participant's name, interested topics and skills, and the objective statement
+                String searchQueryPattern = "%" + searchQuery.toLowerCase() + "%";
+                String topicAndSkillPattern = "%" + cleanTopicOrSkillName(searchQuery) + "%";
+
+                // Concatenate the participant's first and last name separated by a space in the middle
+                Expression<String> firstNameWithSpace = cb.concat(participants.join(TeamFormationParticipant_.user).get(User_.firstName), " ");
+                Expression<String> firstAndLastNameWithSpace = cb.concat(firstNameWithSpace, participants.join(TeamFormationParticipant_.user).get(User_.lastName));
+
+                predicates.add(cb.or(
+                        cb.like(cb.lower(firstAndLastNameWithSpace), searchQueryPattern),
+                        cb.like(cb.lower(participants.get(TeamFormationParticipant_.objectiveStatement)), searchQueryPattern),
+                        cb.like(cb.lower(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills, JoinType.LEFT).get(TopicOrSkill_.name)), topicAndSkillPattern)
+                ));
+            }
+        }
+
+        // Finish query and get most recently created participants matching the results
+        if (predicates.size() > 0) {
+            query.where(cb.and(
+                    cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser))),
+                    cb.or(predicates.toArray(new Predicate[0]))
+            );
+        } else {
+            query.where(cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser)));
+        }
+        query.orderBy(cb.desc(participants.get(TeamFormationParticipant_.id)));
+        TypedQuery<TeamFormationParticipant> typedQuery = entityManager.createQuery(query);
+
+        // Get total count and results from query
+        long foundParticipantsSize = typedQuery.getResultList().size();
+        int totalPages = (int) Math.ceil((double) foundParticipantsSize / limit);
+
+        // Get paginated participants from query
+        typedQuery.setFirstResult((page - 1) * limit);
+        typedQuery.setMaxResults(limit);
+        Collection<TeamFormationParticipant> foundParticipants = typedQuery.getResultList();
+
+        return new TeamFormationParticipantSearchResponse(
+                foundParticipants,
+                totalPages,
+                foundParticipantsSize
         );
     }
 
