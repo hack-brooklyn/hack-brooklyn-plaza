@@ -1,6 +1,6 @@
 import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
-import { StyledNavLink } from 'commonStyles';
+import { StyledNavLink } from 'common/styles/commonStyles';
 import styled from 'styled-components/macro';
 
 interface NavLinkContainerProps {

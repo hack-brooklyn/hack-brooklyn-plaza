@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AnnouncementBrowser, HeadingButton } from '../../components';
-import { HeadingSection, StyledH1 } from 'commonStyles';
-import { RootState } from '../../types';
+import { HeadingSection, StyledH1 } from 'common/styles/commonStyles';
 import ac, { Resources } from '../../security/accessControl';
+import { RootState } from 'types';
+
 import postIcon from 'assets/icons/penWhite.svg';
 
 const AnnouncementView = (): JSX.Element => {

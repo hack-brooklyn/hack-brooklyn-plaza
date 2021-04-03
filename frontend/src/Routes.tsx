@@ -4,26 +4,27 @@ import { Route, Switch } from 'react-router-dom';
 
 import {
   Activate,
-  AnnouncementView,
-  ApplicationLanding,
-  ApplicationPage,
-  CreateUser,
   Dashboard,
   EditAnnouncement,
   ForgotPassword,
   Landing,
-  Login,
-  ManageApplications,
-  PostAnnouncement,
-  SetUserRole,
-  SubmittedApplicationResume,
+  Login
+} from 'views/root';
+import { ApplicationLanding, ApplicationPage } from 'views/apply';
+import {
   TeamFormationHome,
   TeamFormationParticipantSetup,
   TeamFormationTeamHome,
   TeamFormationTeamSearch,
-  TeamFormationTeamSetup,
+  TeamFormationTeamSetup
+} from 'views/teamformation';
+import {
+  CreateUser,
+  ManageApplications,
+  SetUserRole,
+  SubmittedApplicationResume,
   ViewSubmittedApplication
-} from 'views';
+} from 'views/admin';
 import { RootState } from 'types';
 
 const Routes = (): JSX.Element => {
@@ -33,56 +34,13 @@ const Routes = (): JSX.Element => {
 
   return (
     <Switch>
-      <Route path="/teamformation/teams/search">
-        <TeamFormationTeamSearch />
-      </Route>
-
-      <Route path="/teamformation/teams" exact>
-        <TeamFormationTeamHome />
-      </Route>
-
-      <Route path="/teamformation/teams/setup">
-        <TeamFormationTeamSetup />
-      </Route>
-
-      <Route path="/teamformation/participants/setup">
-        <TeamFormationParticipantSetup />
-      </Route>
-
-      <Route path="/teamformation">
-        <TeamFormationHome />
-      </Route>
-
-      <Route path="/admin/users/setrole">
-        <SetUserRole />
-      </Route>
-
-      <Route path="/admin/users/create">
-        <CreateUser />
-      </Route>
-
-      <Route path="/admin/applications/:applicationNumberParam/resume">
-        <SubmittedApplicationResume />
-      </Route>
-
-      <Route path="/admin/applications/:applicationNumberParam">
-        <ViewSubmittedApplication />
-      </Route>
-
-      <Route path="/admin/applications">
-        <ManageApplications />
+      {/* Root */}
+      <Route path="/" exact>
+        {userIsLoggedIn ? <Dashboard /> : <Landing />}
       </Route>
 
       <Route path="/login">
         <Login />
-      </Route>
-
-      <Route path="/apply/form">
-        <ApplicationPage />
-      </Route>
-
-      <Route path="/apply">
-        <ApplicationLanding />
       </Route>
 
       <Route path="/activate">
@@ -93,20 +51,68 @@ const Routes = (): JSX.Element => {
         <ForgotPassword />
       </Route>
 
+      {/* Public Application Form */}
+      <Route path="/apply" exact>
+        <ApplicationLanding />
+      </Route>
+
+      <Route path="/apply/form">
+        <ApplicationPage />
+      </Route>
+
+      {/* Announcements */}
+      <Route path="/announcements" exact>
+        <AnnouncementView />
+      </Route>
+
       <Route path="/announcements/post">
         <PostAnnouncement />
+      </Route>
+
+      {/* Team Formation */}
+      <Route path="/teamformation" exact>
+        <TeamFormationHome />
+      </Route>
+
+      <Route path="/teamformation/participants/setup">
+        <TeamFormationParticipantSetup />
+      </Route>
+
+      <Route path="/teamformation/teams/setup">
+        <TeamFormationTeamSetup />
+      </Route>
+
+      <Route path="/teamformation/teams" exact>
+        <TeamFormationTeamHome />
+      </Route>
+
+      <Route path="/teamformation/teams/search">
+        <TeamFormationTeamSearch />
+      </Route>
+
+      {/* Admin */}
+      <Route path="/admin/applications" exact>
+        <ManageApplications />
+      </Route>
+
+      <Route path="/admin/applications/:applicationNumberParam">
+        <ViewSubmittedApplication />
+      </Route>
+
+      <Route path="/admin/applications/:applicationNumberParam/resume">
+        <SubmittedApplicationResume />
       </Route>
 
         <Route path="/announcements/:announcementId/edit">
             <EditAnnouncement />
         </Route>
 
-      <Route path="/announcements">
-        <AnnouncementView />
+      <Route path="/admin/users/create">
+        <CreateUser />
       </Route>
 
-      <Route path="/" exact>
-        {userIsLoggedIn ? <Dashboard /> : <Landing />}
+      <Route path="/admin/users/setrole">
+        <SetUserRole />
       </Route>
     </Switch>
   );
