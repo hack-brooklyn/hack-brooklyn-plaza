@@ -4,7 +4,7 @@ import styled from 'styled-components/macro';
 import Button from 'react-bootstrap/Button';
 import { ButtonVariant } from 'react-bootstrap/types';
 
-import { ButtonActiveOverrideStyles } from 'commonStyles';
+import { ButtonActiveOverrideStyles } from 'common/styles/commonStyles';
 
 interface StyledButtonProps {
   overrideActiveStyles?: boolean;

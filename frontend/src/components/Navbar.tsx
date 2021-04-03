@@ -10,7 +10,7 @@ import {
   LinkNavItem,
   ProfileDropdownMenu
 } from 'components';
-import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'commonStyles';
+import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'common/styles/commonStyles';
 import { enumHasValue } from 'util/plazaUtils';
 import ac, { Resources, Roles } from 'security/accessControl';
 import { Breakpoints, RootState } from 'types';
