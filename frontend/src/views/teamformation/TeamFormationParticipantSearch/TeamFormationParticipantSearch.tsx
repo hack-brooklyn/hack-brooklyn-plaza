@@ -13,7 +13,7 @@ import {
   SearchForm,
   SearchLoadingSpinner,
   SearchSection,
-  StyledTeamCard
+  StyledParticipantCard
 } from 'common/styles/teamformation/teamFormationBrowserStyles';
 import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { handleError } from 'util/plazaUtils';
@@ -23,15 +23,15 @@ import {
   ConnectionError,
   NoPermissionError,
   RootState,
+  TeamFormationParticipant,
+  TeamFormationParticipantSearchResponse,
   TeamFormationSearchParams,
-  TeamFormationTeam,
-  TeamFormationTeamSearchResponse,
   UnknownError
 } from 'types';
 
 import loadingIcon from 'assets/icons/loading.svg';
 
-const TeamFormationTeamSearch = (): JSX.Element => {
+const TeamFormationParticipantSearch = (): JSX.Element => {
   const history = useHistory();
 
   const accessToken = useSelector(
@@ -44,8 +44,10 @@ const TeamFormationTeamSearch = (): JSX.Element => {
   const [currentSearchQuery, setCurrentSearchQuery] = useState<string | null>(
     null
   );
-  const [currentTeams, setCurrentTeams] = useState<TeamFormationTeam[]>([]);
-  const [totalFoundTeams, setTotalFoundTeams] = useState(0);
+  const [currentParticipants, setCurrentParticipants] = useState<
+    TeamFormationParticipant[]
+  >([]);
+  const [totalFoundParticipants, setTotalFoundParticipants] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   // Local state to handle infinite scroll and pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -124,27 +126,32 @@ const TeamFormationTeamSearch = (): JSX.Element => {
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/teams${queryParams}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
+      res = await fetch(
+        `${API_ROOT}/teamFormation/participants${queryParams}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      });
+      );
     } catch (err) {
       throw new ConnectionError();
     }
 
     if (res.status === 200) {
-      const resBody: TeamFormationTeamSearchResponse = await res.json();
+      const resBody: TeamFormationParticipantSearchResponse = await res.json();
 
       if (isNewSearch) {
-        setCurrentTeams(resBody.teams);
+        setCurrentParticipants(resBody.participants);
       } else {
-        setCurrentTeams(currentTeams.concat(resBody.teams));
+        setCurrentParticipants(
+          currentParticipants.concat(resBody.participants)
+        );
       }
 
       setTotalPages(resBody.pages);
-      setTotalFoundTeams(resBody.totalFoundTeams);
+      setTotalFoundParticipants(resBody.totalFoundParticipants);
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
       await sendSearchRequest(searchQuery, page, isNewSearch, refreshedToken);
@@ -163,9 +170,11 @@ const TeamFormationTeamSearch = (): JSX.Element => {
       <SearchSection>
         <StyledCenteredH2>
           {currentSearchQuery !== null && currentSearchQuery !== ''
-            ? `${totalFoundTeams} result${totalFoundTeams === 1 ? '' : 's'}
+            ? `${totalFoundParticipants} result${
+                totalFoundParticipants === 1 ? '' : 's'
+              }
             for "${currentSearchQuery}"`
-            : 'Browse Teams'}
+            : 'Browse Participants'}
         </StyledCenteredH2>
 
         <SearchForm
@@ -174,11 +183,11 @@ const TeamFormationTeamSearch = (): JSX.Element => {
             setCurrentSearchQuery(searchBoxInputValue);
           }}
         >
-          <Form.Group controlId="tfTeamSearch">
+          <Form.Group controlId="tfParticipantSearch">
             <Form.Control
               name="query"
               type="text"
-              placeholder="Search teams..."
+              placeholder="Search participants..."
               onChange={(e) => setSearchBoxInputValue(e.target.value)}
               value={searchBoxInputValue}
               disabled={fetchingSearchResults}
@@ -189,24 +198,30 @@ const TeamFormationTeamSearch = (): JSX.Element => {
         <InfiniteScroll
           next={continueInfiniteScroll}
           hasMore={currentPage < totalPages}
-          dataLength={currentTeams.length}
+          dataLength={currentParticipants.length}
           loader={
             <LoadingIndicator>
               <div>Loading...</div>
-              <SearchLoadingSpinner src={loadingIcon} alt="Loading teams..." />
+              <SearchLoadingSpinner
+                src={loadingIcon}
+                alt="Loading participants..."
+              />
             </LoadingIndicator>
           }
           endMessage={null}
           style={{ overflow: 'visible' }}
         >
-          {currentTeams.length > 0 ? (
+          {currentParticipants.length > 0 ? (
             <ResultsGrid>
-              {currentTeams.map((team) => (
-                <StyledTeamCard teamData={team} key={team.id} />
+              {currentParticipants.map((participant) => (
+                <StyledParticipantCard
+                  participantData={participant}
+                  key={participant.id}
+                />
               ))}
             </ResultsGrid>
           ) : (
-            <MessageText>No teams were found.</MessageText>
+            <MessageText>No participants were found.</MessageText>
           )}
         </InfiniteScroll>
       </SearchSection>
@@ -214,4 +229,4 @@ const TeamFormationTeamSearch = (): JSX.Element => {
   );
 };
 
-export default TeamFormationTeamSearch;
+export default TeamFormationParticipantSearch;

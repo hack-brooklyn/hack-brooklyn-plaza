@@ -84,3 +84,19 @@ export const LoadingSpinner = styled.img`
   width: 4rem;
   height: 4rem;
 `;
+
+export const SearchSection = styled.section``;
+
+export const LoadingIndicator = styled.div`
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: gray;
+`;
+
+export const SearchLoadingSpinner = styled.img`
+  margin-top: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+`;

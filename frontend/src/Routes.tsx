@@ -14,6 +14,7 @@ import { ApplicationLanding, ApplicationPage } from 'views/apply';
 import {
   TeamFormationHome,
   TeamFormationParticipantHome,
+  TeamFormationParticipantSearch,
   TeamFormationParticipantSetup,
   TeamFormationTeamHome,
   TeamFormationTeamSearch,
@@ -89,6 +90,10 @@ const Routes = (): JSX.Element => {
 
       <Route path="/teamformation/teams" exact>
         <TeamFormationTeamHome />
+      </Route>
+
+      <Route path="/teamformation/participants/search">
+        <TeamFormationParticipantSearch />
       </Route>
 
       <Route path="/teamformation/teams/search">
