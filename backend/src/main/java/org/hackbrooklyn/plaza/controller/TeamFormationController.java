@@ -1,10 +1,7 @@
 package org.hackbrooklyn.plaza.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hackbrooklyn.plaza.dto.CreateTFParticipantAndTeamDTO;
-import org.hackbrooklyn.plaza.dto.CreateTFParticipantDTO;
-import org.hackbrooklyn.plaza.dto.CreateTFTeamDTO;
-import org.hackbrooklyn.plaza.dto.TeamFormationTeamSearchResponse;
+import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.model.TeamFormationParticipant;
 import org.hackbrooklyn.plaza.model.TeamFormationTeam;
 import org.hackbrooklyn.plaza.model.User;
@@ -30,6 +27,20 @@ public class TeamFormationController {
     @Autowired
     public TeamFormationController(TeamFormationService teamFormationService) {
         this.teamFormationService = teamFormationService;
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_PARTICIPANT)")
+    @GetMapping("/participants")
+    public ResponseEntity<TeamFormationParticipantSearchResponse> getParticipants(
+            @RequestParam(defaultValue = "1") @Min(1) int page,
+            @RequestParam(defaultValue = "8") @Min(1) int limit,
+            @RequestParam(defaultValue = "false") boolean personalized,
+            @RequestParam(required = false) String searchQuery,
+            @AuthenticationPrincipal User user
+    ) {
+        TeamFormationParticipantSearchResponse participants = teamFormationService.getParticipants(page, limit, personalized, searchQuery, user);
+
+        return new ResponseEntity<>(participants, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_CREATE_PARTICIPANT)")
