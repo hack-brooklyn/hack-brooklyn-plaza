@@ -1,7 +1,7 @@
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
 
-import { TeamCard } from 'components/teamformation';
+import { ParticipantCard, TeamCard } from 'components/teamformation';
 import { Breakpoints } from 'types';
 
 export const TitleArea = styled.div`
@@ -31,12 +31,20 @@ export const SearchForm = styled(Form)`
   margin: 1rem auto 2rem;
 `;
 
-export const StyledTeamCard = styled(TeamCard)`
+export const StyledTeamFormationCard = css`
   margin-bottom: 2rem;
 
   @media screen and (min-width: ${Breakpoints.ExtraLarge}px) {
     margin: 0;
   }
+`;
+
+export const StyledTeamCard = styled(TeamCard)`
+  ${StyledTeamFormationCard};
+`;
+
+export const StyledParticipantCard = styled(ParticipantCard)`
+  ${StyledTeamFormationCard};
 `;
 
 export const ResultsGrid = styled.div`
@@ -57,4 +65,22 @@ export const MessageText = styled.div`
   text-align: center;
   font-size: 1.25rem;
   font-weight: bold;
+`;
+
+export const LinkButtonContainer = styled.div`
+  margin: 2rem auto 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const LoadingSection = styled.section`
+  margin: 0 auto 3rem;
+  text-align: center;
+`;
+
+export const LoadingSpinner = styled.img`
+  margin-top: 2rem;
+  width: 4rem;
+  height: 4rem;
 `;
