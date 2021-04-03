@@ -49,7 +49,7 @@ const ParticipantCard = (
             (interestedTopicOrSkill, index) => {
               return (
                 <TopicOrSkillBadge
-                  to={`/teamformation/teams/search?query=tos%3A${interestedTopicOrSkill}`}
+                  to={`/teamformation/participants/search?query=tos%3A${interestedTopicOrSkill}`}
                   key={index}
                 >
                   {interestedTopicOrSkill}
