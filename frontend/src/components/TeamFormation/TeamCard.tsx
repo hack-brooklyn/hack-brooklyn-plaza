@@ -6,7 +6,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import {
   ObjectiveStatementText,
   StyledActionButton,
-  StyledCardArticle,
+  CardArticle,
   TopicOrSkillBadge,
   TopicsAndSkillsArea
 } from 'common/styles/teamFormationCardStyles';
@@ -24,13 +24,13 @@ interface MemberImagesAreaProps {
   teamSize: number;
 }
 
-const TeamFormationTeamCard = (
+const TeamCard = (
   props: TeamFormationTeamCardProps
 ): JSX.Element => {
   const { teamData, className } = props;
 
   return (
-    <StyledCardArticle className={className}>
+    <CardArticle className={className}>
       <TopHalf>
         <NameAndTopicsAndSkillsContainer>
           <NameArea>
@@ -71,7 +71,7 @@ const TeamFormationTeamCard = (
           <StyledActionButton>Request to Join</StyledActionButton>
         </ActionButtonContainer>
       </BottomHalf>
-    </StyledCardArticle>
+    </CardArticle>
   );
 };
 
@@ -203,4 +203,4 @@ const ActionButtonContainer = styled.div`
   overflow: visible;
 `;
 
-export default TeamFormationTeamCard;
+export default TeamCard;

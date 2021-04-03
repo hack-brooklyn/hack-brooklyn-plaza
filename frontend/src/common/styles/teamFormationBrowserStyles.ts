@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro';
 import Form from 'react-bootstrap/Form';
 
-import { TeamFormationTeamCard } from 'components';
+import { TeamCard } from 'components/TeamFormation';
 import { Breakpoints } from 'types';
 
 export const TitleArea = styled.div`
@@ -31,7 +31,7 @@ export const SearchForm = styled(Form)`
   margin: 1rem auto 2rem;
 `;
 
-export const StyledTeamCard = styled(TeamFormationTeamCard)`
+export const StyledTeamCard = styled(TeamCard)`
   margin-bottom: 2rem;
 
   @media screen and (min-width: ${Breakpoints.ExtraLarge}px) {
