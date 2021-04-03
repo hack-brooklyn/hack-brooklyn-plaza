@@ -2,9 +2,9 @@ import { generateSelectOptions } from 'util/plazaUtils';
 import { Option } from 'types';
 
 export const defaultTopicsAndSkills: Option[] = generateSelectOptions([
-  'Front-End Development',
-  'Back-End Development',
-  'Full-Stack Development',
+  'Frontend Development',
+  'Backend Development',
+  'Full Stack Development',
   'Mobile Development',
   'Game Development',
   'Data Science',
