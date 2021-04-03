@@ -69,7 +69,7 @@ export const ParticipantSpecializationField = (
         as={Form.Control}
         name={fieldName}
         type="text"
-        placeholder="Full-Stack Developer, Java Developer, UX/UI Designer, etc."
+        placeholder="Full Stack Developer, Java Developer, UX/UI Designer, etc."
         disabled={formik.isSubmitting}
         required
       />

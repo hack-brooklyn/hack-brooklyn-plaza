@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 import {
   ObjectiveStatementText,
@@ -40,7 +41,10 @@ const TeamFormationTeamCard = (
             {teamData.interestedTopicsAndSkills.map(
               (interestedTopicOrSkill, index) => {
                 return (
-                  <TopicOrSkillBadge key={index}>
+                  <TopicOrSkillBadge
+                    to={`/teamformation/teams/search?query=tos%3A${interestedTopicOrSkill}`}
+                    key={index}
+                  >
                     {interestedTopicOrSkill}
                   </TopicOrSkillBadge>
                 );
@@ -85,7 +89,7 @@ const generateMemberImages = (teamData: TeamFormationTeam) => {
               {member.user.firstName} {member.user.lastName}
             </Tooltip>
           }
-          key={member.id}
+          key={i}
         >
           <StyledTeamMemberImage
             src={profileImage}
@@ -96,7 +100,11 @@ const generateMemberImages = (teamData: TeamFormationTeam) => {
     } else {
       // If and when there are no more members to add, add placeholder icons
       memberImageComponents.push(
-        <StyledTeamMemberImage src={openSeatImage} alt="Open Team Seat" />
+        <StyledTeamMemberImage
+          src={openSeatImage}
+          alt="Open Team Seat"
+          key={i}
+        />
       );
     }
   }

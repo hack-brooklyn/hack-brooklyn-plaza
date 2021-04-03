@@ -264,11 +264,18 @@ export interface SubmittedApplicationLite extends SubmittedApplicationCommon {
   applicationNumber: number;
 }
 
-export interface GetApplicationsRequestParams {
+export interface PageableSearchParams {
   page?: number;
   limit?: number;
-  decision?: ApplicationDecisions;
   searchQuery?: string;
+}
+
+export interface GetApplicationsRequestParams extends PageableSearchParams {
+  decision?: ApplicationDecisions;
+}
+
+export interface TeamFormationSearchParams extends PageableSearchParams {
+  personalized?: boolean;
 }
 
 export interface GetApplicationsResponse {

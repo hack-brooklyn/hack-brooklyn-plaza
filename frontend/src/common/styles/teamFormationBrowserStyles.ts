@@ -9,17 +9,22 @@ export const TitleArea = styled.div`
 `;
 
 export const VisibilityStatus = styled.div`
-  margin-left: 0.25rem;
-  display: flex;
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-left: 0.25rem;
+    display: flex;
+  }
 `;
 
 export const VisibilityStatusText = styled.div`
-  margin-left: 0.5rem;
+  text-align: center;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    text-align: left;
+    margin-left: 0.5rem;
+  }
 `;
 
-export const PersonalizedResultsSection = styled.section`
-  margin-top: 4rem;
-`;
+export const PersonalizedResultsSection = styled.section``;
 
 export const SearchForm = styled(Form)`
   max-width: 31.25rem;
@@ -46,4 +51,10 @@ export const ResultsGrid = styled.div`
   @media screen and (min-width: ${Breakpoints.ExtraExtraLarge}px) {
     grid-gap: 2rem;
   }
+`;
+
+export const MessageText = styled.div`
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
 `;
