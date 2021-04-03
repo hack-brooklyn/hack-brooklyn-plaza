@@ -1,16 +1,15 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components/macro';
 
 import {
   ActionButtonContainer,
+  CardArticle,
   ObjectiveStatementText,
   StyledActionButton,
-  CardArticle,
   TopicOrSkillBadge,
   TopicsAndSkillsArea
 } from 'common/styles/teamformation/teamFormationCardStyles';
-import { Breakpoints, RootState, TeamFormationParticipant } from 'types';
+import { Breakpoints, TeamFormationParticipant } from 'types';
 
 import profileImage from 'assets/icons/profile.svg';
 
@@ -23,20 +22,21 @@ const ParticipantCard = (
 ): JSX.Element => {
   const { participantData } = props;
 
-  const firstName = useSelector((state: RootState) => state.user.firstName);
-  const lastName = useSelector((state: RootState) => state.user.lastName);
-
   return (
     <CardArticle>
       <TopHalf>
         <ProfileArea>
           <StyledProfileImage
             src={profileImage}
-            alt={firstName + ' ' + lastName}
+            alt={
+              participantData.user.firstName +
+              ' ' +
+              participantData.user.lastName
+            }
           />
           <NameAndTitleContainer>
             <NameText>
-              {firstName} {lastName}
+              {participantData.user.firstName} {participantData.user.lastName}
             </NameText>
             <SpecializationText>
               {participantData.specialization}
