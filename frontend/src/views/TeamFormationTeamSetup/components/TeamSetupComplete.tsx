@@ -53,8 +53,6 @@ const TeamSetupComplete = (): JSX.Element => {
 
     if (res.status === 200) {
       const resBody = await res.json();
-      console.log(resBody);
-
       setParticipantData(resBody);
     } else if (res.status === 400) {
       throw new InvalidSubmittedDataError();
