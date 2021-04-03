@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.CreateTFParticipantAndTeamDTO;
 import org.hackbrooklyn.plaza.dto.CreateTFParticipantDTO;
 import org.hackbrooklyn.plaza.dto.CreateTFTeamDTO;
+import org.hackbrooklyn.plaza.dto.TeamFormationTeamSearchResponse;
 import org.hackbrooklyn.plaza.model.TeamFormationParticipant;
 import org.hackbrooklyn.plaza.model.TeamFormationTeam;
 import org.hackbrooklyn.plaza.model.User;
@@ -16,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 
 @Slf4j
@@ -38,6 +40,20 @@ public class TeamFormationController {
         teamFormationService.createParticipant(user, reqBody);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")
+    @GetMapping("/teams")
+    public ResponseEntity<TeamFormationTeamSearchResponse> getTeams(
+            @RequestParam(defaultValue = "1") @Min(1) int page,
+            @RequestParam(defaultValue = "8") @Min(1) int limit,
+            @RequestParam(defaultValue = "false") boolean personalized,
+            @RequestParam(required = false) String searchQuery,
+            @AuthenticationPrincipal User user
+    ) {
+        TeamFormationTeamSearchResponse teams = teamFormationService.getTeams(page, limit, personalized, searchQuery, user);
+
+        return new ResponseEntity<>(teams, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_CREATE_TEAM)")
