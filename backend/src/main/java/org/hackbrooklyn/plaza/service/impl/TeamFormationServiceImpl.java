@@ -135,7 +135,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         query.distinct(true);
 
         // Compute predicates depending on the user's options
-        List<Predicate> andPredicates = new ArrayList<>();
         List<Predicate> orPredicates = new ArrayList<>();
         if (personalized) {
             // Return personalized teams based on the user's interested topics and skills
@@ -172,6 +171,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         }
 
         // Add necessary requirements during search
+        List<Predicate> andPredicates = new ArrayList<>();
         andPredicates.add(cb.isTrue(teams.get(TeamFormationTeam_.visibleInBrowser)));
 
         if (hideSentJoinRequests) {
@@ -221,7 +221,9 @@ public class TeamFormationServiceImpl implements TeamFormationService {
      * interested topics and skills to determine personalized results
      */
     @Override
-    public TeamFormationParticipantSearchResponse getParticipants(int page, int limit, boolean personalized, String searchQuery, User user) {
+    public TeamFormationParticipantSearchResponse getParticipants(int page, int limit, boolean personalized, boolean hideSentInvitations, String searchQuery, User user) {
+        TeamFormationParticipant userParticipant = null;
+
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TeamFormationParticipant> query = cb.createQuery(TeamFormationParticipant.class);
 
@@ -231,10 +233,10 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         query.distinct(true);
 
         // Compute predicates depending on the user's options
-        List<Predicate> predicates = new ArrayList<>();
+        List<Predicate> orPredicates = new ArrayList<>();
         if (personalized) {
             // Return personalized participants based on the team's interested topics and skills
-            TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+            userParticipant = teamFormationParticipantRepository
                     .findFirstByUser(user)
                     .orElseThrow(TeamFormationParticipantNotFoundException::new);
             if (userParticipant.getTeam() == null) {
@@ -244,7 +246,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             Set<TopicOrSkill> teamTopicsAndSkills = userParticipant.getTeam().getInterestedTopicsAndSkills();
 
             for (TopicOrSkill topicOrSkill : teamTopicsAndSkills) {
-                predicates.add(
+                orPredicates.add(
                         cb.equal(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills).get(TopicOrSkill_.name), topicOrSkill.getName())
                 );
             }
@@ -254,7 +256,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 // Exact meaning case sensitive and with unprocessed input
                 String searchedTopicOrSkill = StringUtils.substring(searchQuery, 4);
 
-                predicates.add(
+                orPredicates.add(
                         cb.equal(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills).get(TopicOrSkill_.name), searchedTopicOrSkill)
                 );
             } else {
@@ -266,7 +268,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 Expression<String> firstNameWithSpace = cb.concat(participants.join(TeamFormationParticipant_.user).get(User_.firstName), " ");
                 Expression<String> firstAndLastNameWithSpace = cb.concat(firstNameWithSpace, participants.join(TeamFormationParticipant_.user).get(User_.lastName));
 
-                predicates.add(cb.or(
+                orPredicates.add(cb.or(
                         cb.like(cb.lower(firstAndLastNameWithSpace), searchQueryPattern),
                         cb.like(cb.lower(participants.get(TeamFormationParticipant_.objectiveStatement)), searchQueryPattern),
                         cb.like(cb.lower(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills, JoinType.LEFT).get(TopicOrSkill_.name)), topicAndSkillPattern)
@@ -274,15 +276,35 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             }
         }
 
-        // Finish query and get most recently created participants matching the results
-        if (predicates.size() > 0) {
-            query.where(cb.and(
-                    cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser))),
-                    cb.or(predicates.toArray(new Predicate[0]))
-            );
-        } else {
-            query.where(cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser)));
+        // Add necessary requirements during search
+        List<Predicate> andPredicates = new ArrayList<>();
+        andPredicates.add(cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser)));
+
+        if (hideSentInvitations) {
+            if (userParticipant == null) {
+                userParticipant = teamFormationParticipantRepository
+                        .findFirstByUser(user)
+                        .orElseThrow(TeamFormationParticipantNotFoundException::new);
+            }
+
+            if (userParticipant.getTeam() == null) {
+                throw new TeamFormationParticipantNotInTeamException();
+            }
+
+            // Hide found participants that have an invitation from the user's team
+            Expression<TeamFormationTeam> invitingTeam = participants.join(TeamFormationParticipant_.receivedParticipantInvitations, JoinType.LEFT).get(TeamFormationParticipantInvitation_.invitingTeam);
+            andPredicates.add(cb.or(
+                    cb.notEqual(invitingTeam, userParticipant.getTeam()),
+                    cb.isNull(invitingTeam)
+            ));
         }
+
+        if (orPredicates.size() > 0) {
+            andPredicates.add(cb.or(orPredicates.toArray(new Predicate[0])));
+        }
+
+        // Finish query and get most recently created participants matching the results
+        query.where(cb.and(andPredicates.toArray(new Predicate[0])));
         query.orderBy(cb.desc(participants.get(TeamFormationParticipant_.id)));
         TypedQuery<TeamFormationParticipant> typedQuery = entityManager.createQuery(query);
 
