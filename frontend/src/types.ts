@@ -276,7 +276,16 @@ export interface GetApplicationsRequestParams extends PageableSearchParams {
 
 export interface TeamFormationSearchParams extends PageableSearchParams {
   personalized?: boolean;
+}
+
+export interface TeamFormationTeamSearchParams
+  extends TeamFormationSearchParams {
   hideSentJoinRequests?: boolean;
+}
+
+export interface TeamFormationParticipantSearchParams
+  extends TeamFormationSearchParams {
+  hideSentInvitations?: boolean;
 }
 
 export interface GetApplicationsResponse {

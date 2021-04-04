@@ -23,8 +23,8 @@ import {
   ConnectionError,
   NoPermissionError,
   RootState,
-  TeamFormationSearchParams,
   TeamFormationTeam,
+  TeamFormationTeamSearchParams,
   TeamFormationTeamSearchResponse,
   UnknownError
 } from 'types';
@@ -116,7 +116,7 @@ const TeamFormationTeamSearch = (): JSX.Element => {
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
-    const searchOptions: TeamFormationSearchParams = {
+    const searchOptions: TeamFormationTeamSearchParams = {
       searchQuery: searchQuery === '' ? undefined : searchQuery,
       page: page,
       hideSentJoinRequests: true
