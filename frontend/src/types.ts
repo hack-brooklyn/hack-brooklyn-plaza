@@ -550,7 +550,7 @@ export class UserNotFoundError extends Error {
   }
 }
 
-// Thrown when a user account was not found.
+// Thrown when a team formation participant profile has already been set up.
 export class TeamFormationParticipantAlreadyExistsError extends Error {
   constructor() {
     super();
@@ -559,7 +559,7 @@ export class TeamFormationParticipantAlreadyExistsError extends Error {
   }
 }
 
-// Thrown when a user account was not found.
+// Thrown when a team formation participant tries to send a request to a team they already sent one to.
 export class TeamFormationTeamJoinRequestAlreadySentError extends Error {
   constructor() {
     super();
