@@ -216,4 +216,13 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+    
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(AnnouncementNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleAnnouncementNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No announcement was found with the requested id");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
 }
