@@ -44,6 +44,9 @@ const TeamFormationParticipantHome = (): JSX.Element => {
   ] = useState<TeamFormationParticipantSearchResponse>();
   const [submitting, setSubmitting] = useState(false);
   const [participantsLoaded, setParticipantsLoaded] = useState(false);
+  const [participantIsInTeam, setParticipantIsInTeam] = useState<
+    boolean | null
+  >(null);
 
   useEffect(() => {
     getPersonalizedParticipants().catch((err) => handleError(err));
@@ -73,6 +76,10 @@ const TeamFormationParticipantHome = (): JSX.Element => {
       const resBody = await res.json();
       setPersonalizedParticipants(resBody);
       setParticipantsLoaded(true);
+      setParticipantIsInTeam(true);
+    } else if (res.status === 404) {
+      setParticipantsLoaded(true);
+      setParticipantIsInTeam(false);
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
       await getPersonalizedParticipants(refreshedToken);
@@ -130,13 +137,25 @@ const TeamFormationParticipantHome = (): JSX.Element => {
                 ))}
               </ResultsGrid>
             ) : (
-              <MessageText>
-                No participants were found that match your interests at this
-                time.
-                <br />
-                Please check back later or try browsing all the other
-                participants for now!
-              </MessageText>
+              <>
+                {participantIsInTeam ? (
+                  <MessageText>
+                    No participants were found that match your interests at this
+                    time.
+                    <br />
+                    Please check back later or try browsing all the other
+                    participants for now!
+                  </MessageText>
+                ) : (
+                  <MessageText>
+                    Personalized recommendations are only available for
+                    participants already in a team.
+                    <br />
+                    Click the button below to browse all of the participants
+                    instead!
+                  </MessageText>
+                )}
+              </>
             )}
           </>
         ) : (
