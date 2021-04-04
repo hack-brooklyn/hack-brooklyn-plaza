@@ -276,6 +276,7 @@ export interface GetApplicationsRequestParams extends PageableSearchParams {
 
 export interface TeamFormationSearchParams extends PageableSearchParams {
   personalized?: boolean;
+  hideSentJoinRequests?: boolean;
 }
 
 export interface GetApplicationsResponse {
@@ -526,5 +527,14 @@ export class TeamFormationParticipantAlreadyExistsError extends Error {
     super();
     this.name = 'TeamFormationParticipantAlreadyExistsError';
     this.message = 'You already have a team formation participant profile.';
+  }
+}
+
+// Thrown when a user account was not found.
+export class TeamFormationTeamJoinRequestAlreadySentError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamJoinRequestAlreadySentError';
+    this.message = 'You already sent this team a join request.';
   }
 }

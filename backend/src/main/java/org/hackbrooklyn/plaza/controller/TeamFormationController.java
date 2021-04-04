@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 
 @Slf4j
@@ -59,10 +60,11 @@ public class TeamFormationController {
             @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "8") @Min(1) int limit,
             @RequestParam(defaultValue = "false") boolean personalized,
+            @RequestParam(defaultValue = "false") boolean hideSentJoinRequests,
             @RequestParam(required = false) String searchQuery,
             @AuthenticationPrincipal User user
     ) {
-        TeamFormationTeamSearchResponse teams = teamFormationService.getTeams(page, limit, personalized, searchQuery, user);
+        TeamFormationTeamSearchResponse teams = teamFormationService.getTeams(page, limit, personalized, hideSentJoinRequests, searchQuery, user);
 
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }
@@ -107,5 +109,16 @@ public class TeamFormationController {
         TeamFormationTeam foundTeam = teamFormationService.getLoggedInParticipantTeamData(user);
 
         return new ResponseEntity<>(foundTeam, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_PARTICIPANT)")
+    @PostMapping("/teams/{teamId}/requestToJoin")
+    public ResponseEntity<Void> requestToJoinTeam(
+            @PathVariable @Positive int teamId,
+            @RequestBody @Valid MessageDTO resBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.requestToJoinTeam(teamId, resBody, user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

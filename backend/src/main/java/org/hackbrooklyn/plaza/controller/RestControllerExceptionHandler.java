@@ -225,4 +225,22 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TeamFormationTeamNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationTeamNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No team formation team was found.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TeamFormationTeamJoinRequestAlreadySentException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationTeamJoinRequestAlreadySentException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "You have already sent a join request to this team.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
 }
