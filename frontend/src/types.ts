@@ -562,3 +562,12 @@ export class TeamFormationTeamJoinRequestAlreadySentError extends Error {
     this.message = 'You already sent this team a join request.';
   }
 }
+
+// Thrown when a team formation team tries to send an invitation to a participant they already sent one to.
+export class TeamFormationParticipantInvitationAlreadySentError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantInvitationAlreadySentError';
+    this.message = 'Your team has already sent this participant an invitation.';
+  }
+}
