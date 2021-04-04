@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 
 @Slf4j
@@ -107,5 +108,16 @@ public class TeamFormationController {
         TeamFormationTeam foundTeam = teamFormationService.getLoggedInParticipantTeamData(user);
 
         return new ResponseEntity<>(foundTeam, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_PARTICIPANT)")
+    @PostMapping("/teams/{teamId}/requestToJoin")
+    public ResponseEntity<Void> requestToJoinTeam(
+            @PathVariable @Positive int teamId,
+            @RequestBody @Valid MessageDTO resBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.requestToJoinTeam(teamId, resBody, user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
