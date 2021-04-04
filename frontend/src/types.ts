@@ -338,6 +338,11 @@ export interface TeamFormationTeam
   members: TeamFormationParticipant[];
 }
 
+export interface AnnouncementData {
+  body: string;
+  participantsOnly: boolean;
+}
+
 export const roleOptions: Option[] = [
   { value: Roles.None, label: 'None' },
   { value: Roles.Applicant, label: 'Applicant' },
@@ -507,5 +512,13 @@ export class TeamFormationParticipantAlreadyExistsError extends Error {
     super();
     this.name = 'TeamFormationParticipantAlreadyExistsError';
     this.message = 'You already have a team formation participant profile.';
+  }
+}
+
+export class AnnouncementNotFoundError extends Error {
+  constructor() {
+    super();
+    this.name = 'AnnouncementNotFoundError';
+    this.message = 'The requested announcement does not exist';
   }
 }
