@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
+import { TeamJoinRequestModal } from 'components/teamformation';
 import {
   ObjectiveStatementText,
   StyledActionButton,
@@ -17,6 +18,7 @@ import openSeatImage from 'assets/icons/team-formation/open-seat.svg';
 
 interface TeamFormationTeamCardProps {
   teamData: TeamFormationTeam;
+  showJoinButton?: boolean;
   className?: string;
 }
 
@@ -24,10 +26,10 @@ interface MemberImagesAreaProps {
   teamSize: number;
 }
 
-const TeamCard = (
-  props: TeamFormationTeamCardProps
-): JSX.Element => {
-  const { teamData, className } = props;
+const TeamCard = (props: TeamFormationTeamCardProps): JSX.Element => {
+  const { teamData, showJoinButton, className } = props;
+
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
 
   return (
     <CardArticle className={className}>
@@ -53,24 +55,42 @@ const TeamCard = (
           </TopicsAndSkillsArea>
         </NameAndTopicsAndSkillsContainer>
 
-        <MemberImagesArea teamSize={teamData.size}>
-          {generateMemberImages(teamData)}
-        </MemberImagesArea>
+        <div>
+          <MemberImagesArea teamSize={teamData.size}>
+            {generateMemberImages(teamData)}
+          </MemberImagesArea>
+
+          {showJoinButton !== undefined && !showJoinButton && (
+            <MemberCountTop>
+              {teamData.members.length}/{teamData.size} Members
+            </MemberCountTop>
+          )}
+        </div>
       </TopHalf>
 
       <BottomHalf>
-        <ObjectiveStatementText>
+        <ObjectiveStatementText showJoinButton={showJoinButton}>
           {teamData.objectiveStatement}
         </ObjectiveStatementText>
 
-        <ActionButtonContainer>
-          {/* TODO: Add logic to handle join requests */}
-          <MemberCount>
-            {teamData.members.length}/{teamData.size} Members
-          </MemberCount>
-          <StyledActionButton>Request to Join</StyledActionButton>
-        </ActionButtonContainer>
+        {(showJoinButton === undefined || showJoinButton) && (
+          <ActionButtonContainer>
+            <MemberCount>
+              {teamData.members.length}/{teamData.size} Members
+            </MemberCount>
+
+            <StyledActionButton onClick={() => setRequestModalOpen(true)}>
+              Request to Join
+            </StyledActionButton>
+          </ActionButtonContainer>
+        )}
       </BottomHalf>
+
+      <TeamJoinRequestModal
+        teamData={teamData}
+        show={requestModalOpen}
+        setShow={setRequestModalOpen}
+      />
     </CardArticle>
   );
 };
@@ -134,6 +154,7 @@ const BottomHalf = styled.div`
 
 const NameArea = styled.div`
   @media screen and (min-width: ${Breakpoints.Medium}px) {
+    max-width: 95%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -182,6 +203,19 @@ const StyledTeamMemberImage = styled.img`
 
   @media screen and (min-width: ${Breakpoints.Medium}px) {
     margin: 0;
+  }
+`;
+
+const MemberCountTop = styled.div`
+  display: block;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
   }
 `;
 
