@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { handleError } from '../../util/plazaUtils';
-import { refreshAccessToken } from '../../util/auth';
+import { handleError } from 'util/plazaUtils';
+import { refreshAccessToken } from 'util/auth';
 import {
   AnnouncementData,
   AnnouncementNotFoundError,
@@ -12,9 +12,9 @@ import {
   NoPermissionError,
   RootState,
   UnknownError
-} from '../../types';
-import { API_ROOT } from '../../index';
-import { AnnouncementEditor } from '../../components';
+} from 'types';
+import { API_ROOT } from 'index';
+import { AnnouncementEditor } from 'components';
 
 interface ParamId {
   announcementId: string;

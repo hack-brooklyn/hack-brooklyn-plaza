@@ -1,16 +1,18 @@
 import React from 'react';
-import { RequiredFormLabel } from './index';
 import { FastField, Formik } from 'formik';
 import { Form } from 'react-bootstrap';
-import { StyledH1, StyledSubmitButton } from '../commonStyles';
 import styled from 'styled-components/macro';
-import { AnnouncementData } from '../types';
+
+import { RequiredFormLabel } from '../';
+import { StyledH1, StyledSubmitButton } from 'common/styles/commonStyles';
+import { AnnouncementData } from 'types';
 
 interface AnnouncementEditorData {
   announcementData: AnnouncementData;
   actionType: string;
   submitForm: (announcementData: AnnouncementData) => Promise<void>;
 }
+
 const AnnouncementEditor = (props: AnnouncementEditorData): JSX.Element => {
   const { announcementData, actionType, submitForm } = props;
 

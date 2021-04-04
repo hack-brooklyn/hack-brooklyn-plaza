@@ -9,16 +9,16 @@ import utc from 'dayjs/plugin/utc';
 import { toast } from 'react-toastify';
 import ReactMarkdown from 'react-markdown';
 
-import { API_ROOT } from '../index';
+import { API_ROOT } from 'index';
 import {
   Breakpoints,
   ConnectionError,
   NoPermissionError,
   RootState,
   UnknownError
-} from '../types';
-import { refreshAccessToken } from '../util/auth';
-import { handleError } from '../util/plazaUtils';
+} from 'types';
+import { refreshAccessToken } from 'util/auth';
+import { handleError } from 'util/plazaUtils';
 import editIcon from 'assets/icons/penBlack.svg';
 import deleteIcon from 'assets/icons/trashIcon.svg';
 
@@ -100,23 +100,24 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       <Container>
         <BoldText>
           {timeCreated !== lastUpdated &&
-          `Updated: ${dayjs.utc(lastUpdated).fromNow()}`}
-          {timeCreated !== lastUpdated && (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
+            `Updated: ${dayjs.utc(lastUpdated).fromNow()}`}
+          {timeCreated !== lastUpdated &&
+            (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
           Created: {dayjs.utc(lastUpdated).fromNow()}
         </BoldText>
         {displayControls && (
-            <ControlContainer>
-              <StyledAnchor to={`/announcements/${id}/edit`}>
-                <ButtonIcon src={editIcon} alt={'Edit Icon'} />
-              </StyledAnchor>
-              <StyledAnchor to={'/announcements'}>
-                <ButtonIcon
-                    src={deleteIcon}
-                    alt={'Delete Icon'}
-                    onClick={confirmDeleteAnnouncement}
-                />
-              </StyledAnchor>
-            </ControlContainer>
+          <ControlContainer>
+            <StyledAnchor to={`/announcements/${id}/edit`}>
+              <ButtonIcon src={editIcon} alt={'Edit Icon'} />
+            </StyledAnchor>
+            <StyledAnchor to={'/announcements'}>
+              <ButtonIcon
+                src={deleteIcon}
+                alt={'Delete Icon'}
+                onClick={confirmDeleteAnnouncement}
+              />
+            </StyledAnchor>
+          </ControlContainer>
         )}
       </Container>
     </AnnouncementContainer>

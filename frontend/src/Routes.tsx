@@ -2,10 +2,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
+import { AnnouncementView, PostAnnouncement, EditAnnouncement } from 'views/announcements';
 import {
   Activate,
   Dashboard,
-  EditAnnouncement,
   ForgotPassword,
   Landing,
   Login
@@ -71,6 +71,10 @@ const Routes = (): JSX.Element => {
         <PostAnnouncement />
       </Route>
 
+      <Route path="/announcements/:announcementId/edit">
+        <EditAnnouncement />
+      </Route>
+
       {/* Team Formation */}
       <Route path="/teamformation" exact>
         <TeamFormationHome />
@@ -112,10 +116,6 @@ const Routes = (): JSX.Element => {
       <Route path="/admin/applications/:applicationNumberParam/resume">
         <SubmittedApplicationResume />
       </Route>
-
-        <Route path="/announcements/:announcementId/edit">
-            <EditAnnouncement />
-        </Route>
 
       <Route path="/admin/users/create">
         <CreateUser />

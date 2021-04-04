@@ -3,11 +3,17 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
-import { Announcement } from './index';
-import { refreshAccessToken } from '../util/auth';
-import { handleError } from '../util/plazaUtils';
-import { API_ROOT } from '../index';
-import {Breakpoints, ConnectionError, NoPermissionError, RootState, UnknownError} from '../types';
+import { Announcement } from './';
+import { refreshAccessToken } from 'util/auth';
+import { handleError } from 'util/plazaUtils';
+import { API_ROOT } from 'index';
+import {
+  Breakpoints,
+  ConnectionError,
+  NoPermissionError,
+  RootState,
+  UnknownError
+} from 'types';
 
 interface AnnouncementBrowserProps {
   isAbleToModify?: boolean;
@@ -39,8 +45,8 @@ const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
       res = await fetch(`${API_ROOT}/announcements?limit=5`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
     } catch (err) {
       throw new ConnectionError();
@@ -63,7 +69,12 @@ const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
   return (
     <AnnouncementBrowserContainer>
       {announcements.map((e, idx) => (
-        <Announcement key={idx} {...e} displayControls={props.isAbleToModify} toggleRefresh={toggleRefresh}/>
+        <Announcement
+          key={idx}
+          {...e}
+          displayControls={props.isAbleToModify}
+          toggleRefresh={toggleRefresh}
+        />
       ))}
     </AnnouncementBrowserContainer>
   );
@@ -75,7 +86,6 @@ const AnnouncementBrowserContainer = styled.div`
   @media (max-width: ${Breakpoints.Small}px) {
     width: 100%;
   }
-  
 `;
 
 export default AnnouncementBrowser;
