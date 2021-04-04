@@ -15,6 +15,7 @@ import {
   StyledButton
 } from 'common/styles/teamformation/teamFormationModalStyles';
 import {
+  CommonModalProps,
   ConnectionError,
   InvalidSubmittedDataError,
   MessageData,
@@ -28,7 +29,7 @@ import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
 
-interface TeamJoinRequestModalProps {
+interface TeamJoinRequestModalProps extends CommonModalProps {
   teamData: TeamFormationTeam;
 }
 
