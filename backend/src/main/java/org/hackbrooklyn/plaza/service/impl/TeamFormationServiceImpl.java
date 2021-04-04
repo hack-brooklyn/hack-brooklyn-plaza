@@ -6,6 +6,7 @@ import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.*;
 import org.hackbrooklyn.plaza.repository.TeamFormationParticipantRepository;
+import org.hackbrooklyn.plaza.repository.TeamFormationTeamJoinRequestRepository;
 import org.hackbrooklyn.plaza.repository.TeamFormationTeamRepository;
 import org.hackbrooklyn.plaza.repository.TopicOrSkillRepository;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
@@ -26,13 +27,15 @@ public class TeamFormationServiceImpl implements TeamFormationService {
 
     private final TeamFormationParticipantRepository teamFormationParticipantRepository;
     private final TeamFormationTeamRepository teamFormationTeamRepository;
+    private final TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository;
     private final TopicOrSkillRepository topicOrSkillRepository;
     private final EntityManager entityManager;
 
     @Autowired
-    public TeamFormationServiceImpl(TeamFormationParticipantRepository teamFormationParticipantRepository, TeamFormationTeamRepository teamFormationTeamRepository, TopicOrSkillRepository topicOrSkillRepository, EntityManager entityManager) {
+    public TeamFormationServiceImpl(TeamFormationParticipantRepository teamFormationParticipantRepository, TeamFormationTeamRepository teamFormationTeamRepository, TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository, TopicOrSkillRepository topicOrSkillRepository, EntityManager entityManager) {
         this.teamFormationParticipantRepository = teamFormationParticipantRepository;
         this.teamFormationTeamRepository = teamFormationTeamRepository;
+        this.teamFormationTeamJoinRequestRepository = teamFormationTeamJoinRequestRepository;
         this.topicOrSkillRepository = topicOrSkillRepository;
         this.entityManager = entityManager;
     }
@@ -278,6 +281,32 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 totalPages,
                 foundParticipantsSize
         );
+    }
+
+    @Override
+    public void requestToJoinTeam(int teamId, MessageDTO requestData, User user) {
+        TeamFormationParticipant requestingParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+        TeamFormationTeam requestedTeam = teamFormationTeamRepository
+                .findById(teamId)
+                .orElseThrow(TeamFormationTeamNotFoundException::new);
+
+        // Check if the user already sent the team a request
+        if (requestedTeam.getReceivedTeamJoinRequests().stream()
+                .anyMatch(joinRequest -> joinRequest
+                        .getRequestingParticipant()
+                        .equals(requestingParticipant))) {
+            throw new TeamFormationTeamJoinRequestAlreadySentException();
+        }
+
+        TeamFormationTeamJoinRequest joinRequest = new TeamFormationTeamJoinRequest();
+
+        joinRequest.setRequestedTeam(requestedTeam);
+        joinRequest.setRequestingParticipant(requestingParticipant);
+        joinRequest.setMessage(requestData.getMessage());
+
+        teamFormationTeamJoinRequestRepository.save(joinRequest);
     }
 
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {
