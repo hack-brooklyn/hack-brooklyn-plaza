@@ -118,7 +118,8 @@ const TeamFormationTeamSearch = (): JSX.Element => {
 
     const searchOptions: TeamFormationSearchParams = {
       searchQuery: searchQuery === '' ? undefined : searchQuery,
-      page: page
+      page: page,
+      hideSentJoinRequests: true
     };
     const queryParams = '?' + queryString.stringify(searchOptions);
 
