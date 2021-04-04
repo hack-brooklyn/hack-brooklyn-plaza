@@ -60,10 +60,11 @@ public class TeamFormationController {
             @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "8") @Min(1) int limit,
             @RequestParam(defaultValue = "false") boolean personalized,
+            @RequestParam(defaultValue = "false") boolean hideSentJoinRequests,
             @RequestParam(required = false) String searchQuery,
             @AuthenticationPrincipal User user
     ) {
-        TeamFormationTeamSearchResponse teams = teamFormationService.getTeams(page, limit, personalized, searchQuery, user);
+        TeamFormationTeamSearchResponse teams = teamFormationService.getTeams(page, limit, personalized, hideSentJoinRequests, searchQuery, user);
 
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }

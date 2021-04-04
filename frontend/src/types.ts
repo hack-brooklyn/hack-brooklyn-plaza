@@ -276,6 +276,7 @@ export interface GetApplicationsRequestParams extends PageableSearchParams {
 
 export interface TeamFormationSearchParams extends PageableSearchParams {
   personalized?: boolean;
+  hideSentJoinRequests?: boolean;
 }
 
 export interface GetApplicationsResponse {
@@ -539,5 +540,14 @@ export class AnnouncementNotFoundError extends Error {
     super();
     this.name = 'AnnouncementNotFoundError';
     this.message = 'The requested announcement does not exist';
+  }
+}
+
+// Thrown when a user account was not found.
+export class TeamFormationTeamJoinRequestAlreadySentError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamJoinRequestAlreadySentError';
+    this.message = 'You already sent this team a join request.';
   }
 }
