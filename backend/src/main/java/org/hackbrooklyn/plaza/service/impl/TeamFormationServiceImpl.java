@@ -198,8 +198,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         query.orderBy(cb.desc(teams.get(TeamFormationTeam_.id)));
         TypedQuery<TeamFormationTeam> typedQuery = entityManager.createQuery(query);
 
-        log.info(typedQuery.unwrap(org.hibernate.query.Query.class).getQueryString());
-
         // Get total count and results from query
         long foundTeamsSize = typedQuery.getResultList().size();
         int totalPages = (int) Math.ceil((double) foundTeamsSize / limit);
