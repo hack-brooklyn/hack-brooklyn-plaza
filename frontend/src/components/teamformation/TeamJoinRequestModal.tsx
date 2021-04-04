@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { FastField, Formik } from 'formik';
-import styled from 'styled-components/macro';
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import { TeamCard } from 'components/teamformation';
 import { RequiredFormLabel } from 'components';
 import {
-  Breakpoints,
+  MessageFormGroup,
+  ModalBody,
+  ModalHeading,
+  StyledButton
+} from 'common/styles/teamformation/teamFormationModalStyles';
+import {
   ConnectionError,
   InvalidSubmittedDataError,
   MessageData,
@@ -21,7 +24,6 @@ import {
   TeamFormationTeamJoinRequestAlreadySentError,
   UnknownError
 } from 'types';
-import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
@@ -112,8 +114,8 @@ const TeamJoinRequestModal = (
       handleClose={() => setShow(false)}
     >
       <ModalBody>
-        <ModalTitle>Request to Join</ModalTitle>
-        <TeamCard teamData={teamData} showJoinButton={false} />
+        <ModalHeading>Request to Join</ModalHeading>
+        <TeamCard teamData={teamData} showActionButton={false} />
 
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
           {(formik) => (
@@ -150,28 +152,5 @@ const TeamJoinRequestModal = (
     </Modal>
   );
 };
-
-const ModalBody = styled(Modal.Body)`
-  padding: 2rem 1.5rem;
-
-  @media screen and (min-width: ${Breakpoints.Large}px) {
-    padding: 3rem;
-  }
-`;
-
-const ModalTitle = styled(StyledCenteredH2)`
-  margin-bottom: 2rem;
-  font-weight: bold;
-`;
-
-const MessageFormGroup = styled(Form.Group)`
-  margin: 1rem auto 2rem;
-  max-width: 600px;
-`;
-
-const StyledButton = styled(Button)`
-  display: block;
-  margin: 0 auto 1rem;
-`;
 
 export default TeamJoinRequestModal;
