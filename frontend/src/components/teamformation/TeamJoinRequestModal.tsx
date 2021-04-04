@@ -14,6 +14,7 @@ import {
   Breakpoints,
   ConnectionError,
   InvalidSubmittedDataError,
+  MessageData,
   NoPermissionError,
   RootState,
   TeamFormationTeam,
@@ -27,12 +28,6 @@ import { API_ROOT } from 'index';
 
 interface TeamJoinRequestModalProps {
   teamData: TeamFormationTeam;
-  show: boolean;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface TeamJoinRequestFormData {
-  message: string;
 }
 
 const TeamJoinRequestModal = (
@@ -48,11 +43,11 @@ const TeamJoinRequestModal = (
 
   const [submitting, setSubmitting] = useState(false);
 
-  const initialValues: TeamJoinRequestFormData = {
+  const initialValues: MessageData = {
     message: ''
   };
 
-  const handleSubmit = async (formData: TeamJoinRequestFormData) => {
+  const handleSubmit = async (formData: MessageData) => {
     setSubmitting(true);
 
     try {
@@ -65,7 +60,7 @@ const TeamJoinRequestModal = (
   };
 
   const sendRequestToJoin = async (
-    formData: TeamJoinRequestFormData,
+    formData: MessageData,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
