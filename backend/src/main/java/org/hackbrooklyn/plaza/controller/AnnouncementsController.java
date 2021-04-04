@@ -45,6 +45,15 @@ public class AnnouncementsController {
         return new ResponseEntity<>(announcements, HttpStatus.OK);
     }
 
+    @GetMapping("/{announcementId}")
+    public ResponseEntity<Announcement> getAnnouncement(@AuthenticationPrincipal User user, @PathVariable int announcementId) {
+        boolean participant = user.getAuthorities().contains(new SimpleGrantedAuthority(Authorities.ANNOUNCEMENTS_READ_PARTICIPANTS_ONLY));
+        Announcement announcement = announcementService.getAnnouncementById(participant, announcementId);
+
+        return new ResponseEntity<>(announcement, HttpStatus.OK);
+
+    }
+
     @PreAuthorize("hasAuthority(@authorities.ANNOUNCEMENTS_CREATE)")
     @PostMapping
     public ResponseEntity<Void> addAnnouncement(@AuthenticationPrincipal User user, @RequestBody @Valid AnnouncementBodyRequest reqBody) {

@@ -1,5 +1,6 @@
 package org.hackbrooklyn.plaza.service.impl;
 
+import org.hackbrooklyn.plaza.exception.AnnouncementNotFoundException;
 import org.hackbrooklyn.plaza.model.Announcement;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.repository.AnnouncementRepository;
@@ -45,6 +46,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         typedQuery.setMaxResults(limit);
 
         return typedQuery.getResultList();
+    }
+
+    @Override
+    public Announcement getAnnouncementById(boolean participant, int announcementId) {
+        return announcementRepository.findById(announcementId).orElseThrow(AnnouncementNotFoundException::new);
     }
 
     @Override
