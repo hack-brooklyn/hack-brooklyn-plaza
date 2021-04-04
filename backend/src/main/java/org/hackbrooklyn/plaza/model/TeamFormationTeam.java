@@ -64,4 +64,8 @@ public class TeamFormationTeam {
     @OneToMany(mappedBy = "requestedTeam")
     @JsonIgnore
     private Set<TeamFormationTeamJoinRequest> receivedTeamJoinRequests;
+
+    @OneToMany(mappedBy = "invitingTeam")
+    @JsonIgnore
+    private Set<TeamFormationParticipantInvitation> sentParticipantInvitations;
 }
