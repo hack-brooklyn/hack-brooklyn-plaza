@@ -179,6 +179,11 @@ export interface KeyPasswordData {
   password: string;
 }
 
+// Holds a message for a team join request or a participant invitation.
+export interface MessageData {
+  message: string;
+}
+
 // Hackathon Applications
 // Common required fields for the application and the response
 export interface ApplicationCommon extends UserIdentity {
