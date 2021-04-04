@@ -24,8 +24,8 @@ import {
   NoPermissionError,
   RootState,
   TeamFormationParticipant,
+  TeamFormationParticipantSearchParams,
   TeamFormationParticipantSearchResponse,
-  TeamFormationSearchParams,
   UnknownError
 } from 'types';
 
@@ -118,9 +118,10 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
-    const searchOptions: TeamFormationSearchParams = {
+    const searchOptions: TeamFormationParticipantSearchParams = {
       searchQuery: searchQuery === '' ? undefined : searchQuery,
-      page: page
+      page: page,
+      hideSentInvitations: true
     };
     const queryParams = '?' + queryString.stringify(searchOptions);
 
