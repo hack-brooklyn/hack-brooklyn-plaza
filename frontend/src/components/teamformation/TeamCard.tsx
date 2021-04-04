@@ -5,21 +5,23 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 import { TeamJoinRequestModal } from 'components/teamformation';
 import {
+  CardArticle,
   ObjectiveStatementText,
   StyledActionButton,
-  CardArticle,
   TopicOrSkillBadge,
   TopicsAndSkillsArea
 } from 'common/styles/teamformation/teamFormationCardStyles';
-import { Breakpoints, TeamFormationTeam } from 'types';
+import {
+  Breakpoints,
+  CommonTeamFormationCardProps,
+  TeamFormationTeam
+} from 'types';
 
 import profileImage from 'assets/icons/profile.svg';
 import openSeatImage from 'assets/icons/team-formation/open-seat.svg';
 
-interface TeamFormationTeamCardProps {
+interface TeamFormationTeamCardProps extends CommonTeamFormationCardProps {
   teamData: TeamFormationTeam;
-  showJoinButton?: boolean;
-  className?: string;
 }
 
 interface MemberImagesAreaProps {
@@ -27,7 +29,7 @@ interface MemberImagesAreaProps {
 }
 
 const TeamCard = (props: TeamFormationTeamCardProps): JSX.Element => {
-  const { teamData, showJoinButton, className } = props;
+  const { teamData, showActionButton, className } = props;
 
   const [requestModalOpen, setRequestModalOpen] = useState(false);
 
@@ -60,7 +62,7 @@ const TeamCard = (props: TeamFormationTeamCardProps): JSX.Element => {
             {generateMemberImages(teamData)}
           </MemberImagesArea>
 
-          {showJoinButton !== undefined && !showJoinButton && (
+          {showActionButton !== undefined && !showActionButton && (
             <MemberCountTop>
               {teamData.members.length}/{teamData.size} Members
             </MemberCountTop>
@@ -69,11 +71,11 @@ const TeamCard = (props: TeamFormationTeamCardProps): JSX.Element => {
       </TopHalf>
 
       <BottomHalf>
-        <ObjectiveStatementText showJoinButton={showJoinButton}>
+        <ObjectiveStatementText showJoinButton={showActionButton}>
           {teamData.objectiveStatement}
         </ObjectiveStatementText>
 
-        {(showJoinButton === undefined || showJoinButton) && (
+        {(showActionButton === undefined || showActionButton) && (
           <ActionButtonContainer>
             <MemberCount>
               {teamData.members.length}/{teamData.size} Members
