@@ -5,10 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.*;
-import org.hackbrooklyn.plaza.repository.TeamFormationParticipantRepository;
-import org.hackbrooklyn.plaza.repository.TeamFormationTeamJoinRequestRepository;
-import org.hackbrooklyn.plaza.repository.TeamFormationTeamRepository;
-import org.hackbrooklyn.plaza.repository.TopicOrSkillRepository;
+import org.hackbrooklyn.plaza.repository.*;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,14 +25,16 @@ public class TeamFormationServiceImpl implements TeamFormationService {
     private final TeamFormationParticipantRepository teamFormationParticipantRepository;
     private final TeamFormationTeamRepository teamFormationTeamRepository;
     private final TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository;
+    private final TeamFormationParticipantInvitationRepository teamFormationParticipantInvitationRepository;
     private final TopicOrSkillRepository topicOrSkillRepository;
     private final EntityManager entityManager;
 
     @Autowired
-    public TeamFormationServiceImpl(TeamFormationParticipantRepository teamFormationParticipantRepository, TeamFormationTeamRepository teamFormationTeamRepository, TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository, TopicOrSkillRepository topicOrSkillRepository, EntityManager entityManager) {
+    public TeamFormationServiceImpl(TeamFormationParticipantRepository teamFormationParticipantRepository, TeamFormationTeamRepository teamFormationTeamRepository, TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository, TeamFormationParticipantInvitationRepository teamFormationParticipantInvitationRepository, TopicOrSkillRepository topicOrSkillRepository, EntityManager entityManager) {
         this.teamFormationParticipantRepository = teamFormationParticipantRepository;
         this.teamFormationTeamRepository = teamFormationTeamRepository;
         this.teamFormationTeamJoinRequestRepository = teamFormationTeamJoinRequestRepository;
+        this.teamFormationParticipantInvitationRepository = teamFormationParticipantInvitationRepository;
         this.topicOrSkillRepository = topicOrSkillRepository;
         this.entityManager = entityManager;
     }
@@ -308,11 +307,12 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         TeamFormationParticipant requestingParticipant = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
         TeamFormationTeam requestedTeam = teamFormationTeamRepository
                 .findById(teamId)
                 .orElseThrow(TeamFormationTeamNotFoundException::new);
 
-        // Check if the user already sent the team a request
+        // Check if the participant already sent the team a request
         if (requestedTeam.getReceivedTeamJoinRequests().stream()
                 .anyMatch(joinRequest -> joinRequest
                         .getRequestingParticipant()
@@ -327,6 +327,34 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         joinRequest.setMessage(requestData.getMessage());
 
         teamFormationTeamJoinRequestRepository.save(joinRequest);
+    }
+
+    @Override
+    public void inviteParticipantToTeam(int participantId, MessageDTO invitationData, User user) {
+        TeamFormationParticipant invitingTeamMember = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+        TeamFormationTeam invitingTeam = invitingTeamMember.getTeam();
+
+        TeamFormationParticipant invitedParticipant = teamFormationParticipantRepository
+                .findById(participantId)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        // Check if the team already sent the participant an invitation
+        if (invitedParticipant.getReceivedParticipantInvitations().stream()
+                .anyMatch(participantInvitation -> participantInvitation
+                        .getInvitingTeam()
+                        .equals(invitingTeam))) {
+            throw new TeamFormationParticipantInvitationAlreadySentException();
+        }
+
+        TeamFormationParticipantInvitation participantInvitation = new TeamFormationParticipantInvitation();
+
+        participantInvitation.setInvitingTeam(invitingTeam);
+        participantInvitation.setInvitedParticipant(invitedParticipant);
+        participantInvitation.setMessage(invitationData.getMessage());
+
+        teamFormationParticipantInvitationRepository.save(participantInvitation);
     }
 
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {
