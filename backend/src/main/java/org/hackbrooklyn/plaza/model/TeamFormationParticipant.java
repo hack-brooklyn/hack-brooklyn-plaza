@@ -1,6 +1,7 @@
 package org.hackbrooklyn.plaza.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
@@ -62,4 +63,8 @@ public class TeamFormationParticipant {
     @NotNull
     @JsonSerialize(using = TopicOrSkillSetSerializer.class)
     private Set<TopicOrSkill> interestedTopicsAndSkills;
+
+    @OneToMany(mappedBy = "requestingParticipant")
+    @JsonIgnore
+    private Set<TeamFormationTeamJoinRequest> sentTeamJoinRequests;
 }
