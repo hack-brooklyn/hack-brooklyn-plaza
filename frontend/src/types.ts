@@ -363,6 +363,11 @@ export interface TeamFormationParticipantSearchResponse {
   totalFoundParticipants: number;
 }
 
+export interface AnnouncementData {
+  body: string;
+  participantsOnly: boolean;
+}
+
 export const roleOptions: Option[] = [
   { value: Roles.None, label: 'None' },
   { value: Roles.Applicant, label: 'Applicant' },
@@ -549,5 +554,13 @@ export class TeamFormationTeamJoinRequestAlreadySentError extends Error {
     super();
     this.name = 'TeamFormationTeamJoinRequestAlreadySentError';
     this.message = 'You already sent this team a join request.';
+  }
+}
+
+export class AnnouncementNotFoundError extends Error {
+  constructor() {
+    super();
+    this.name = 'AnnouncementNotFoundError';
+    this.message = 'The requested announcement does not exist';
   }
 }
