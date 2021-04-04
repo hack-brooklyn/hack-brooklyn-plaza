@@ -44,14 +44,30 @@ export const TopicOrSkillBadge = styled(LinkBadge)`
   }
 `;
 
+interface ObjectiveStatementTextProps {
+  showJoinButton?: boolean;
+}
+
 export const ObjectiveStatementText = styled.p`
-  flex-basis: 70%;
-  align-self: flex-end;
   font-size: 1rem;
+  
+  ${({ showJoinButton }: ObjectiveStatementTextProps) =>
+    showJoinButton !== undefined &&
+    !showJoinButton &&
+    `
+        margin-bottom: 0;
+    `};
 
   @media screen and (min-width: ${Breakpoints.Medium}px) {
     margin-top: 0.875rem;
     margin-bottom: 0;
+
+    ${({ showJoinButton }: ObjectiveStatementTextProps) =>
+      (showJoinButton === undefined || showJoinButton) &&
+      `
+        flex-basis: 70%;
+        align-self: flex-end;
+    `};
 
     // Ellipsis after 5 lines
     display: -webkit-box;
