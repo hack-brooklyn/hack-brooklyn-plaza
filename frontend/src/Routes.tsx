@@ -9,6 +9,7 @@ import {
   ApplicationPage,
   CreateUser,
   Dashboard,
+  EditAnnouncement,
   ForgotPassword,
   Landing,
   Login,
@@ -85,6 +86,10 @@ const Routes = (): JSX.Element => {
       <Route path="/announcements/post">
         <PostAnnouncement />
       </Route>
+
+        <Route path="/announcements/:announcementId/edit">
+            <EditAnnouncement />
+        </Route>
 
       <Route path="/announcements">
         <AnnouncementView />
