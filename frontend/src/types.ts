@@ -323,6 +323,16 @@ export interface FormikModularFieldProps extends ModularFieldProps {
   formik: FormikProps<any>;
 }
 
+export interface CommonModalProps {
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface CommonTeamFormationCardProps {
+  showActionButton?: boolean;
+  className?: string;
+}
+
 export interface PageParams {
   applicationNumberParam?: string;
 }
