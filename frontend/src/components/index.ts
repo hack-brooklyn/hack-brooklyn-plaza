@@ -11,6 +11,7 @@ export { default as ProfileDropdownMenu } from './ProfileDropdownMenu';
 export { default as RequiredAsterisk } from './RequiredAsterisk';
 export { default as RequiredFormLabel } from './RequiredFormLabel';
 export { default as Announcement } from './Announcement';
+export { default as AnnouncementEditor } from './AnnouncementEditor';
 export { default as AnnouncementBrowser } from './AnnouncementBrowser';
 export { default as MultiSelect } from './MultiSelect';
 export { default as TeamFormationParticipantCard } from './TeamFormationParticipantCard';
