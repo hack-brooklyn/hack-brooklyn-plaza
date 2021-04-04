@@ -10,10 +10,11 @@ import { toast } from 'react-toastify';
 
 import { API_ROOT } from '../index';
 import {
+  Breakpoints,
   ConnectionError,
   NoPermissionError,
   RootState,
-  UnknownError,
+  UnknownError
 } from '../types';
 import { refreshAccessToken } from '../util/auth';
 import { handleError } from '../util/plazaUtils';
@@ -38,6 +39,7 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
   const accessToken = useSelector(
     (state: RootState) => state.auth.jwtAccessToken
   );
+  const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
   const confirmDeleteAnnouncement = async () => {
     if (confirm('Are you sure you want to delete?')) {
@@ -123,7 +125,19 @@ const LastUpdatedText = styled.p`
   font-weight: bold;
 `;
 
-const ControlContainer = styled.div``;
+const Container = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const ControlContainer = styled.div`
+  @media (max-width: ${Breakpoints.Small}px) {
+    justify-self: flex-end;
+    display: flex;
+  }
+`;
 
 const ButtonIcon = styled.img``;
 
