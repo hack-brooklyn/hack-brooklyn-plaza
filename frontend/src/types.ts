@@ -574,20 +574,13 @@ export class TeamFormationParticipantInvitationAlreadySentError extends Error {
     super();
     this.name = 'TeamFormationParticipantInvitationAlreadySentError';
     this.message = 'Your team has already sent this participant an invitation.';
+  }
+}
 
 export class AnnouncementNotFoundError extends Error {
   constructor() {
     super();
     this.name = 'AnnouncementNotFoundError';
     this.message = 'The requested announcement does not exist';
-  }
-}
-
-// Thrown when a team formation team tries to send an invitation to a participant they already sent one to.
-export class TeamFormationParticipantInvitationAlreadySentError extends Error {
-  constructor() {
-    super();
-    this.name = 'TeamFormationParticipantInvitationAlreadySentError';
-    this.message = 'Your team has already sent this participant an invitation.';
   }
 }
