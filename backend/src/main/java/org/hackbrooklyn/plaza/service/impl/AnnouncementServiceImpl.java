@@ -56,8 +56,11 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Override
     public int createNewAnnouncement(String body, boolean participantsOnly, User author) {
         Announcement announcement = new Announcement();
+        LocalDateTime time = LocalDateTime.now();
         announcement.setBody(body);
         announcement.setAuthor(author);
+        announcement.setTimeCreated(time);
+        announcement.setLastUpdated(time);
         announcement.setParticipantsOnly(participantsOnly);
         Announcement newAnnouncement = announcementRepository.save(announcement);
 
