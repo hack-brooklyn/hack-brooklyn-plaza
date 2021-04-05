@@ -7,22 +7,25 @@ import { useSelector } from 'react-redux';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { toast } from 'react-toastify';
+import ReactMarkdown from 'react-markdown';
 
-import { API_ROOT } from '../index';
+import { API_ROOT } from 'index';
 import {
+  Breakpoints,
   ConnectionError,
   NoPermissionError,
   RootState,
   UnknownError,
-} from '../types';
-import { refreshAccessToken } from '../util/auth';
-import { handleError } from '../util/plazaUtils';
+} from 'types';
+import { refreshAccessToken } from 'util/auth';
+import { handleError } from 'util/plazaUtils';
 import editIcon from 'assets/icons/penBlack.svg';
 import deleteIcon from 'assets/icons/trashIcon.svg';
 
 interface AnnouncementProps {
   body: string;
   lastUpdated: string;
+  timeCreated: string;
   displayControls: boolean;
   id: number;
   toggleRefresh: () => void;
@@ -32,7 +35,9 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
 const Announcement = (props: AnnouncementProps): JSX.Element => {
-  const { body, lastUpdated, displayControls, id, toggleRefresh } = props;
+  const { body, lastUpdated, timeCreated, displayControls, id, toggleRefresh } = props;
+
+  const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
   const history = useHistory();
   const accessToken = useSelector(
@@ -81,29 +86,55 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
 
   return (
     <AnnouncementContainer>
-      <BodyText>{body}</BodyText>
-      <LastUpdatedText>{dayjs.utc(lastUpdated).fromNow()}</LastUpdatedText>
-      {displayControls && (
-        <ControlContainer>
-          <StyledAnchor to={`/announcements/${id}/edit`}>
-            <ButtonIcon src={editIcon} alt={'Edit Icon'} />
-          </StyledAnchor>
-          <StyledAnchor to={'/announcements'}>
-            <ButtonIcon
-              src={deleteIcon}
-              alt={'Delete Icon'}
-              onClick={confirmDeleteAnnouncement}
-            />
-          </StyledAnchor>
-        </ControlContainer>
-      )}
+      <BodyText>
+        <ReactMarkdown skipHtml={true} renderers={{ link: LinkRenderer }}>
+          {body}
+        </ReactMarkdown>
+      </BodyText>
+      <Container>
+        <BoldText>
+          {timeCreated !== lastUpdated &&
+          `Updated: ${dayjs.utc(lastUpdated).fromNow()}`}
+          {timeCreated !== lastUpdated && (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
+          Created: {dayjs.utc(lastUpdated).fromNow()}
+        </BoldText>
+        {displayControls && (
+          <ControlContainer>
+            <StyledAnchor to={`/announcements/${id}/edit`}>
+              <ButtonIcon src={editIcon} alt={'Edit Icon'} />
+            </StyledAnchor>
+            <StyledAnchor to={'/announcements'}>
+              <ButtonIcon
+                src={deleteIcon}
+                alt={'Delete Icon'}
+                onClick={confirmDeleteAnnouncement}
+              />
+            </StyledAnchor>
+          </ControlContainer>
+        )}
+      </Container>
     </AnnouncementContainer>
+  );
+};
+
+interface LinkProps {
+  href: string;
+  children: React.ReactNode;
+}
+
+const LinkRenderer = (props: LinkProps) => {
+  const { href, children } = props;
+  return (
+    <a href={href} rel="noreferrer" target="_blank">
+      {children}
+    </a>
   );
 };
 
 const AnnouncementContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
@@ -113,17 +144,29 @@ const AnnouncementContainer = styled.div`
   }
 `;
 
+const Container = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const ControlContainer = styled.div`
+  @media (max-width: ${Breakpoints.Small}px) {
+    justify-self: flex-end;
+    display: flex;
+  }
+`;
+
 const BodyText = styled.p`
   width: 100%;
   word-break: break-word;
   font-size: 1.1rem;
 `;
 
-const LastUpdatedText = styled.p`
+const BoldText = styled.p`
   font-weight: bold;
 `;
-
-const ControlContainer = styled.div``;
 
 const ButtonIcon = styled.img``;
 

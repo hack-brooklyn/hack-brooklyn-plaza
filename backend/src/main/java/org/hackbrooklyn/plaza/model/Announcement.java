@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.hackbrooklyn.plaza.serializer.LocalDateTimeWithUTCSerializer;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -37,11 +36,9 @@ public class Announcement {
 
     @Column(name = "time_created")
     @JsonSerialize(using = LocalDateTimeWithUTCSerializer.class)
-    @CreationTimestamp
     private LocalDateTime timeCreated;
 
     @Column(name = "last_updated")
     @JsonSerialize(using = LocalDateTimeWithUTCSerializer.class)
-    @CreationTimestamp
     private LocalDateTime lastUpdated;
 }

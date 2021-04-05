@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
-import { Announcement } from './index';
-import { refreshAccessToken } from '../util/auth';
-import { handleError } from '../util/plazaUtils';
-import { API_ROOT } from '../index';
-import { ConnectionError, NoPermissionError, RootState, UnknownError } from '../types';
+import { Announcement } from './';
+import { refreshAccessToken } from 'util/auth';
+import { handleError } from 'util/plazaUtils';
+import { API_ROOT } from 'index';
+import { Breakpoints, ConnectionError, NoPermissionError, RootState, UnknownError } from 'types';
 
 interface AnnouncementBrowserProps {
   isAbleToModify?: boolean;
@@ -70,8 +70,11 @@ const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
 };
 
 const AnnouncementBrowserContainer = styled.div`
-  margin: 1rem auto;
+  margin: 0 auto;
   width: 80%;
+  @media (max-width: ${Breakpoints.Small}px) {
+    width: 100%;
+  }
 `;
 
 export default AnnouncementBrowser;

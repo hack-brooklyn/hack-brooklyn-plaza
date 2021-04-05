@@ -11,6 +11,4 @@ export { default as Navbar } from './Navbar';
 export { default as ProfileDropdownMenu } from './ProfileDropdownMenu';
 export { default as RequiredAsterisk } from './RequiredAsterisk';
 export { default as RequiredFormLabel } from './RequiredFormLabel';
-export { default as Announcement } from './Announcement';
-export { default as AnnouncementBrowser } from './AnnouncementBrowser';
 export { default as MultiSelect } from './MultiSelect';
