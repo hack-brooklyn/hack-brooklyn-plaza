@@ -568,6 +568,13 @@ export class TeamFormationTeamJoinRequestAlreadySentError extends Error {
   }
 }
 
+// Thrown when a team formation team tries to send an invitation to a participant they already sent one to.
+export class TeamFormationParticipantInvitationAlreadySentError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantInvitationAlreadySentError';
+    this.message = 'Your team has already sent this participant an invitation.';
+
 export class AnnouncementNotFoundError extends Error {
   constructor() {
     super();
