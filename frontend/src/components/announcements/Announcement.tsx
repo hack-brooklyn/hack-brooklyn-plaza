@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { toast } from 'react-toastify';
+import ReactMarkdown from 'react-markdown';
 
 import { API_ROOT } from '../index';
 import {
@@ -23,6 +24,7 @@ import deleteIcon from 'assets/icons/trashIcon.svg';
 interface AnnouncementProps {
   body: string;
   lastUpdated: string;
+  timeCreated: string;
   displayControls: boolean;
   id: number;
   toggleRefresh: () => void;
@@ -81,23 +83,48 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
 
   return (
     <AnnouncementContainer>
-      <BodyText>{body}</BodyText>
-      <LastUpdatedText>{dayjs.utc(lastUpdated).fromNow()}</LastUpdatedText>
-      {displayControls && (
-        <ControlContainer>
-          <StyledAnchor to={`/announcements/${id}/edit`}>
-            <ButtonIcon src={editIcon} alt={'Edit Icon'} />
-          </StyledAnchor>
-          <StyledAnchor to={'/announcements'}>
-            <ButtonIcon
-              src={deleteIcon}
-              alt={'Delete Icon'}
-              onClick={confirmDeleteAnnouncement}
-            />
-          </StyledAnchor>
-        </ControlContainer>
-      )}
+      <BodyText>
+        <ReactMarkdown skipHtml={true} renderers={{ link: LinkRenderer }}>
+          {body}
+        </ReactMarkdown>
+      </BodyText>
+      <Container>
+        <BoldText>
+          {timeCreated !== lastUpdated &&
+          `Updated: ${dayjs.utc(lastUpdated).fromNow()}`}
+          {timeCreated !== lastUpdated && (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
+          Created: {dayjs.utc(lastUpdated).fromNow()}
+        </BoldText>
+        {displayControls && (
+          <ControlContainer>
+            <StyledAnchor to={`/announcements/${id}/edit`}>
+              <ButtonIcon src={editIcon} alt={'Edit Icon'} />
+            </StyledAnchor>
+            <StyledAnchor to={'/announcements'}>
+              <ButtonIcon
+                src={deleteIcon}
+                alt={'Delete Icon'}
+                onClick={confirmDeleteAnnouncement}
+              />
+            </StyledAnchor>
+          </ControlContainer>
+        )}
+      </Container>
     </AnnouncementContainer>
+  );
+};
+
+interface LinkProps {
+  href: string;
+  children: React.ReactNode;
+}
+
+const LinkRenderer = (props: LinkProps) => {
+  const { href, children } = props;
+  return (
+    <a href={href} rel="noreferrer" target="_blank">
+      {children}
+    </a>
   );
 };
 
