@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
-import { AnnouncementView, PostAnnouncement } from 'views';
+import { AnnouncementView, PostAnnouncement, EditAnnouncement } from 'views/announcements';
 import {
   Activate,
   Dashboard,
@@ -69,6 +69,10 @@ const Routes = (): JSX.Element => {
 
       <Route path="/announcements/post">
         <PostAnnouncement />
+      </Route>
+
+      <Route path="/announcements/:announcementId/edit">
+        <EditAnnouncement />
       </Route>
 
       {/* Team Formation */}

@@ -1,5 +1,6 @@
 package org.hackbrooklyn.plaza.service.impl;
 
+import org.hackbrooklyn.plaza.exception.AnnouncementNotFoundException;
 import org.hackbrooklyn.plaza.model.Announcement;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.repository.AnnouncementRepository;
@@ -48,10 +49,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
+    public Announcement getAnnouncementById(boolean participant, int announcementId) {
+        return announcementRepository.findById(announcementId).orElseThrow(AnnouncementNotFoundException::new);
+    }
+
+    @Override
     public int createNewAnnouncement(String body, boolean participantsOnly, User author) {
         Announcement announcement = new Announcement();
+        LocalDateTime time = LocalDateTime.now();
         announcement.setBody(body);
         announcement.setAuthor(author);
+        announcement.setTimeCreated(time);
+        announcement.setLastUpdated(time);
         announcement.setParticipantsOnly(participantsOnly);
         Announcement newAnnouncement = announcementRepository.save(announcement);
 
