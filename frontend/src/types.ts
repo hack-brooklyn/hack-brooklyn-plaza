@@ -179,6 +179,11 @@ export interface KeyPasswordData {
   password: string;
 }
 
+// Holds a message for a team join request or a participant invitation.
+export interface MessageData {
+  message: string;
+}
+
 // Hackathon Applications
 // Common required fields for the application and the response
 export interface ApplicationCommon extends UserIdentity {
@@ -276,7 +281,16 @@ export interface GetApplicationsRequestParams extends PageableSearchParams {
 
 export interface TeamFormationSearchParams extends PageableSearchParams {
   personalized?: boolean;
+}
+
+export interface TeamFormationTeamSearchParams
+  extends TeamFormationSearchParams {
   hideSentJoinRequests?: boolean;
+}
+
+export interface TeamFormationParticipantSearchParams
+  extends TeamFormationSearchParams {
+  hideSentInvitations?: boolean;
 }
 
 export interface GetApplicationsResponse {
@@ -307,6 +321,16 @@ export interface ModularFieldProps {
 
 export interface FormikModularFieldProps extends ModularFieldProps {
   formik: FormikProps<any>;
+}
+
+export interface CommonModalProps {
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface CommonTeamFormationCardProps {
+  showActionButton?: boolean;
+  className?: string;
 }
 
 export interface PageParams {
@@ -526,7 +550,7 @@ export class UserNotFoundError extends Error {
   }
 }
 
-// Thrown when a user account was not found.
+// Thrown when a team formation participant profile has already been set up.
 export class TeamFormationParticipantAlreadyExistsError extends Error {
   constructor() {
     super();
@@ -535,12 +559,21 @@ export class TeamFormationParticipantAlreadyExistsError extends Error {
   }
 }
 
-// Thrown when a user account was not found.
+// Thrown when a team formation participant tries to send a request to a team they already sent one to.
 export class TeamFormationTeamJoinRequestAlreadySentError extends Error {
   constructor() {
     super();
     this.name = 'TeamFormationTeamJoinRequestAlreadySentError';
     this.message = 'You already sent this team a join request.';
+  }
+}
+
+// Thrown when a team formation team tries to send an invitation to a participant they already sent one to.
+export class TeamFormationParticipantInvitationAlreadySentError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantInvitationAlreadySentError';
+    this.message = 'Your team has already sent this participant an invitation.';
   }
 }
 

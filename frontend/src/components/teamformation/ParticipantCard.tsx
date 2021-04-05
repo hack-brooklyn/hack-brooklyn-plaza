@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 
+import { ParticipantInvitationModal } from 'components/teamformation';
 import {
   ActionButtonContainer,
   CardArticle,
@@ -9,21 +10,28 @@ import {
   TopicOrSkillBadge,
   TopicsAndSkillsArea
 } from 'common/styles/teamformation/teamFormationCardStyles';
-import { Breakpoints, TeamFormationParticipant } from 'types';
+import {
+  Breakpoints,
+  CommonTeamFormationCardProps,
+  TeamFormationParticipant
+} from 'types';
 
 import profileImage from 'assets/icons/profile.svg';
 
-interface TeamFormationParticipantCardProps {
+interface TeamFormationParticipantCardProps
+  extends CommonTeamFormationCardProps {
   participantData: TeamFormationParticipant;
 }
 
 const ParticipantCard = (
   props: TeamFormationParticipantCardProps
 ): JSX.Element => {
-  const { participantData } = props;
+  const { participantData, showActionButton, className } = props;
+
+  const [invitationModalOpen, setInvitationModalOpen] = useState(false);
 
   return (
-    <CardArticle>
+    <CardArticle className={className}>
       <TopHalf>
         <ProfileArea>
           <StyledProfileImage
@@ -34,6 +42,7 @@ const ParticipantCard = (
               participantData.user.lastName
             }
           />
+
           <NameAndTitleContainer>
             <NameText>
               {participantData.user.firstName} {participantData.user.lastName}
@@ -61,15 +70,24 @@ const ParticipantCard = (
       </TopHalf>
 
       <BottomHalf>
-        <ObjectiveStatementText>
+        <ObjectiveStatementText showJoinButton={showActionButton}>
           {participantData.objectiveStatement}
         </ObjectiveStatementText>
 
-        <ActionButtonContainer>
-          {/* TODO: Add logic to handle invitations */}
-          <StyledActionButton>Invite to Team</StyledActionButton>
-        </ActionButtonContainer>
+        {(showActionButton === undefined || showActionButton) && (
+          <ActionButtonContainer>
+            <StyledActionButton onClick={() => setInvitationModalOpen(true)}>
+              Invite to Team
+            </StyledActionButton>
+          </ActionButtonContainer>
+        )}
       </BottomHalf>
+
+      <ParticipantInvitationModal
+        participantData={participantData}
+        show={invitationModalOpen}
+        setShow={setInvitationModalOpen}
+      />
     </CardArticle>
   );
 };

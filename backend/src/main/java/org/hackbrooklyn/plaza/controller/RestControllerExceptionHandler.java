@@ -244,6 +244,15 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TeamFormationParticipantInvitationAlreadySentException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantInvitationAlreadySentException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "Your team has already sent an invitation to this participant.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AnnouncementNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleAnnouncementNotFoundException() {

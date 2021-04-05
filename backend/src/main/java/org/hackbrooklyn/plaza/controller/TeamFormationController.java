@@ -36,10 +36,11 @@ public class TeamFormationController {
             @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "8") @Min(1) int limit,
             @RequestParam(defaultValue = "false") boolean personalized,
+            @RequestParam(defaultValue = "false") boolean hideSentInvitations,
             @RequestParam(required = false) String searchQuery,
             @AuthenticationPrincipal User user
     ) {
-        TeamFormationParticipantSearchResponse participants = teamFormationService.getParticipants(page, limit, personalized, searchQuery, user);
+        TeamFormationParticipantSearchResponse participants = teamFormationService.getParticipants(page, limit, personalized, hideSentInvitations, searchQuery, user);
 
         return new ResponseEntity<>(participants, HttpStatus.OK);
     }
@@ -118,6 +119,17 @@ public class TeamFormationController {
             @RequestBody @Valid MessageDTO resBody,
             @AuthenticationPrincipal User user) {
         teamFormationService.requestToJoinTeam(teamId, resBody, user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_TEAM)")
+    @PostMapping("/participants/{participantId}/inviteToTeam")
+    public ResponseEntity<Void> inviteParticipantToTeam(
+            @PathVariable @Positive int participantId,
+            @RequestBody @Valid MessageDTO resBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.inviteParticipantToTeam(participantId, resBody, user);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

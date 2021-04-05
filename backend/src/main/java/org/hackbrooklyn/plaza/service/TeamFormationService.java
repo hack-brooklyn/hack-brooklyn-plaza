@@ -19,7 +19,9 @@ public interface TeamFormationService {
 
     TeamFormationTeamSearchResponse getTeams(int page, int limit, boolean personalized, boolean hideSentJoinRequests, String searchQuery, User user);
 
-    TeamFormationParticipantSearchResponse getParticipants(int page, int limit, boolean personalized, String searchQuery, User user);
+    TeamFormationParticipantSearchResponse getParticipants(int page, int limit, boolean personalized, boolean hideSentInvitations, String searchQuery, User user);
 
     void requestToJoinTeam(int teamId, MessageDTO requestData, User user);
+
+    void inviteParticipantToTeam(int participantId, MessageDTO resBody, User user);
 }

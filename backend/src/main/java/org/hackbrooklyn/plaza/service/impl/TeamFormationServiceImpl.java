@@ -5,10 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.*;
-import org.hackbrooklyn.plaza.repository.TeamFormationParticipantRepository;
-import org.hackbrooklyn.plaza.repository.TeamFormationTeamJoinRequestRepository;
-import org.hackbrooklyn.plaza.repository.TeamFormationTeamRepository;
-import org.hackbrooklyn.plaza.repository.TopicOrSkillRepository;
+import org.hackbrooklyn.plaza.repository.*;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,14 +25,16 @@ public class TeamFormationServiceImpl implements TeamFormationService {
     private final TeamFormationParticipantRepository teamFormationParticipantRepository;
     private final TeamFormationTeamRepository teamFormationTeamRepository;
     private final TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository;
+    private final TeamFormationParticipantInvitationRepository teamFormationParticipantInvitationRepository;
     private final TopicOrSkillRepository topicOrSkillRepository;
     private final EntityManager entityManager;
 
     @Autowired
-    public TeamFormationServiceImpl(TeamFormationParticipantRepository teamFormationParticipantRepository, TeamFormationTeamRepository teamFormationTeamRepository, TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository, TopicOrSkillRepository topicOrSkillRepository, EntityManager entityManager) {
+    public TeamFormationServiceImpl(TeamFormationParticipantRepository teamFormationParticipantRepository, TeamFormationTeamRepository teamFormationTeamRepository, TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository, TeamFormationParticipantInvitationRepository teamFormationParticipantInvitationRepository, TopicOrSkillRepository topicOrSkillRepository, EntityManager entityManager) {
         this.teamFormationParticipantRepository = teamFormationParticipantRepository;
         this.teamFormationTeamRepository = teamFormationTeamRepository;
         this.teamFormationTeamJoinRequestRepository = teamFormationTeamJoinRequestRepository;
+        this.teamFormationParticipantInvitationRepository = teamFormationParticipantInvitationRepository;
         this.topicOrSkillRepository = topicOrSkillRepository;
         this.entityManager = entityManager;
     }
@@ -136,7 +135,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         query.distinct(true);
 
         // Compute predicates depending on the user's options
-        List<Predicate> andPredicates = new ArrayList<>();
         List<Predicate> orPredicates = new ArrayList<>();
         if (personalized) {
             // Return personalized teams based on the user's interested topics and skills
@@ -173,6 +171,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         }
 
         // Add necessary requirements during search
+        List<Predicate> andPredicates = new ArrayList<>();
         andPredicates.add(cb.isTrue(teams.get(TeamFormationTeam_.visibleInBrowser)));
 
         if (hideSentJoinRequests) {
@@ -199,8 +198,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         query.orderBy(cb.desc(teams.get(TeamFormationTeam_.id)));
         TypedQuery<TeamFormationTeam> typedQuery = entityManager.createQuery(query);
 
-        log.info(typedQuery.unwrap(org.hibernate.query.Query.class).getQueryString());
-
         // Get total count and results from query
         long foundTeamsSize = typedQuery.getResultList().size();
         int totalPages = (int) Math.ceil((double) foundTeamsSize / limit);
@@ -222,7 +219,9 @@ public class TeamFormationServiceImpl implements TeamFormationService {
      * interested topics and skills to determine personalized results
      */
     @Override
-    public TeamFormationParticipantSearchResponse getParticipants(int page, int limit, boolean personalized, String searchQuery, User user) {
+    public TeamFormationParticipantSearchResponse getParticipants(int page, int limit, boolean personalized, boolean hideSentInvitations, String searchQuery, User user) {
+        TeamFormationParticipant userParticipant = null;
+
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TeamFormationParticipant> query = cb.createQuery(TeamFormationParticipant.class);
 
@@ -232,10 +231,10 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         query.distinct(true);
 
         // Compute predicates depending on the user's options
-        List<Predicate> predicates = new ArrayList<>();
+        List<Predicate> orPredicates = new ArrayList<>();
         if (personalized) {
             // Return personalized participants based on the team's interested topics and skills
-            TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+            userParticipant = teamFormationParticipantRepository
                     .findFirstByUser(user)
                     .orElseThrow(TeamFormationParticipantNotFoundException::new);
             if (userParticipant.getTeam() == null) {
@@ -245,7 +244,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             Set<TopicOrSkill> teamTopicsAndSkills = userParticipant.getTeam().getInterestedTopicsAndSkills();
 
             for (TopicOrSkill topicOrSkill : teamTopicsAndSkills) {
-                predicates.add(
+                orPredicates.add(
                         cb.equal(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills).get(TopicOrSkill_.name), topicOrSkill.getName())
                 );
             }
@@ -255,7 +254,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 // Exact meaning case sensitive and with unprocessed input
                 String searchedTopicOrSkill = StringUtils.substring(searchQuery, 4);
 
-                predicates.add(
+                orPredicates.add(
                         cb.equal(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills).get(TopicOrSkill_.name), searchedTopicOrSkill)
                 );
             } else {
@@ -267,7 +266,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 Expression<String> firstNameWithSpace = cb.concat(participants.join(TeamFormationParticipant_.user).get(User_.firstName), " ");
                 Expression<String> firstAndLastNameWithSpace = cb.concat(firstNameWithSpace, participants.join(TeamFormationParticipant_.user).get(User_.lastName));
 
-                predicates.add(cb.or(
+                orPredicates.add(cb.or(
                         cb.like(cb.lower(firstAndLastNameWithSpace), searchQueryPattern),
                         cb.like(cb.lower(participants.get(TeamFormationParticipant_.objectiveStatement)), searchQueryPattern),
                         cb.like(cb.lower(participants.join(TeamFormationParticipant_.interestedTopicsAndSkills, JoinType.LEFT).get(TopicOrSkill_.name)), topicAndSkillPattern)
@@ -275,15 +274,35 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             }
         }
 
-        // Finish query and get most recently created participants matching the results
-        if (predicates.size() > 0) {
-            query.where(cb.and(
-                    cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser))),
-                    cb.or(predicates.toArray(new Predicate[0]))
-            );
-        } else {
-            query.where(cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser)));
+        // Add necessary requirements during search
+        List<Predicate> andPredicates = new ArrayList<>();
+        andPredicates.add(cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser)));
+
+        if (hideSentInvitations) {
+            if (userParticipant == null) {
+                userParticipant = teamFormationParticipantRepository
+                        .findFirstByUser(user)
+                        .orElseThrow(TeamFormationParticipantNotFoundException::new);
+            }
+
+            if (userParticipant.getTeam() == null) {
+                throw new TeamFormationParticipantNotInTeamException();
+            }
+
+            // Hide found participants that have an invitation from the user's team
+            Expression<TeamFormationTeam> invitingTeam = participants.join(TeamFormationParticipant_.receivedParticipantInvitations, JoinType.LEFT).get(TeamFormationParticipantInvitation_.invitingTeam);
+            andPredicates.add(cb.or(
+                    cb.notEqual(invitingTeam, userParticipant.getTeam()),
+                    cb.isNull(invitingTeam)
+            ));
         }
+
+        if (orPredicates.size() > 0) {
+            andPredicates.add(cb.or(orPredicates.toArray(new Predicate[0])));
+        }
+
+        // Finish query and get most recently created participants matching the results
+        query.where(cb.and(andPredicates.toArray(new Predicate[0])));
         query.orderBy(cb.desc(participants.get(TeamFormationParticipant_.id)));
         TypedQuery<TeamFormationParticipant> typedQuery = entityManager.createQuery(query);
 
@@ -308,11 +327,12 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         TeamFormationParticipant requestingParticipant = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
         TeamFormationTeam requestedTeam = teamFormationTeamRepository
                 .findById(teamId)
                 .orElseThrow(TeamFormationTeamNotFoundException::new);
 
-        // Check if the user already sent the team a request
+        // Check if the participant already sent the team a request
         if (requestedTeam.getReceivedTeamJoinRequests().stream()
                 .anyMatch(joinRequest -> joinRequest
                         .getRequestingParticipant()
@@ -327,6 +347,34 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         joinRequest.setMessage(requestData.getMessage());
 
         teamFormationTeamJoinRequestRepository.save(joinRequest);
+    }
+
+    @Override
+    public void inviteParticipantToTeam(int participantId, MessageDTO invitationData, User user) {
+        TeamFormationParticipant invitingTeamMember = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+        TeamFormationTeam invitingTeam = invitingTeamMember.getTeam();
+
+        TeamFormationParticipant invitedParticipant = teamFormationParticipantRepository
+                .findById(participantId)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        // Check if the team already sent the participant an invitation
+        if (invitedParticipant.getReceivedParticipantInvitations().stream()
+                .anyMatch(participantInvitation -> participantInvitation
+                        .getInvitingTeam()
+                        .equals(invitingTeam))) {
+            throw new TeamFormationParticipantInvitationAlreadySentException();
+        }
+
+        TeamFormationParticipantInvitation participantInvitation = new TeamFormationParticipantInvitation();
+
+        participantInvitation.setInvitingTeam(invitingTeam);
+        participantInvitation.setInvitedParticipant(invitedParticipant);
+        participantInvitation.setMessage(invitationData.getMessage());
+
+        teamFormationParticipantInvitationRepository.save(participantInvitation);
     }
 
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {

@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
-import { TeamCard } from 'components/teamformation';
+import { ParticipantCard } from 'components/teamformation';
 import { RequiredFormLabel } from 'components';
 import {
   MessageFormGroup,
@@ -21,22 +21,22 @@ import {
   MessageData,
   NoPermissionError,
   RootState,
-  TeamFormationTeam,
-  TeamFormationTeamJoinRequestAlreadySentError,
+  TeamFormationParticipant,
+  TeamFormationParticipantInvitationAlreadySentError,
   UnknownError
 } from 'types';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
 
-interface TeamJoinRequestModalProps extends CommonModalProps {
-  teamData: TeamFormationTeam;
+interface ParticipantInvitationModalProps extends CommonModalProps {
+  participantData: TeamFormationParticipant;
 }
 
-const TeamJoinRequestModal = (
-  props: TeamJoinRequestModalProps
+const ParticipantInvitationModal = (
+  props: ParticipantInvitationModalProps
 ): JSX.Element => {
-  const { teamData, show, setShow } = props;
+  const { participantData, show, setShow } = props;
 
   const history = useHistory();
 
@@ -54,7 +54,7 @@ const TeamJoinRequestModal = (
     setSubmitting(true);
 
     try {
-      await sendRequestToJoin(formData);
+      await sendInvitation(formData);
     } catch (err) {
       handleError(err);
     } finally {
@@ -62,7 +62,7 @@ const TeamJoinRequestModal = (
     }
   };
 
-  const sendRequestToJoin = async (
+  const sendInvitation = async (
     formData: MessageData,
     overriddenAccessToken?: string
   ) => {
@@ -71,7 +71,7 @@ const TeamJoinRequestModal = (
     let res;
     try {
       res = await fetch(
-        `${API_ROOT}/teamFormation/teams/${teamData.id}/requestToJoin`,
+        `${API_ROOT}/teamFormation/participants/${participantData.id}/inviteToTeam`,
         {
           method: 'POST',
           headers: {
@@ -86,16 +86,16 @@ const TeamJoinRequestModal = (
     }
 
     if (res.status === 200) {
-      toast.success('Request sent!');
+      toast.success('Invitation sent!');
       setShow(false);
     } else if (res.status === 409) {
       setShow(false);
-      throw new TeamFormationTeamJoinRequestAlreadySentError();
+      throw new TeamFormationParticipantInvitationAlreadySentError();
     } else if (res.status === 400) {
       throw new InvalidSubmittedDataError();
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
-      await sendRequestToJoin(formData, refreshedToken);
+      await sendInvitation(formData, refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -115,28 +115,31 @@ const TeamJoinRequestModal = (
       handleClose={() => setShow(false)}
     >
       <ModalBody>
-        <ModalHeading>Request to Join</ModalHeading>
-        <TeamCard teamData={teamData} showActionButton={false} />
+        <ModalHeading>Invite Participant</ModalHeading>
+        <ParticipantCard
+          participantData={participantData}
+          showActionButton={false}
+        />
 
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
           {(formik) => (
             <Form onSubmit={formik.handleSubmit}>
-              <MessageFormGroup controlId="tfTeamJoinRequestMessage">
-                <RequiredFormLabel>Message to Team</RequiredFormLabel>
+              <MessageFormGroup controlId="tfParticipantInvitationMessage">
+                <RequiredFormLabel>Message to Participant</RequiredFormLabel>
                 <FastField
                   as="textarea"
                   className="form-control"
                   name="message"
                   rows="5"
                   maxlength="500"
-                  placeholder="In under 500 characters, introduce yourself to the team and why you’re interested in joining them."
+                  placeholder="In under 500 characters, introduce your team to the participant and why your team is interested in working with them."
                   disabled={submitting}
                   required
                 />
               </MessageFormGroup>
 
               <StyledButton type="submit" size="lg" disabled={submitting}>
-                {submitting ? 'Sending...' : 'Send Request'}
+                {submitting ? 'Sending...' : 'Send Invitation'}
               </StyledButton>
             </Form>
           )}
@@ -154,4 +157,4 @@ const TeamJoinRequestModal = (
   );
 };
 
-export default TeamJoinRequestModal;
+export default ParticipantInvitationModal;
