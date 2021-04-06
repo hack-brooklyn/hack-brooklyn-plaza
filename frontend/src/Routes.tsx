@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 
-import { AnnouncementView, PostAnnouncement, EditAnnouncement } from 'views/announcements';
+import { TeamFormationHeadingSection } from 'components/teamformation';
 import {
   Activate,
   Dashboard,
@@ -11,6 +11,11 @@ import {
   Login
 } from 'views/root';
 import { ApplicationLanding, ApplicationPage } from 'views/apply';
+import {
+  AnnouncementView,
+  PostAnnouncement,
+  EditAnnouncement
+} from 'views/announcements';
 import {
   TeamFormationHome,
   TeamFormationParticipantHome,
@@ -35,96 +40,104 @@ const Routes = (): JSX.Element => {
   );
 
   return (
-    <Switch>
-      {/* Root */}
-      <Route path="/" exact>
-        {userIsLoggedIn ? <Dashboard /> : <Landing />}
+    <>
+      {/* This heading component will render on top of the switched routes when
+          any route containing /teamformation is active */}
+      <Route path="/teamformation">
+        <TeamFormationHeadingSection />
       </Route>
 
-      <Route path="/login">
-        <Login />
-      </Route>
+      <Switch>
+        {/* Root */}
+        <Route path="/" exact>
+          {userIsLoggedIn ? <Dashboard /> : <Landing />}
+        </Route>
 
-      <Route path="/activate">
-        <Activate />
-      </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
 
-      <Route path="/resetpassword">
-        <ForgotPassword />
-      </Route>
+        <Route path="/activate">
+          <Activate />
+        </Route>
 
-      {/* Public Application Form */}
-      <Route path="/apply" exact>
-        <ApplicationLanding />
-      </Route>
+        <Route path="/resetpassword">
+          <ForgotPassword />
+        </Route>
 
-      <Route path="/apply/form">
-        <ApplicationPage />
-      </Route>
+        {/* Public Application Form */}
+        <Route path="/apply" exact>
+          <ApplicationLanding />
+        </Route>
 
-      {/* Announcements */}
-      <Route path="/announcements" exact>
-        <AnnouncementView />
-      </Route>
+        <Route path="/apply/form">
+          <ApplicationPage />
+        </Route>
 
-      <Route path="/announcements/post">
-        <PostAnnouncement />
-      </Route>
+        {/* Announcements */}
+        <Route path="/announcements" exact>
+          <AnnouncementView />
+        </Route>
 
-      <Route path="/announcements/:announcementId/edit">
-        <EditAnnouncement />
-      </Route>
+        <Route path="/announcements/post">
+          <PostAnnouncement />
+        </Route>
 
-      {/* Team Formation */}
-      <Route path="/teamformation" exact>
-        <TeamFormationHome />
-      </Route>
+        <Route path="/announcements/:announcementId/edit">
+          <EditAnnouncement />
+        </Route>
 
-      <Route path="/teamformation/participants/setup">
-        <TeamFormationParticipantSetup />
-      </Route>
+        {/* Team Formation */}
+        <Route path="/teamformation" exact>
+          <TeamFormationHome />
+        </Route>
 
-      <Route path="/teamformation/teams/setup">
-        <TeamFormationTeamSetup />
-      </Route>
+        <Route path="/teamformation/participants/setup">
+          <TeamFormationParticipantSetup />
+        </Route>
 
-      <Route path="/teamformation/participants" exact>
-        <TeamFormationParticipantHome />
-      </Route>
+        <Route path="/teamformation/teams/setup">
+          <TeamFormationTeamSetup />
+        </Route>
 
-      <Route path="/teamformation/teams" exact>
-        <TeamFormationTeamHome />
-      </Route>
+        <Route path="/teamformation/participants" exact>
+          <TeamFormationParticipantHome />
+        </Route>
 
-      <Route path="/teamformation/participants/search">
-        <TeamFormationParticipantSearch />
-      </Route>
+        <Route path="/teamformation/teams" exact>
+          <TeamFormationTeamHome />
+        </Route>
 
-      <Route path="/teamformation/teams/search">
-        <TeamFormationTeamSearch />
-      </Route>
+        <Route path="/teamformation/participants/search">
+          <TeamFormationParticipantSearch />
+        </Route>
 
-      {/* Admin */}
-      <Route path="/admin/applications" exact>
-        <ManageApplications />
-      </Route>
+        <Route path="/teamformation/teams/search">
+          <TeamFormationTeamSearch />
+        </Route>
 
-      <Route path="/admin/applications/:applicationNumberParam">
-        <ViewSubmittedApplication />
-      </Route>
+        {/* Admin */}
+        <Route path="/admin/applications" exact>
+          <ManageApplications />
+        </Route>
 
-      <Route path="/admin/applications/:applicationNumberParam/resume">
-        <SubmittedApplicationResume />
-      </Route>
+        <Route path="/admin/applications/:applicationNumberParam">
+          <ViewSubmittedApplication />
+        </Route>
 
-      <Route path="/admin/users/create">
-        <CreateUser />
-      </Route>
+        <Route path="/admin/applications/:applicationNumberParam/resume">
+          <SubmittedApplicationResume />
+        </Route>
 
-      <Route path="/admin/users/setrole">
-        <SetUserRole />
-      </Route>
-    </Switch>
+        <Route path="/admin/users/create">
+          <CreateUser />
+        </Route>
+
+        <Route path="/admin/users/setrole">
+          <SetUserRole />
+        </Route>
+      </Switch>
+    </>
   );
 };
 
