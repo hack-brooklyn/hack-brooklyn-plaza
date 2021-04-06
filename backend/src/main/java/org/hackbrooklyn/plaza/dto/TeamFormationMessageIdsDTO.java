@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class TokenDTO {
+public class TeamFormationMessageIdsDTO {
 
-    private String token;
+    private int[] ids;
 }

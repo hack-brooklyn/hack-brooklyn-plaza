@@ -1,11 +1,13 @@
 package org.hackbrooklyn.plaza.service.impl;
 
+import com.google.common.primitives.Ints;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.exception.*;
 import org.hackbrooklyn.plaza.model.*;
 import org.hackbrooklyn.plaza.repository.*;
+import org.hackbrooklyn.plaza.repository.TeamFormationTeamJoinRequestRepository.RequestIdsOnly;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.hackbrooklyn.plaza.util.TeamFormationUtils.cleanTopicOrSkillName;
 
@@ -123,8 +126,10 @@ public class TeamFormationServiceImpl implements TeamFormationService {
     }
 
     @Override
-    public TeamFormationTeamSearchResponse getTeams(int page, int limit, boolean personalized, boolean hideSentJoinRequests, String searchQuery, User user) {
-        TeamFormationParticipant participant = null;
+    public TeamFormationTeamSearchDTO getTeams(int page, int limit, boolean personalized, boolean hideSentJoinRequests, String searchQuery, User user) {
+        TeamFormationParticipant participant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TeamFormationTeam> query = cb.createQuery(TeamFormationTeam.class);
@@ -138,9 +143,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         List<Predicate> orPredicates = new ArrayList<>();
         if (personalized) {
             // Return personalized teams based on the user's interested topics and skills
-            participant = teamFormationParticipantRepository
-                    .findFirstByUser(user)
-                    .orElseThrow(TeamFormationParticipantNotFoundException::new);
             Set<TopicOrSkill> participantTopicsAndSkills = participant.getInterestedTopicsAndSkills();
 
             for (TopicOrSkill topicOrSkill : participantTopicsAndSkills) {
@@ -174,14 +176,13 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         List<Predicate> andPredicates = new ArrayList<>();
         andPredicates.add(cb.isTrue(teams.get(TeamFormationTeam_.visibleInBrowser)));
 
-        if (hideSentJoinRequests) {
-            if (participant == null) {
-                participant = teamFormationParticipantRepository
-                        .findFirstByUser(user)
-                        .orElseThrow(TeamFormationParticipantNotFoundException::new);
-            }
+        // Don't return the user's current team if they're in one already
+        if (participant.getTeam() != null) {
+            andPredicates.add(cb.notEqual(teams.get(TeamFormationTeam_.id), participant.getTeam().getId()));
+        }
 
-            // Hide found teams that have a join request from the user
+        // Hide found teams that have a join request from the user
+        if (hideSentJoinRequests) {
             Expression<TeamFormationParticipant> requestingParticipant = teams.join(TeamFormationTeam_.receivedTeamJoinRequests, JoinType.LEFT).get(TeamFormationTeamJoinRequest_.requestingParticipant);
             andPredicates.add(cb.or(
                     cb.notEqual(requestingParticipant, participant),
@@ -189,6 +190,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             ));
         }
 
+        // Add constraints specified by query parameters if any were specified
         if (orPredicates.size() > 0) {
             andPredicates.add(cb.or(orPredicates.toArray(new Predicate[0])));
         }
@@ -207,9 +209,9 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         typedQuery.setMaxResults(limit);
         Collection<TeamFormationTeam> foundTeams = typedQuery.getResultList();
 
-        return new TeamFormationTeamSearchResponse(
-                foundTeams,
+        return new TeamFormationTeamSearchDTO(
                 totalPages,
+                foundTeams,
                 foundTeamsSize
         );
     }
@@ -219,8 +221,10 @@ public class TeamFormationServiceImpl implements TeamFormationService {
      * interested topics and skills to determine personalized results
      */
     @Override
-    public TeamFormationParticipantSearchResponse getParticipants(int page, int limit, boolean personalized, boolean hideSentInvitations, String searchQuery, User user) {
-        TeamFormationParticipant userParticipant = null;
+    public TeamFormationParticipantSearchDTO getParticipants(int page, int limit, boolean personalized, boolean hideSentInvitations, String searchQuery, User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TeamFormationParticipant> query = cb.createQuery(TeamFormationParticipant.class);
@@ -234,9 +238,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         List<Predicate> orPredicates = new ArrayList<>();
         if (personalized) {
             // Return personalized participants based on the team's interested topics and skills
-            userParticipant = teamFormationParticipantRepository
-                    .findFirstByUser(user)
-                    .orElseThrow(TeamFormationParticipantNotFoundException::new);
             if (userParticipant.getTeam() == null) {
                 throw new TeamFormationParticipantNotInTeamException();
             }
@@ -278,18 +279,15 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         List<Predicate> andPredicates = new ArrayList<>();
         andPredicates.add(cb.isTrue(participants.get(TeamFormationParticipant_.visibleInBrowser)));
 
-        if (hideSentInvitations) {
-            if (userParticipant == null) {
-                userParticipant = teamFormationParticipantRepository
-                        .findFirstByUser(user)
-                        .orElseThrow(TeamFormationParticipantNotFoundException::new);
-            }
+        // Don't return the participant that is currently getting the list of participants
+        andPredicates.add(cb.notEqual(participants.get(TeamFormationParticipant_.id), userParticipant.getId()));
 
+        // Hide found participants that have an invitation from the user's team
+        if (hideSentInvitations) {
             if (userParticipant.getTeam() == null) {
                 throw new TeamFormationParticipantNotInTeamException();
             }
 
-            // Hide found participants that have an invitation from the user's team
             Expression<TeamFormationTeam> invitingTeam = participants.join(TeamFormationParticipant_.receivedParticipantInvitations, JoinType.LEFT).get(TeamFormationParticipantInvitation_.invitingTeam);
             andPredicates.add(cb.or(
                     cb.notEqual(invitingTeam, userParticipant.getTeam()),
@@ -297,6 +295,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             ));
         }
 
+        // Add constraints specified by query parameters if any were specified
         if (orPredicates.size() > 0) {
             andPredicates.add(cb.or(orPredicates.toArray(new Predicate[0])));
         }
@@ -315,9 +314,9 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         typedQuery.setMaxResults(limit);
         Collection<TeamFormationParticipant> foundParticipants = typedQuery.getResultList();
 
-        return new TeamFormationParticipantSearchResponse(
-                foundParticipants,
+        return new TeamFormationParticipantSearchDTO(
                 totalPages,
+                foundParticipants,
                 foundParticipantsSize
         );
     }
@@ -375,6 +374,98 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         participantInvitation.setMessage(invitationData.getMessage());
 
         teamFormationParticipantInvitationRepository.save(participantInvitation);
+    }
+
+    @Override
+    public TeamFormationTeamInboxDTO getTeamInbox(int page, int limit, User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+        if (userParticipant.getTeam() == null) throw new TeamFormationParticipantNotInTeamException();
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TeamFormationTeamJoinRequest> query = cb.createQuery(TeamFormationTeamJoinRequest.class);
+
+        // Query for all messages that are in the team's inbox
+        Root<TeamFormationTeamJoinRequest> joinRequests = query.from(TeamFormationTeamJoinRequest.class);
+        query.select(joinRequests);
+        query.distinct(true);
+
+        // Load the lazy-loaded requestingParticipant field
+        joinRequests.fetch(TeamFormationTeamJoinRequest_.requestingParticipant);
+
+        query.where(cb.and(
+                cb.isNull(joinRequests.get(TeamFormationTeamJoinRequest_.requestAccepted)),
+                cb.equal(joinRequests.get(TeamFormationTeamJoinRequest_.requestedTeam), userParticipant.getTeam())
+        ));
+        query.orderBy(cb.desc(joinRequests.get(TeamFormationTeamJoinRequest_.requestTimestamp)));
+        TypedQuery<TeamFormationTeamJoinRequest> typedQuery = entityManager.createQuery(query);
+
+        // Get total count and results from query
+        long foundJoinRequestsSize = typedQuery.getResultList().size();
+        int totalPages = (int) Math.ceil((double) foundJoinRequestsSize / limit);
+
+        // Get paginated join requests from query
+        typedQuery.setFirstResult((page - 1) * limit);
+        typedQuery.setMaxResults(limit);
+        Collection<TeamFormationTeamJoinRequest> foundJoinRequests = typedQuery.getResultList();
+
+        return new TeamFormationTeamInboxDTO(totalPages, foundJoinRequests, foundJoinRequestsSize);
+    }
+
+    @Override
+    public TeamFormationMessageIdsDTO getTeamInboxMessageIds(User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+        if (userParticipant.getTeam() == null) throw new TeamFormationParticipantNotInTeamException();
+
+        List<RequestIdsOnly> messageIdsProjection = teamFormationTeamJoinRequestRepository.
+                findAllByRequestedTeamAndRequestAcceptedNullOrderByRequestTimestamp(userParticipant.getTeam());
+
+        // Convert RequestIdsOnly projection to list of Integers
+        List<Integer> messageIds = messageIdsProjection.stream()
+                .map(RequestIdsOnly::getRequestId)
+                .collect(Collectors.toList());
+
+        return new TeamFormationMessageIdsDTO(Ints.toArray(messageIds));
+    }
+
+    @Override
+    public TeamFormationTeamJoinRequest getJoinRequestDetails(int joinRequestId, User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        TeamFormationTeamJoinRequest foundJoinRequest = teamFormationTeamJoinRequestRepository
+                .findByIdLoadParticipant(joinRequestId)
+                .orElseThrow(TeamFormationTeamJoinRequestNotFoundException::new);
+
+        // Only allow team members in the team receiving the join request to view the join request
+        if (foundJoinRequest.getRequestedTeam() != userParticipant.getTeam() || userParticipant.getTeam() == null) {
+            throw new TeamFormationTeamJoinRequestInaccessibleException();
+        }
+
+        return foundJoinRequest;
+    }
+
+    @Override
+    public void setJoinRequestAccepted(int joinRequestId, Boolean requestAccepted, User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        TeamFormationTeamJoinRequest foundJoinRequest = teamFormationTeamJoinRequestRepository
+                .findByIdLoadParticipant(joinRequestId)
+                .orElseThrow(TeamFormationTeamJoinRequestNotFoundException::new);
+
+        // Only allow team members in the team receiving the join request to set the accepted status of a join request
+        if (foundJoinRequest.getRequestedTeam() != userParticipant.getTeam() || userParticipant.getTeam() == null) {
+            throw new TeamFormationTeamJoinRequestInaccessibleException();
+        }
+
+        foundJoinRequest.setRequestAccepted(requestAccepted);
+        teamFormationTeamJoinRequestRepository.save(foundJoinRequest);
     }
 
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {

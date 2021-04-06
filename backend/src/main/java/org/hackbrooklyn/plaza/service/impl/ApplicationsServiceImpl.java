@@ -10,7 +10,7 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.hackbrooklyn.plaza.dto.ApplicationManagerEntryDTO;
 import org.hackbrooklyn.plaza.dto.ApplicationNumbersDTO;
 import org.hackbrooklyn.plaza.dto.LinkDTO;
-import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
+import org.hackbrooklyn.plaza.dto.MultipleApplicationsDTO;
 import org.hackbrooklyn.plaza.exception.ApplicationNotFoundException;
 import org.hackbrooklyn.plaza.exception.ResumeNotFoundException;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -76,7 +76,7 @@ public class ApplicationsServiceImpl implements ApplicationsService {
     }
 
     @Override
-    public MultipleApplicationsResponse getMultipleApplications(int page, int limit, String searchQuery, Decision decision) {
+    public MultipleApplicationsDTO getMultipleApplications(int page, int limit, String searchQuery, Decision decision) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<SubmittedApplication> query = cb.createQuery(SubmittedApplication.class);
 
@@ -128,9 +128,9 @@ public class ApplicationsServiceImpl implements ApplicationsService {
         // Retrieve the amount of undecided applications in the database independent of the request's queries
         long totalUndecidedApplications = submittedApplicationRepository.countByDecision(Decision.UNDECIDED);
 
-        return new MultipleApplicationsResponse(
-                applicationManagerEntries,
+        return new MultipleApplicationsDTO(
                 totalPages,
+                applicationManagerEntries,
                 foundApplicationsCount,
                 totalUndecidedApplications
         );
