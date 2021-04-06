@@ -1,8 +1,11 @@
 package org.hackbrooklyn.plaza.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hackbrooklyn.plaza.serializer.LocalDateTimeWithUTCSerializer;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -28,6 +31,7 @@ public class TeamFormationTeamJoinRequest {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requested_team_id", referencedColumnName = "id")
     @NotNull
+    @JsonIgnore
     private TeamFormationTeam requestedTeam;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +50,6 @@ public class TeamFormationTeamJoinRequest {
 
     @Column(name = "request_timestamp")
     @CreationTimestamp
+    @JsonSerialize(using = LocalDateTimeWithUTCSerializer.class)
     private LocalDateTime requestTimestamp;
 }
