@@ -1,9 +1,13 @@
 package org.hackbrooklyn.plaza.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.*;
 import org.hackbrooklyn.plaza.model.TeamFormationParticipant;
 import org.hackbrooklyn.plaza.model.TeamFormationTeam;
+import org.hackbrooklyn.plaza.model.TeamFormationTeamJoinRequest;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
-
 
 @Slf4j
 @RestController
@@ -32,7 +35,7 @@ public class TeamFormationController {
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_PARTICIPANT)")
     @GetMapping("/participants")
-    public ResponseEntity<TeamFormationParticipantSearchResponse> getParticipants(
+    public ResponseEntity<TeamFormationParticipantSearchDTO> getParticipants(
             @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "8") @Min(1) int limit,
             @RequestParam(defaultValue = "false") boolean personalized,
@@ -40,7 +43,7 @@ public class TeamFormationController {
             @RequestParam(required = false) String searchQuery,
             @AuthenticationPrincipal User user
     ) {
-        TeamFormationParticipantSearchResponse participants = teamFormationService.getParticipants(page, limit, personalized, hideSentInvitations, searchQuery, user);
+        TeamFormationParticipantSearchDTO participants = teamFormationService.getParticipants(page, limit, personalized, hideSentInvitations, searchQuery, user);
 
         return new ResponseEntity<>(participants, HttpStatus.OK);
     }
@@ -57,7 +60,7 @@ public class TeamFormationController {
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")
     @GetMapping("/teams")
-    public ResponseEntity<TeamFormationTeamSearchResponse> getTeams(
+    public ResponseEntity<TeamFormationTeamSearchDTO> getTeams(
             @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "8") @Min(1) int limit,
             @RequestParam(defaultValue = "false") boolean personalized,
@@ -65,7 +68,7 @@ public class TeamFormationController {
             @RequestParam(required = false) String searchQuery,
             @AuthenticationPrincipal User user
     ) {
-        TeamFormationTeamSearchResponse teams = teamFormationService.getTeams(page, limit, personalized, hideSentJoinRequests, searchQuery, user);
+        TeamFormationTeamSearchDTO teams = teamFormationService.getTeams(page, limit, personalized, hideSentJoinRequests, searchQuery, user);
 
         return new ResponseEntity<>(teams, HttpStatus.OK);
     }
@@ -132,5 +135,65 @@ public class TeamFormationController {
         teamFormationService.inviteParticipantToTeam(participantId, resBody, user);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Gets a pageable list of the messages in the requesting team's inbox.
+     */
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")
+    @GetMapping("/teams/joinRequests")
+    public ResponseEntity<TeamFormationTeamInboxDTO> getTeamInbox(
+            @RequestParam(defaultValue = "1") @Min(1) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int limit,
+            @AuthenticationPrincipal User user) {
+        TeamFormationTeamInboxDTO resBody = teamFormationService.getTeamInbox(page, limit, user);
+
+        return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    /**
+     * Gets a full list of the message IDs in the requesting team's inbox.
+     * Includes the IDs only.
+     */
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")
+    @GetMapping("/teams/inbox")
+    public ResponseEntity<TeamFormationMessageIdsDTO> getTeamInboxMessageIds(
+            @AuthenticationPrincipal User user) {
+        TeamFormationMessageIdsDTO resBody = teamFormationService.getTeamInboxMessageIds(user);
+
+        return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    /**
+     * Gets the details about a single join request for a team. Only join requests that a team has received can be
+     * viewed.
+     */
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")
+    @GetMapping("/teams/joinRequests/{joinRequestId}")
+    public ResponseEntity<TeamFormationTeamJoinRequest> getJoinRequestDetails(
+            @PathVariable @Positive int joinRequestId,
+            @AuthenticationPrincipal User user) {
+        TeamFormationTeamJoinRequest resBody = teamFormationService.getJoinRequestDetails(joinRequestId, user);
+
+        return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_TEAM)")
+    @PostMapping("/teams/joinRequests/{joinRequestId}/setRequestAccepted")
+    public ResponseEntity<Void> setJoinRequestAccepted(
+            @PathVariable @Positive int joinRequestId,
+            @RequestBody @Valid SetJoinRequestAcceptedRequest reqBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.setJoinRequestAccepted(joinRequestId, reqBody.getRequestAccepted(), user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Data
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    private static class SetJoinRequestAcceptedRequest {
+
+        private Boolean requestAccepted;
     }
 }
