@@ -108,33 +108,49 @@ const ParticipantHeadingContents = (
 
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
+  const [participantInboxOpen, setParticipantInboxOpen] = useState(false);
+
+  const participantHeadingActions: MenuAction[] = [
+    {
+      onClick: () => setParticipantInboxOpen(true),
+      text: 'Inbox',
+      type: 'button',
+      icon: mailboxIcon
+    }
+  ];
+
   return (
     <>
-      {participantData !== undefined ? (
-        <VisibilityStatus>
-          {windowWidth > Breakpoints.Large && (
-            <>
-              {participantData.visibleInBrowser ? (
-                <img src={browserVisibleIcon} alt="Visible in browser icon" />
-              ) : (
-                <img src={browserHiddenIcon} alt="Hidden from browser icon" />
-              )}
-            </>
-          )}
+      <TitleArea>
+        <StyledH1>Team Formation</StyledH1>
+        {participantData !== undefined ? (
+          <VisibilityStatus>
+            {windowWidth > Breakpoints.Large && (
+              <>
+                {participantData.visibleInBrowser ? (
+                  <img src={browserVisibleIcon} alt='Visible in browser icon' />
+                ) : (
+                  <img src={browserHiddenIcon} alt='Hidden from browser icon' />
+                )}
+              </>
+            )}
 
+            <VisibilityStatusText>
+              Your profile is currently
+              {participantData.visibleInBrowser
+                ? ' visible on '
+                : ' hidden from '}
+              the participant browser.
+            </VisibilityStatusText>
+          </VisibilityStatus>
+        ) : (
           <VisibilityStatusText>
-            Your profile is currently
-            {participantData.visibleInBrowser
-              ? ' visible on '
-              : ' hidden from '}
-            the participant browser.
+            Checking profile visibility...
           </VisibilityStatusText>
-        </VisibilityStatus>
-      ) : (
-        <VisibilityStatusText>
-          Checking profile visibility...
-        </VisibilityStatusText>
-      )}
+        )}
+      </TitleArea>
+
+      <HeadingActions viewName='Team Formation' actions={participantHeadingActions} />
     </>
   );
 };
@@ -164,9 +180,9 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
           {windowWidth > Breakpoints.Large && (
             <>
               {teamData.visibleInBrowser ? (
-                <img src={browserVisibleIcon} alt="Visible in browser icon" />
+                <img src={browserVisibleIcon} alt='Visible in browser icon' />
               ) : (
-                <img src={browserHiddenIcon} alt="Hidden from browser icon" />
+                <img src={browserHiddenIcon} alt='Hidden from browser icon' />
               )}
             </>
           )}
@@ -179,7 +195,7 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
         </VisibilityStatus>
       </TitleArea>
 
-      <HeadingActions viewName="Dashboard" actions={teamHeadingActions} />
+      <HeadingActions viewName='Team Formation' actions={teamHeadingActions} />
 
       <TeamInboxModal show={teamInboxOpen} setShow={setTeamInboxOpen} />
     </>
