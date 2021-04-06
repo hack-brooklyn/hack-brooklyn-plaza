@@ -29,6 +29,7 @@ import {
 } from 'types';
 
 import loadingIcon from 'assets/icons/loading.svg';
+import { checkParticipantHasTeam } from 'util/teamFormation';
 
 const TeamFormationTeamSearch = (): JSX.Element => {
   const history = useHistory();
@@ -37,6 +38,7 @@ const TeamFormationTeamSearch = (): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
+  const [participantDoesNotHaveTeam, setParticipantDoesNotHaveTeam] = useState(false);
   // The state to hold the controlled search box input value
   const [searchBoxInputValue, setSearchBoxInputValue] = useState('');
   // The current search query's state, updated on each search query change only
@@ -51,6 +53,11 @@ const TeamFormationTeamSearch = (): JSX.Element => {
   const [fetchingSearchResults, setFetchingSearchResults] = useState(false);
 
   useEffect(() => {
+    checkParticipantHasTeam(history)
+      .then((status) => {
+        status !== undefined && setParticipantDoesNotHaveTeam(!status);
+      });
+
     // Parse the search query on page load
     parseSearchQuery();
 
@@ -200,7 +207,11 @@ const TeamFormationTeamSearch = (): JSX.Element => {
           {currentTeams.length > 0 ? (
             <ResultsGrid>
               {currentTeams.map((team) => (
-                <StyledTeamCard teamData={team} key={team.id} />
+                <StyledTeamCard
+                  teamData={team}
+                  showActionButton={participantDoesNotHaveTeam}
+                  key={team.id}
+                />
               ))}
             </ResultsGrid>
           ) : (

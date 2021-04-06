@@ -29,6 +29,7 @@ import {
 } from 'types';
 
 import loadingIcon from 'assets/icons/loading.svg';
+import { checkParticipantHasTeam } from 'util/teamFormation';
 
 const TeamFormationParticipantSearch = (): JSX.Element => {
   const history = useHistory();
@@ -37,15 +38,15 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
+  // Whether or not the participant has a team.
+  const [participantHasTeam, setParticipantHasTeam] = useState(false);
   // The state to hold the controlled search box input value
   const [searchBoxInputValue, setSearchBoxInputValue] = useState('');
   // The current search query's state, updated on each search query change only
   const [currentSearchQuery, setCurrentSearchQuery] = useState<string | null>(
     null
   );
-  const [currentParticipants, setCurrentParticipants] = useState<
-    TeamFormationParticipant[]
-  >([]);
+  const [currentParticipants, setCurrentParticipants] = useState<TeamFormationParticipant[]>([]);
   const [totalFoundParticipants, setTotalFoundParticipants] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   // Local state to handle infinite scroll and pagination
@@ -53,6 +54,12 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
   const [fetchingSearchResults, setFetchingSearchResults] = useState(false);
 
   useEffect(() => {
+    // Get whether or not the participant has a team already
+    checkParticipantHasTeam(history)
+      .then((status) => {
+        status !== undefined && setParticipantHasTeam(status);
+      });
+
     // Parse the search query on page load
     parseSearchQuery();
 
@@ -169,8 +176,8 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
         <StyledCenteredH2>
           {currentSearchQuery !== null && currentSearchQuery !== ''
             ? `${totalFoundParticipants} result${
-                totalFoundParticipants === 1 ? '' : 's'
-              }
+              totalFoundParticipants === 1 ? '' : 's'
+            }
             for "${currentSearchQuery}"`
             : 'Browse Participants'}
         </StyledCenteredH2>
@@ -181,11 +188,11 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
             setCurrentSearchQuery(searchBoxInputValue);
           }}
         >
-          <Form.Group controlId="tfParticipantSearch">
+          <Form.Group controlId='tfParticipantSearch'>
             <Form.Control
-              name="query"
-              type="text"
-              placeholder="Search participants..."
+              name='query'
+              type='text'
+              placeholder='Search participants...'
               onChange={(e) => setSearchBoxInputValue(e.target.value)}
               value={searchBoxInputValue}
               disabled={fetchingSearchResults}
@@ -202,7 +209,7 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
               <div>Loading...</div>
               <SearchLoadingSpinner
                 src={loadingIcon}
-                alt="Loading participants..."
+                alt='Loading participants...'
               />
             </LoadingIndicator>
           }
@@ -214,6 +221,7 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
               {currentParticipants.map((participant) => (
                 <StyledParticipantCard
                   participantData={participant}
+                  showActionButton={participantHasTeam}
                   key={participant.id}
                 />
               ))}

@@ -27,6 +27,7 @@ import {
 } from 'types';
 
 import loadingIcon from 'assets/icons/loading.svg';
+import { checkParticipantHasTeam } from 'util/teamFormation';
 
 const TeamFormationTeamHome = (): JSX.Element => {
   const history = useHistory();
@@ -35,8 +36,9 @@ const TeamFormationTeamHome = (): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
+  // Whether or not the participant has a team.
+  const [participantDoesNotHaveTeam, setParticipantDoesNotHaveTeam] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
   const [
     personalizedTeams,
     setPersonalizedTeams
@@ -45,6 +47,11 @@ const TeamFormationTeamHome = (): JSX.Element => {
   const [teamsLoaded, setTeamsLoaded] = useState(false);
 
   useEffect(() => {
+    checkParticipantHasTeam(history)
+      .then((status) => {
+        status !== undefined && setParticipantDoesNotHaveTeam(!status);
+      });
+
     getPersonalizedTeams().catch((err) => handleError(err));
   }, []);
 
@@ -94,11 +101,11 @@ const TeamFormationTeamHome = (): JSX.Element => {
         <StyledCenteredH2>Teams for You</StyledCenteredH2>
 
         <SearchForm onSubmit={searchTeams}>
-          <Form.Group controlId="tfTeamBrowserSearch">
+          <Form.Group controlId='tfTeamBrowserSearch'>
             <Form.Control
-              name="query"
-              type="text"
-              placeholder="Search teams..."
+              name='query'
+              type='text'
+              placeholder='Search teams...'
               onChange={(e) => setSearchQuery(e.target.value)}
               value={searchQuery}
               disabled={submitting}
@@ -112,7 +119,11 @@ const TeamFormationTeamHome = (): JSX.Element => {
             {personalizedTeams && personalizedTeams.teams.length > 0 ? (
               <ResultsGrid>
                 {personalizedTeams.teams.map((team) => (
-                  <StyledTeamCard teamData={team} key={team.id} />
+                  <StyledTeamCard
+                    teamData={team}
+                    showActionButton={participantDoesNotHaveTeam}
+                    key={team.id}
+                  />
                 ))}
               </ResultsGrid>
             ) : (
@@ -130,15 +141,15 @@ const TeamFormationTeamHome = (): JSX.Element => {
               Finding teams that best match your interests, please wait...
             </MessageText>
 
-            <LoadingSpinner src={loadingIcon} alt="Loading teams..." />
+            <LoadingSpinner src={loadingIcon} alt='Loading teams...' />
           </LoadingSection>
         )}
 
         <LinkButtonContainer>
           <LinkButton
-            to="/teamformation/teams/search"
-            variant="secondary"
-            size="lg"
+            to='/teamformation/teams/search'
+            variant='secondary'
+            size='lg'
           >
             Browse All Teams
           </LinkButton>
