@@ -5,7 +5,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import queryString from 'query-string';
 import Form from 'react-bootstrap/Form';
 
-import { ParticipantHeadingSection } from 'components/teamformation';
 import {
   LoadingIndicator,
   MessageText,
@@ -159,8 +158,6 @@ const TeamFormationTeamSearch = (): JSX.Element => {
 
   return (
     <>
-      <ParticipantHeadingSection />
-
       <SearchSection>
         <StyledCenteredH2>
           {currentSearchQuery !== null && currentSearchQuery !== ''

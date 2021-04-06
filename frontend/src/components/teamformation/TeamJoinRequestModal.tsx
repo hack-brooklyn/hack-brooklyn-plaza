@@ -116,6 +116,7 @@ const TeamJoinRequestModal = (
     >
       <ModalBody>
         <ModalHeading>Request to Join</ModalHeading>
+
         <TeamCard teamData={teamData} showActionButton={false} />
 
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>

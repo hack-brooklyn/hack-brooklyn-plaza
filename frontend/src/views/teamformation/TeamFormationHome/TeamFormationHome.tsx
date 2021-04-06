@@ -5,7 +5,7 @@ import styled from 'styled-components/macro';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { StyledCenteredH2, StyledH1 } from 'common/styles/commonStyles';
+import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
@@ -55,10 +55,10 @@ const TeamFormationHome = (): JSX.Element => {
 
       if (resBody.team === null) {
         // User has no team and is looking for a team, redirect to the team browser
-        history.push('/teamformation/teams');
+        history.replace('/teamformation/teams');
       } else {
         // User has a team and is looking for participants, redirect to the participant browser
-        history.push('/teamformation/participants');
+        history.replace('/teamformation/participants');
       }
     } else if (res.status === 404) {
       // If we get back 404 Not Found, stay on the page so the user can perform initial setup.
@@ -74,55 +74,53 @@ const TeamFormationHome = (): JSX.Element => {
     }
   };
 
-  return (
-    <>
-      <StyledH1>Team Formation</StyledH1>
+  if (initialSetupVisible) {
+    return (
+      <>
+        <WelcomeTextSection>
+          <StyledCenteredH2>Welcome to Team Formation!</StyledCenteredH2>
+          <StyledP>
+            Team formation makes it easy to find a team to work with or to find
+            new members for your current team.
+          </StyledP>
 
-      {initialSetupVisible && (
-        <>
-          <WelcomeTextSection>
-            <StyledCenteredH2>Welcome to Team Formation!</StyledCenteredH2>
-            <StyledP>
-              Team formation makes it easy to find a team to work with or to
-              find new members for your current team.
-            </StyledP>
+          <StyledP>
+            To start, select the option that best describes your current
+            situation.
+          </StyledP>
+        </WelcomeTextSection>
 
-            <StyledP>
-              To start, select the option that best describes your current
-              situation.
-            </StyledP>
-          </WelcomeTextSection>
+        <OptionsSection>
+          <Row>
+            <Col md={6}>
+              <Option to="/teamformation/participants/setup">
+                <OptionIcon
+                  src={lookingForTeamIcon}
+                  alt="I am looking for a team"
+                />
+                <OptionDescription>
+                  I don’t have a team yet and am currently looking for a team to
+                  join
+                </OptionDescription>
+              </Option>
+            </Col>
 
-          <OptionsSection>
-            <Row>
-              <Col md={6}>
-                <Option to="/teamformation/participants/setup">
-                  <OptionIcon
-                    src={lookingForTeamIcon}
-                    alt="I am looking for a team"
-                  />
-                  <OptionDescription>
-                    I don’t have a team yet and am currently looking for a team
-                    to join
-                  </OptionDescription>
-                </Option>
-              </Col>
-
-              <Col md={6}>
-                <Option to="/teamformation/teams/setup">
-                  <OptionIcon src={haveATeamIcon} alt="I have a team" />
-                  <OptionDescription>
-                    I have a team/want to create a new team and am looking for
-                    members
-                  </OptionDescription>
-                </Option>
-              </Col>
-            </Row>
-          </OptionsSection>
-        </>
-      )}
-    </>
-  );
+            <Col md={6}>
+              <Option to="/teamformation/teams/setup">
+                <OptionIcon src={haveATeamIcon} alt="I have a team" />
+                <OptionDescription>
+                  I have a team/want to create a new team and am looking for
+                  members
+                </OptionDescription>
+              </Option>
+            </Col>
+          </Row>
+        </OptionsSection>
+      </>
+    );
+  } else {
+    return <></>;
+  }
 };
 
 const WelcomeTextSection = styled.section`

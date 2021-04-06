@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 
-import { ParticipantHeadingSection } from 'components/teamformation';
 import { LinkButton } from 'components';
 import {
   LinkButtonContainer,
@@ -91,8 +90,6 @@ const TeamFormationTeamHome = (): JSX.Element => {
 
   return (
     <>
-      <ParticipantHeadingSection />
-
       <PersonalizedResultsSection>
         <StyledCenteredH2>Teams for You</StyledCenteredH2>
 

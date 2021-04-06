@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components/macro';
+
 import { Breakpoints } from 'types';
 
 interface ButtonContentProps {
@@ -11,7 +12,7 @@ interface ButtonContentProps {
 interface HeadingButtonProps extends ButtonContentProps {
   type: 'button' | 'link' | 'anchor';
   link?: string;
-  onClick?: () => void;
+  onClick?(...args: any[]): void;
 }
 
 const HeadingButton = (props: HeadingButtonProps): JSX.Element | null => {
@@ -31,9 +32,9 @@ const HeadingButton = (props: HeadingButtonProps): JSX.Element | null => {
     );
   } else if (type === 'button' && onClick !== undefined) {
     return (
-      <button onClick={onClick}>
+      <StyledHeadingButton onClick={onClick}>
         <ButtonContent icon={icon} text={text} />
-      </button>
+      </StyledHeadingButton>
     );
   } else {
     return null;
@@ -45,7 +46,7 @@ const ButtonContent = (props: ButtonContentProps) => {
   return (
     <ButtonContainer>
       <IconArea>
-        <ButtonIcon src={icon} alt={text} />
+        <img src={icon} alt={text} />
       </IconArea>
 
       <ButtonText>
@@ -92,7 +93,7 @@ const IconArea = styled.div`
   }
 `;
 
-const LinkStyles = css`
+const CommonHeadingButtonStyles = css`
   padding: 0.5rem 0;
 
   display: flex;
@@ -125,15 +126,17 @@ const LinkStyles = css`
 `;
 
 const StyledLink = styled(Link)`
-  ${LinkStyles}
+  ${CommonHeadingButtonStyles}
 `;
 
 const StyledAnchor = styled.a`
-  ${LinkStyles}
+  ${CommonHeadingButtonStyles}
 `;
 
-const ButtonIcon = styled.img`
-
+const StyledHeadingButton = styled.button`
+  background: none;
+  border: none;
+  ${CommonHeadingButtonStyles};
 `;
 
 const ButtonText = styled.p`
