@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
-import arrowIcon from 'assets/icons/arrow.svg';
+import arrowIcon from 'assets/icons/large-arrow.svg';
 
 interface ActionLinkProps {
   name: string;
