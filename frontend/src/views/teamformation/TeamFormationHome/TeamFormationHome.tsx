@@ -5,7 +5,7 @@ import styled from 'styled-components/macro';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { StyledCenteredH2, StyledH1 } from 'common/styles/commonStyles';
+import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
