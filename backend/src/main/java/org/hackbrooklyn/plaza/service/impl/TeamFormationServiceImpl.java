@@ -283,11 +283,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         andPredicates.add(cb.notEqual(participants.get(TeamFormationParticipant_.id), userParticipant.getId()));
 
         // Hide found participants that have an invitation from the user's team
-        if (hideSentInvitations) {
-            if (userParticipant.getTeam() == null) {
-                throw new TeamFormationParticipantNotInTeamException();
-            }
-
+        if (userParticipant.getTeam() != null && hideSentInvitations) {
             Expression<TeamFormationTeam> invitingTeam = participants.join(TeamFormationParticipant_.receivedParticipantInvitations, JoinType.LEFT).get(TeamFormationParticipantInvitation_.invitingTeam);
             andPredicates.add(cb.or(
                     cb.notEqual(invitingTeam, userParticipant.getTeam()),
