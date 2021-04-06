@@ -308,7 +308,7 @@ export interface MenuAction {
   type: 'anchor' | 'link' | 'button';
   text: string;
   link?: string;
-  onClick?: () => void;
+  onClick?(...args: any[]): void;
   icon: string;
 }
 
@@ -380,6 +380,18 @@ export interface TeamFormationParticipantSearchResponse {
   participants: TeamFormationParticipant[];
   pages: number;
   totalFoundParticipants: number;
+}
+
+export interface IdsResponse {
+  ids: number[];
+}
+
+export interface TeamFormationJoinRequest {
+  requestId: number;
+  requestingParticipant: TeamFormationParticipant;
+  message: string;
+  requestAccepted: boolean;
+  requestTimestamp: Date;
 }
 
 export interface AnnouncementData {
@@ -574,6 +586,15 @@ export class TeamFormationParticipantInvitationAlreadySentError extends Error {
     super();
     this.name = 'TeamFormationParticipantInvitationAlreadySentError';
     this.message = 'Your team has already sent this participant an invitation.';
+  }
+}
+
+// Thrown when a team formation participant is not in a team.
+export class TeamFormationParticipantNotInTeamError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantNotInTeamError';
+    this.message = 'You must be in a team formation team to use this feature.';
   }
 }
 
