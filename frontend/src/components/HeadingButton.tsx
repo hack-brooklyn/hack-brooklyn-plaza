@@ -136,7 +136,12 @@ const StyledAnchor = styled.a`
 const StyledHeadingButton = styled.button`
   background: none;
   border: none;
+  width: 100%;
   ${CommonHeadingButtonStyles};
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    width: auto;    
+  }
 `;
 
 const ButtonText = styled.p`
