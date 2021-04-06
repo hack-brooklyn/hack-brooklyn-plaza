@@ -60,10 +60,10 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
   }, [show]);
 
   useEffect(() => {
-    if (currentIndex !== null) {
+    if (currentIndex !== null && requestIds[currentIndex] !== undefined) {
       getJoinRequestData(currentIndex).catch((err) => handleError(err));
     }
-  }, [currentIndex]);
+  }, [currentIndex, requestIds]);
 
   const getTeamInbox = async (overriddenAccessToken?: string) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
@@ -189,7 +189,6 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
         setRequestIds(
           requestIds.filter((id) => id !== requestIds[currentIndex])
         );
-        setCurrentIndex(currentIndex + 1);
       } else if (requestIds[currentIndex - 1] !== undefined) {
         // Advance to the previous join request
         setRequestIds(
