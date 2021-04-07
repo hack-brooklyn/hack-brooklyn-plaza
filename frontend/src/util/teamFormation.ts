@@ -8,6 +8,7 @@ import {
   InvalidSubmittedDataError,
   NoPermissionError,
   TeamFormationParticipant,
+  TeamFormationParticipantNotSetUpError,
   UnknownError
 } from 'types';
 
