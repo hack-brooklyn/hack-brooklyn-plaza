@@ -10,6 +10,7 @@ export const ModalBody = styled(Modal.Body)`
   padding: 2rem 1.5rem;
 
   @media screen and (min-width: ${Breakpoints.Large}px) {
+    min-height: 40rem;
     padding: 3rem;
   }
 `;
@@ -17,6 +18,10 @@ export const ModalBody = styled(Modal.Body)`
 export const ModalHeading = styled(StyledCenteredH2)`
   margin-bottom: 2rem;
   font-weight: bold;
+`;
+
+export const ModalHeadingNoMarginBottom = styled(ModalHeading)`
+  margin-bottom: 0;
 `;
 
 export const MessageFormGroup = styled(Form.Group)`
