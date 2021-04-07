@@ -11,7 +11,7 @@ import {
   UnknownError
 } from 'types';
 
-export const checkParticipantHasTeam = async (history: History<LocationState>, overriddenAccessToken?: string) => {
+export const getParticipantData = async (history: History<LocationState>, overriddenAccessToken?: string): Promise<TeamFormationParticipant> => {
   const state = store.getState();
   const accessToken = state.auth.jwtAccessToken;
   const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
@@ -29,19 +29,19 @@ export const checkParticipantHasTeam = async (history: History<LocationState>, o
   }
 
   if (res.status === 200) {
-    const resBody: TeamFormationParticipant = await res.json();
-    return resBody.team !== null;
+    return await res.json();
   } else if (res.status === 404) {
     history.push('/teamformation');
   } else if (res.status === 400) {
     throw new InvalidSubmittedDataError();
   } else if (res.status === 401) {
     const refreshedToken = await refreshAccessToken(history);
-    await checkParticipantHasTeam(history, refreshedToken);
+    await getParticipantData(history, refreshedToken);
   } else if (res.status === 403) {
     history.push('/');
     throw new NoPermissionError();
-  } else {
-    throw new UnknownError();
   }
+
+  // The function must return a TeamFormationParticipant, otherwise throw an error
+  throw new UnknownError();
 };

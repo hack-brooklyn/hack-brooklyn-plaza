@@ -15,6 +15,7 @@ import {
   StyledTeamCard
 } from 'common/styles/teamformation/teamFormationBrowserStyles';
 import { StyledCenteredH2 } from 'common/styles/commonStyles';
+import { getParticipantData } from 'util/teamFormation';
 import { handleError } from 'util/plazaUtils';
 import { refreshAccessToken } from 'util/auth';
 import { API_ROOT } from 'index';
@@ -27,7 +28,6 @@ import {
 } from 'types';
 
 import loadingIcon from 'assets/icons/loading.svg';
-import { checkParticipantHasTeam } from 'util/teamFormation';
 
 const TeamFormationTeamHome = (): JSX.Element => {
   const history = useHistory();
@@ -37,7 +37,9 @@ const TeamFormationTeamHome = (): JSX.Element => {
   );
 
   // Whether or not the participant has a team.
-  const [participantDoesNotHaveTeam, setParticipantDoesNotHaveTeam] = useState(false);
+  const [participantDoesNotHaveTeam, setParticipantDoesNotHaveTeam] = useState(
+    false
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [
     personalizedTeams,
@@ -47,13 +49,18 @@ const TeamFormationTeamHome = (): JSX.Element => {
   const [teamsLoaded, setTeamsLoaded] = useState(false);
 
   useEffect(() => {
-    checkParticipantHasTeam(history)
-      .then((status) => {
-        status !== undefined && setParticipantDoesNotHaveTeam(!status);
-      });
-
-    getPersonalizedTeams().catch((err) => handleError(err));
+    loadTeamHome().catch((err) => handleError(err));
   }, []);
+
+  const loadTeamHome = async () => {
+    await checkParticipantTeamStatus();
+    await getPersonalizedTeams();
+  };
+
+  const checkParticipantTeamStatus = async () => {
+    const participantData = await getParticipantData(history);
+    setParticipantDoesNotHaveTeam(participantData.team === null);
+  };
 
   const getPersonalizedTeams = async (overriddenAccessToken?: string) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
@@ -101,11 +108,11 @@ const TeamFormationTeamHome = (): JSX.Element => {
         <StyledCenteredH2>Teams for You</StyledCenteredH2>
 
         <SearchForm onSubmit={searchTeams}>
-          <Form.Group controlId='tfTeamBrowserSearch'>
+          <Form.Group controlId="tfTeamBrowserSearch">
             <Form.Control
-              name='query'
-              type='text'
-              placeholder='Search teams...'
+              name="query"
+              type="text"
+              placeholder="Search teams..."
               onChange={(e) => setSearchQuery(e.target.value)}
               value={searchQuery}
               disabled={submitting}
@@ -141,15 +148,15 @@ const TeamFormationTeamHome = (): JSX.Element => {
               Finding teams that best match your interests, please wait...
             </MessageText>
 
-            <LoadingSpinner src={loadingIcon} alt='Loading teams...' />
+            <LoadingSpinner src={loadingIcon} alt="Loading teams..." />
           </LoadingSection>
         )}
 
         <LinkButtonContainer>
           <LinkButton
-            to='/teamformation/teams/search'
-            variant='secondary'
-            size='lg'
+            to="/teamformation/teams/search"
+            variant="secondary"
+            size="lg"
           >
             Browse All Teams
           </LinkButton>
