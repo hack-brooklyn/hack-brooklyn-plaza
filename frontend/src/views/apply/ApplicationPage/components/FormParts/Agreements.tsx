@@ -20,7 +20,8 @@ const Agreements = (props: FormPartProps): JSX.Element => {
           required
         />
         <Form.Check.Label htmlFor="applicationTocAndCoc">
-          I have read and agree to the Hack Brooklyn <TermsAndConditions /> and <CodeOfConduct />.<RequiredAsterisk />
+          I have read and agree to the Hack Brooklyn <TermsAndConditions /> and{' '}
+          <CodeOfConduct />.<RequiredAsterisk />
         </Form.Check.Label>
       </Form.Check>
       <FastField

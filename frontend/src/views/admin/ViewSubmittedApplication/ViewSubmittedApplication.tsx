@@ -6,9 +6,21 @@ import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 
 import { LinkButton } from 'components';
-import { LinksSection, ProfileSection, ShortResponseSection, SummarySection } from './components';
-import { ButtonActiveOverrideStyles, HeadingSection, StyledH1 } from 'common/styles/commonStyles';
-import { advanceApplicationIndex, exitApplicationReviewMode } from 'actions/applicationReview';
+import {
+  LinksSection,
+  ProfileSection,
+  ShortResponseSection,
+  SummarySection
+} from './components';
+import {
+  ButtonActiveOverrideStyles,
+  HeadingSection,
+  StyledH1
+} from 'common/styles/commonStyles';
+import {
+  advanceApplicationIndex,
+  exitApplicationReviewMode
+} from 'actions/applicationReview';
 import { acCan, refreshAccessToken } from 'util/auth';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { checkApplicationPageParams } from 'util/applications';
@@ -30,15 +42,26 @@ const ViewSubmittedApplication = (): JSX.Element => {
   const history = useHistory();
   const { applicationNumberParam } = useParams<PageParams>();
 
-  const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
+  const accessToken = useSelector(
+    (state: RootState) => state.auth.jwtAccessToken
+  );
   const userRole = useSelector((state: RootState) => state.user.role);
-  const reviewModeOn = useSelector((state: RootState) => state.applicationReview.enabled);
-  const appNumbers = useSelector((state: RootState) => state.applicationReview.applicationNumbers);
-  const currentIndex = useSelector((state: RootState) => state.applicationReview.currentIndex);
+  const reviewModeOn = useSelector(
+    (state: RootState) => state.applicationReview.enabled
+  );
+  const appNumbers = useSelector(
+    (state: RootState) => state.applicationReview.applicationNumbers
+  );
+  const currentIndex = useSelector(
+    (state: RootState) => state.applicationReview.currentIndex
+  );
 
   const [pageReady, setPageReady] = useState(false);
   const [applicationNumber, setApplicationNumber] = useState(-1);
-  const [applicationData, setApplicationData] = useState<SubmittedApplication>();
+  const [
+    applicationData,
+    setApplicationData
+  ] = useState<SubmittedApplication>();
   const [actionProcessing, setActionProcessing] = useState(false);
 
   useEffect(() => {
@@ -52,18 +75,24 @@ const ViewSubmittedApplication = (): JSX.Element => {
 
     let parsedApplicationNumber: number;
     try {
-      parsedApplicationNumber = checkApplicationPageParams(applicationNumberParam);
+      parsedApplicationNumber = checkApplicationPageParams(
+        applicationNumberParam
+      );
     } catch (err) {
       handleError(err);
       return;
     }
 
     setApplicationNumber(parsedApplicationNumber);
-    getApplicationData(parsedApplicationNumber)
-      .catch((err) => handleError(err));
+    getApplicationData(parsedApplicationNumber).catch((err) =>
+      handleError(err)
+    );
   }, [applicationNumberParam]);
 
-  const getApplicationData = async (appNumber: number, overriddenAccessToken?: string) => {
+  const getApplicationData = async (
+    appNumber: number,
+    overriddenAccessToken?: string
+  ) => {
     setPageReady(false);
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
@@ -95,7 +124,10 @@ const ViewSubmittedApplication = (): JSX.Element => {
     }
   };
 
-  const postUpdateApplicationDecision = async (decision: ApplicationDecisions, overriddenAccessToken?: string) => {
+  const postUpdateApplicationDecision = async (
+    decision: ApplicationDecisions,
+    overriddenAccessToken?: string
+  ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     const reqBody = {
@@ -104,14 +136,17 @@ const ViewSubmittedApplication = (): JSX.Element => {
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/applications/${applicationNumber}/setDecision`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(reqBody)
-      });
+      res = await fetch(
+        `${API_ROOT}/applications/${applicationNumber}/setDecision`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(reqBody)
+        }
+      );
     } catch (err) {
       throw new ConnectionError();
     }
@@ -205,7 +240,9 @@ const ViewSubmittedApplication = (): JSX.Element => {
     if (currentIndex !== null && currentIndex + 1 < appNumbers.length) {
       history.push(`/admin/applications/${appNumbers[currentIndex + 1]}`);
     } else {
-      toast('You have reached the end of the undecided applications. Exiting review mode...');
+      toast(
+        'You have reached the end of the undecided applications. Exiting review mode...'
+      );
       dispatch(exitApplicationReviewMode());
       history.push('/admin/applications');
     }
@@ -218,8 +255,9 @@ const ViewSubmittedApplication = (): JSX.Element => {
 
         <HeadingActions>
           <RemainingApplications>
-            {reviewModeOn && currentIndex !== null &&
-            `${appNumbers.length - currentIndex} Remaining`}
+            {reviewModeOn &&
+              currentIndex !== null &&
+              `${appNumbers.length - currentIndex} Remaining`}
           </RemainingApplications>
 
           <HeadingButtons>
@@ -228,7 +266,9 @@ const ViewSubmittedApplication = (): JSX.Element => {
                 <>
                   <StyledButton
                     variant="success"
-                    onClick={() => updateDecision(ApplicationDecisions.Accepted)}
+                    onClick={() =>
+                      updateDecision(ApplicationDecisions.Accepted)
+                    }
                     disabled={actionProcessing}
                   >
                     Accept
@@ -236,7 +276,9 @@ const ViewSubmittedApplication = (): JSX.Element => {
 
                   <StyledButton
                     variant="danger"
-                    onClick={() => updateDecision(ApplicationDecisions.Rejected)}
+                    onClick={() =>
+                      updateDecision(ApplicationDecisions.Rejected)
+                    }
                     disabled={actionProcessing}
                   >
                     Reject
@@ -244,16 +286,16 @@ const ViewSubmittedApplication = (): JSX.Element => {
 
                   <StyledButton
                     variant="secondary"
-                    onClick={() => updateDecision(ApplicationDecisions.Undecided)}
+                    onClick={() =>
+                      updateDecision(ApplicationDecisions.Undecided)
+                    }
                     disabled={actionProcessing}
                   >
                     {reviewModeOn ? 'Skip' : 'Undecided'}
                   </StyledButton>
                 </>
               ) : (
-                <LoadingText>
-                  Loading...
-                </LoadingText>
+                <LoadingText>Loading...</LoadingText>
               )}
             </DecisionButtons>
 
@@ -268,10 +310,7 @@ const ViewSubmittedApplication = (): JSX.Element => {
                 Exit Review Mode
               </StyledButton>
             ) : (
-              <StyledLinkButton
-                to="/admin/applications"
-                variant="primary"
-              >
+              <StyledLinkButton to="/admin/applications" variant="primary">
                 Back to Applications
               </StyledLinkButton>
             )}
@@ -283,17 +322,17 @@ const ViewSubmittedApplication = (): JSX.Element => {
         <>
           <SummarySection
             applicationData={applicationData}
-            applicationNumber={applicationNumber} />
+            applicationNumber={applicationNumber}
+          />
 
-          <ProfileSection
-            applicationData={applicationData} />
+          <ProfileSection applicationData={applicationData} />
 
-          <ShortResponseSection
-            applicationData={applicationData} />
+          <ShortResponseSection applicationData={applicationData} />
 
           <LinksSection
             applicationData={applicationData}
-            applicationNumber={applicationNumber} />
+            applicationNumber={applicationNumber}
+          />
 
           <DeleteApplicationButton
             variant="outline-danger"

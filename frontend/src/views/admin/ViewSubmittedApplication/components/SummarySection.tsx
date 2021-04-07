@@ -7,8 +7,8 @@ import priorityApplicantIcon from 'assets/icons/application-labels/priority.svg'
 import generalPriorityApplicantIcon from 'assets/icons/application-labels/general-priority.svg';
 
 interface SummarySectionProps {
-  applicationData: SubmittedApplication,
-  applicationNumber: number
+  applicationData: SubmittedApplication;
+  applicationNumber: number;
 }
 
 interface ApplicantLabelProps {

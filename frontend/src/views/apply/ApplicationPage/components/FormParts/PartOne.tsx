@@ -4,9 +4,21 @@ import Select from 'react-select/creatable';
 import Form from 'react-bootstrap/Form';
 
 import { RequiredFormLabel } from 'components';
-import { ApplicationFormFields, StyledFieldset, StyledTitleLegend } from 'common/styles/apply/applicationPageStyles';
-import { StyledFormLabel, StyledFormLabelLegend } from 'common/styles/commonStyles';
-import { ethnicityOptions, genderOptions, pronounOptions, shirtSizeOptions } from 'common/selectOptions/applicationFormOptions';
+import {
+  ApplicationFormFields,
+  StyledFieldset,
+  StyledTitleLegend
+} from 'common/styles/apply/applicationPageStyles';
+import {
+  StyledFormLabel,
+  StyledFormLabelLegend
+} from 'common/styles/commonStyles';
+import {
+  ethnicityOptions,
+  genderOptions,
+  pronounOptions,
+  shirtSizeOptions
+} from 'common/selectOptions/applicationFormOptions';
 import { FormPartProps } from '../ApplicationForm';
 import { Option } from 'types';
 

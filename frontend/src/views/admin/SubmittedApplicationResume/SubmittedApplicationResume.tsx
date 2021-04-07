@@ -9,7 +9,14 @@ import { acCan, refreshAccessToken } from 'util/auth';
 import { checkApplicationPageParams } from 'util/applications';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { Resources } from 'security/accessControl';
-import { Breakpoints, ConnectionError, NoPermissionError, PageParams, RootState, UnknownError } from 'types';
+import {
+  Breakpoints,
+  ConnectionError,
+  NoPermissionError,
+  PageParams,
+  RootState,
+  UnknownError
+} from 'types';
 import { API_ROOT } from 'index';
 
 interface GenerateResumeLinkResponse {

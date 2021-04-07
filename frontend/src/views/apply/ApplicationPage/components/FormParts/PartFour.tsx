@@ -2,7 +2,10 @@ import React from 'react';
 import { FastField } from 'formik';
 import styled from 'styled-components/macro';
 
-import { StyledFieldset, StyledTitleLegend } from 'common/styles/apply/applicationPageStyles';
+import {
+  StyledFieldset,
+  StyledTitleLegend
+} from 'common/styles/apply/applicationPageStyles';
 import { StyledFormLabel } from 'common/styles/commonStyles';
 import { FormPartProps } from '../ApplicationForm';
 

@@ -9,7 +9,10 @@ const CountdownSection = (): JSX.Element => {
   return (
     <StyledSection>
       <StyledH2>Hacking Begins In</StyledH2>
-      <Countdown date={new Date('April 23, 2021 6:00 PM')} renderer={countdownRenderer} />
+      <Countdown
+        date={new Date('April 23, 2021 6:00 PM')}
+        renderer={countdownRenderer}
+      />
     </StyledSection>
   );
 };

@@ -7,7 +7,11 @@ import {
   ChecklistSection,
   CountdownSection
 } from './components';
-import { HeadingSection, StyledCenteredMarginH2, StyledH1 } from 'common/styles/commonStyles';
+import {
+  HeadingSection,
+  StyledCenteredMarginH2,
+  StyledH1
+} from 'common/styles/commonStyles';
 import { acCan, acHasAttributeAccess } from 'util/auth';
 import {
   AnnouncementsAttributes,

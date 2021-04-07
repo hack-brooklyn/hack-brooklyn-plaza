@@ -28,13 +28,12 @@ const Landing = (): JSX.Element => {
     let res;
     try {
       res = await fetch(`${API_ROOT}/newsletter/subscribe`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(subscriberData)
-        }
-      );
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(subscriberData)
+      });
     } catch (err) {
       setSubmitting(false);
       toastErrorMessage();
@@ -46,11 +45,15 @@ const Landing = (): JSX.Element => {
     if (res.status === 200) {
       // 200 OK
       // The user has been successfully subscribed and their interest registered
-      toast.success('Thank you for registering your interest! You will receive an email from us once registration opens to the public.');
+      toast.success(
+        'Thank you for registering your interest! You will receive an email from us once registration opens to the public.'
+      );
     } else if (res.status === 409) {
       // 409 Conflict
       // The user's interest has already been registered
-      toast.success('You have already registered your interest! You will receive an email from us once registration opens to the public.');
+      toast.success(
+        'You have already registered your interest! You will receive an email from us once registration opens to the public.'
+      );
     } else if (res.status === 400) {
       // 400 Bad Request
       // The submitted data failed validation
@@ -62,12 +65,15 @@ const Landing = (): JSX.Element => {
   };
 
   const toastErrorMessage = () => {
-    toast.error('There was an error while signing you up for the newsletter! Please try again. If this error continues to happen, please send us an email at contact@hackbrooklyn.org for further assistance. You can also click this message or click "Contact Us" on the header to send us an email.', {
-      autoClose: 30000,
-      onClick: () => {
-        window.open('mailto:contact@hackbrooklyn.org');
+    toast.error(
+      'There was an error while signing you up for the newsletter! Please try again. If this error continues to happen, please send us an email at contact@hackbrooklyn.org for further assistance. You can also click this message or click "Contact Us" on the header to send us an email.',
+      {
+        autoClose: 30000,
+        onClick: () => {
+          window.open('mailto:contact@hackbrooklyn.org');
+        }
       }
-    });
+    );
   };
 
   return (
@@ -75,25 +81,30 @@ const Landing = (): JSX.Element => {
       <MonoHeading>Welcome!</MonoHeading>
       <StyledParagraph>
         <span role="text">
-          Hack Brooklyn is back again for another 48 hours of innovation on <strong>April 23,
-          2021</strong>. This year, we’re excited to announce that we will be accepting students from all schools!
+          Hack Brooklyn is back again for another 48 hours of innovation on{' '}
+          <strong>April 23, 2021</strong>. This year, we’re excited to announce
+          that we will be accepting students from all schools!
         </span>
       </StyledParagraph>
       <StyledParagraph>
         {PRIORITY_APPLICATIONS_ACTIVE ? (
           <span role="text">
-            Priority applications are now open! If you applied to Hack Brooklyn last year and/or are a
-            Brooklyn College student, apply now to hear back by <strong>March 29, 2021</strong>.
+            Priority applications are now open! If you applied to Hack Brooklyn
+            last year and/or are a Brooklyn College student, apply now to hear
+            back by <strong>March 29, 2021</strong>.
           </span>
         ) : (
           <span role="text">
-            Applications are now open to the public! Apply now to hear back starting on <strong>March 29, 2021</strong>.
+            Applications are now open to the public! Apply now to hear back
+            starting on <strong>March 29, 2021</strong>.
           </span>
         )}
       </StyledParagraph>
 
       <ApplyTextAndButton>
-        <StyledParagraph center>Ready to begin your adventure? Apply now!</StyledParagraph>
+        <StyledParagraph center>
+          Ready to begin your adventure? Apply now!
+        </StyledParagraph>
         <ButtonContainer>
           <LinkButton to="/apply/form" size="lg">
             Start {PRIORITY_APPLICATIONS_ACTIVE && 'Priority '}Application
@@ -104,44 +115,55 @@ const Landing = (): JSX.Element => {
       {PRIORITY_APPLICATIONS_ACTIVE && (
         <>
           <StyledParagraph>
-            Not a priority applicant? No problem! Enter your info below to join our mailing list and we’ll send you an
-            email when applications go live to the public. <strong>You’ll also receive priority consideration for the
-            general application!</strong>
+            Not a priority applicant? No problem! Enter your info below to join
+            our mailing list and we’ll send you an email when applications go
+            live to the public.{' '}
+            <strong>
+              You’ll also receive priority consideration for the general
+              application!
+            </strong>
           </StyledParagraph>
 
           <StyledForm onSubmit={handleSubmit}>
             <NameFormContainer>
               <Form.Group controlId="interestFormFirstName">
                 <Form.Label>First Name</Form.Label>
-                <Form.Control type="text"
-                              value={firstName}
-                              onChange={(event) => setFirstName(event.target.value)}
-                              disabled={submitting}
-                              required
+                <Form.Control
+                  type="text"
+                  value={firstName}
+                  onChange={(event) => setFirstName(event.target.value)}
+                  disabled={submitting}
+                  required
                 />
               </Form.Group>
 
               <Form.Group controlId="interestFormLastName">
                 <Form.Label>Last Name</Form.Label>
-                <Form.Control type="text"
-                              value={lastName}
-                              onChange={(event) => setLastName(event.target.value)}
-                              disabled={submitting}
-                              required
+                <Form.Control
+                  type="text"
+                  value={lastName}
+                  onChange={(event) => setLastName(event.target.value)}
+                  disabled={submitting}
+                  required
                 />
               </Form.Group>
             </NameFormContainer>
 
             <Form.Group controlId="interestFormEmail">
               <Form.Label>Email Address</Form.Label>
-              <Form.Control type="email"
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
-                            disabled={submitting}
-                            required
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                disabled={submitting}
+                required
               />
             </Form.Group>
-            <StyledSubmitButton type="submit" variant="info" disabled={submitting}>
+            <StyledSubmitButton
+              type="submit"
+              variant="info"
+              disabled={submitting}
+            >
               {submitting ? 'Registering...' : 'Register Interest'}
             </StyledSubmitButton>
           </StyledForm>

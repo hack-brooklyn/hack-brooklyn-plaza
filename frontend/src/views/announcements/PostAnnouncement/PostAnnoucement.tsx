@@ -10,7 +10,7 @@ import {
   ConnectionError,
   NoPermissionError,
   RootState,
-  UnknownError,
+  UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
 import { AnnouncementEditor } from 'components/announcements';
@@ -24,7 +24,7 @@ const PostAnnouncement = (): JSX.Element => {
 
   const initialValues: AnnouncementData = {
     body: '',
-    participantsOnly: false,
+    participantsOnly: false
   };
 
   const submitPost = async (announcementData: AnnouncementData) => {
@@ -50,9 +50,9 @@ const PostAnnouncement = (): JSX.Element => {
         credentials: 'include',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(announcementData),
+        body: JSON.stringify(announcementData)
       });
     } catch (err) {
       throw new ConnectionError();
@@ -71,7 +71,13 @@ const PostAnnouncement = (): JSX.Element => {
     }
   };
 
-  return ( <AnnouncementEditor announcementData={initialValues} actionType={'Create'} submitForm={submitPost} /> );
+  return (
+    <AnnouncementEditor
+      announcementData={initialValues}
+      actionType={'Create'}
+      submitForm={submitPost}
+    />
+  );
 };
 
 export default PostAnnouncement;

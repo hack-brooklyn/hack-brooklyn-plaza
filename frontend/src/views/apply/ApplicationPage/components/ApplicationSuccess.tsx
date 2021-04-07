@@ -10,30 +10,41 @@ const ApplicationSuccess = (): JSX.Element => {
   return (
     <article>
       <ImageAndHeading>
-        <CheckmarkSvg src={checkmark} alt="Green checkmark indicating successful application submission." />
+        <CheckmarkSvg
+          src={checkmark}
+          alt="Green checkmark indicating successful application submission."
+        />
         <StyledHeading>Application Submitted!</StyledHeading>
       </ImageAndHeading>
 
       <Text className="ApplicationSuccess-text">
         <StyledParagraph>
-          Thank you for applying to Hack Brooklyn! We have received your application and look forward to reviewing it.
-          {PRIORITY_APPLICATIONS_ACTIVE ? ' As a priority applicant, expect to hear back by ' : ' Application decisions will begin releasing on '}
+          Thank you for applying to Hack Brooklyn! We have received your
+          application and look forward to reviewing it.
+          {PRIORITY_APPLICATIONS_ACTIVE
+            ? ' As a priority applicant, expect to hear back by '
+            : ' Application decisions will begin releasing on '}
           <strong>March 29, 2021</strong>.
         </StyledParagraph>
 
         <StyledParagraph>
-          To finish the application process,{' '}<Link to="/activate">activate your account by
-          clicking here.</Link>{' '}Application decisions will be released here on Hack Brooklyn Plaza, so check back
-          often to get the latest updates about Hack Brooklyn and to view your decision when they release.
+          To finish the application process,{' '}
+          <Link to="/activate">activate your account by clicking here.</Link>{' '}
+          Application decisions will be released here on Hack Brooklyn Plaza, so
+          check back often to get the latest updates about Hack Brooklyn and to
+          view your decision when they release.
         </StyledParagraph>
 
         <StyledParagraph>
-          In the meantime, be sure to spread the word about Hack Brooklyn and encourage your friends to apply as well!
+          In the meantime, be sure to spread the word about Hack Brooklyn and
+          encourage your friends to apply as well!
         </StyledParagraph>
 
         <StyledParagraph>See you soon!</StyledParagraph>
 
-        <StyledParagraph><strong>- The Hack Brooklyn Team</strong></StyledParagraph>
+        <StyledParagraph>
+          <strong>- The Hack Brooklyn Team</strong>
+        </StyledParagraph>
       </Text>
     </article>
   );

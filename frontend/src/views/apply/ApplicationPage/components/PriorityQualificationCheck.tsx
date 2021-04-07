@@ -12,8 +12,8 @@ import { API_ROOT } from 'index';
 
 interface PriorityQualificationCheckProps {
   isPriorityApplicant: boolean;
-  setIsPriorityApplicant: React.Dispatch<React.SetStateAction<boolean>>
-  setPriorityApplicantEmail: React.Dispatch<React.SetStateAction<string>>
+  setIsPriorityApplicant: React.Dispatch<React.SetStateAction<boolean>>;
+  setPriorityApplicantEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const PriorityQualificationCheck = (props: PriorityQualificationCheckProps): JSX.Element => {

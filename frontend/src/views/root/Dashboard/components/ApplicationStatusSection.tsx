@@ -5,7 +5,14 @@ import styled, { css } from 'styled-components/macro';
 
 import { handleError } from 'util/plazaUtils';
 import { refreshAccessToken } from 'util/auth';
-import { ApplicationDecisions, Breakpoints, ConnectionError, NoPermissionError, RootState, UnknownError } from 'types';
+import {
+  ApplicationDecisions,
+  Breakpoints,
+  ConnectionError,
+  NoPermissionError,
+  RootState,
+  UnknownError
+} from 'types';
 import { API_ROOT } from 'index';
 
 interface ApplicationDecisionResponse {
