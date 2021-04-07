@@ -1,10 +1,14 @@
 package org.hackbrooklyn.plaza.model;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,13 +19,13 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "title", columnDefinition = "TEXT")
+    @Column(name = "title")
     @NotBlank
     private String title;
 
     @Column(name = "presenters")
-    @NotBlank
-    private String presenters;
+    @ElementCollection
+    private List<@NotBlank String> presenters;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -34,7 +38,7 @@ public class Event {
     private String description;
 
     @Column(name = "external_link")
-    @NotBlank
+    @URL
     private String externalLink;
 
 }
