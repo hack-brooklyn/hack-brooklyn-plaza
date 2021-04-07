@@ -171,10 +171,15 @@ const TeamFormationTeamSearch = (): JSX.Element => {
     <>
       <SearchSection>
         <StyledCenteredH2>
-          {currentSearchQuery !== null && currentSearchQuery !== ''
+          {fetchingSearchResults
+            ? // Waiting for search results
+              'Searching...'
+            : // Search results with result count
+            currentSearchQuery !== null && currentSearchQuery !== ''
             ? `${totalFoundTeams} result${totalFoundTeams === 1 ? '' : 's'}
-            for "${currentSearchQuery}"`
-            : 'Browse Teams'}
+                for "${currentSearchQuery}"`
+            : // No search query
+              'Browse Teams'}
         </StyledCenteredH2>
 
         <SearchForm
