@@ -351,7 +351,7 @@ export interface PageParams {
   applicationNumberParam?: string;
 }
 
-export interface TeamFormationSetupCommon {
+export interface TeamFormationCommonFormData {
   interestedTopicsAndSkills: string[];
   objectiveStatement: string;
 }
@@ -361,25 +361,25 @@ export interface TeamFormationCommon {
   visibleInBrowser: boolean;
 }
 
-export interface TeamFormationParticipantSetupData
-  extends TeamFormationSetupCommon {
+export interface TeamFormationParticipantFormData
+  extends TeamFormationCommonFormData {
   specialization: string;
 }
 
-export interface TeamFormationTeamSetupData extends TeamFormationSetupCommon {
+export interface TeamFormationTeamFormData extends TeamFormationCommonFormData {
   name: string;
   size: number;
 }
 
 export interface TeamFormationParticipant
-  extends TeamFormationParticipantSetupData,
+  extends TeamFormationParticipantFormData,
     TeamFormationCommon {
   team: TeamFormationTeam;
   user: UserFullName;
 }
 
 export interface TeamFormationTeam
-  extends TeamFormationTeamSetupData,
+  extends TeamFormationTeamFormData,
     TeamFormationCommon {
   members: TeamFormationParticipant[];
 }
