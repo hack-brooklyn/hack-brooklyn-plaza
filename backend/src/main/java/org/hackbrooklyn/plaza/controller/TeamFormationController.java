@@ -49,7 +49,7 @@ public class TeamFormationController {
     @PostMapping("/participants")
     public ResponseEntity<Void> createParticipant(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreateTFParticipantDTO reqBody) {
+            @RequestBody @Valid TeamFormationParticipantFormDataDTO reqBody) {
         teamFormationService.createParticipant(user, reqBody);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -74,7 +74,7 @@ public class TeamFormationController {
     @PostMapping("/teams")
     public ResponseEntity<Void> createTeam(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreateTFTeamDTO reqBody) {
+            @RequestBody @Valid CreateTeamFormationTeamDTO reqBody) {
         teamFormationService.createTeam(user, reqBody);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -87,9 +87,9 @@ public class TeamFormationController {
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_CREATE_PARTICIPANT) and hasAuthority(@authorities.TEAM_FORMATION_CREATE_TEAM)")
     @PostMapping("/createParticipantAndTeam")
     public ResponseEntity<Void> createParticipantAndTeam(
-            @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreateTFParticipantAndTeamDTO reqBody) {
-        teamFormationService.createParticipantAndTeam(user, reqBody);
+            @RequestBody @Valid CreateTeamFormationParticipantAndTeamDTO reqBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.createParticipantAndTeam(reqBody, user);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -101,6 +101,16 @@ public class TeamFormationController {
         TeamFormationParticipant foundParticipant = teamFormationService.getLoggedInParticipantData(user);
 
         return new ResponseEntity<>(foundParticipant, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_PARTICIPANT)")
+    @PutMapping("/participants/userData")
+    public ResponseEntity<Void> updateLoggedInParticipantData(
+            @RequestBody @Valid TeamFormationParticipantFormDataWithBrowserVisibilityDTO reqBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.updateLoggedInParticipantData(reqBody, user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")

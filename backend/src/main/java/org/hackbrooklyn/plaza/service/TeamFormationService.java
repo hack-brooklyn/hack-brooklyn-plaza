@@ -5,11 +5,11 @@ import org.hackbrooklyn.plaza.model.*;
 
 public interface TeamFormationService {
 
-    void createParticipant(User user, CreateTFParticipantDTO participantProfileData);
+    void createParticipant(User user, TeamFormationParticipantFormDataDTO participantProfileData);
 
-    void createTeam(User user, CreateTFTeamDTO teamData);
+    void createTeam(User user, CreateTeamFormationTeamDTO teamData);
 
-    void createParticipantAndTeam(User user, CreateTFParticipantAndTeamDTO participantAndTeamData);
+    void createParticipantAndTeam(CreateTeamFormationParticipantAndTeamDTO participantAndTeamData, User user);
 
     TeamFormationParticipant getLoggedInParticipantData(User user);
 
@@ -38,4 +38,6 @@ public interface TeamFormationService {
     TeamFormationParticipantInvitation getParticipantInvitationDetails(int invitationId, User user);
 
     void setParticipantInvitationAccepted(int invitationId, Boolean invitationAccepted, User user);
+
+    void updateLoggedInParticipantData(TeamFormationParticipantFormDataWithBrowserVisibilityDTO submittedData, User user);
 }

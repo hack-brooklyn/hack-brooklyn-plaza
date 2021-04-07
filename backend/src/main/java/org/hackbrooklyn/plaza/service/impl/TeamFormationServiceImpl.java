@@ -45,27 +45,20 @@ public class TeamFormationServiceImpl implements TeamFormationService {
 
     @Override
     @Transactional
-    public void createParticipant(User user, CreateTFParticipantDTO submittedData) {
+    public void createParticipant(User user, TeamFormationParticipantFormDataDTO submittedData) {
         if (teamFormationParticipantRepository.findFirstByUser(user).isPresent()) {
             throw new TeamFormationParticipantAlreadyExistsException();
         }
 
         TeamFormationParticipant newParticipant = new TeamFormationParticipant();
         newParticipant.setUser(user);
-        newParticipant.setSpecialization(submittedData.getSpecialization());
-        newParticipant.setObjectiveStatement(submittedData.getObjectiveStatement());
         newParticipant.setVisibleInBrowser(true);
-
-        Set<String> topicAndSkillNames = submittedData.getInterestedTopicsAndSkills();
-        Set<TopicOrSkill> topicsAndSkills = getTopicsAndSkillsFromNames(topicAndSkillNames);
-        newParticipant.setInterestedTopicsAndSkills(topicsAndSkills);
-
-        teamFormationParticipantRepository.save(newParticipant);
+        setParticipantDataAndSave(submittedData, newParticipant);
     }
 
     @Override
     @Transactional
-    public void createTeam(User user, CreateTFTeamDTO submittedData) {
+    public void createTeam(User user, CreateTeamFormationTeamDTO submittedData) {
         TeamFormationParticipant userParticipant = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
@@ -109,7 +102,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
      */
     @Override
     @Transactional
-    public void createParticipantAndTeam(User user, CreateTFParticipantAndTeamDTO submittedData) {
+    public void createParticipantAndTeam(CreateTeamFormationParticipantAndTeamDTO submittedData, User user) {
         createParticipant(user, submittedData.getParticipant());
         createTeam(user, submittedData.getTeam());
     }
@@ -119,6 +112,16 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         return teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
+    }
+
+    @Override
+    public void updateLoggedInParticipantData(TeamFormationParticipantFormDataWithBrowserVisibilityDTO submittedData, User user) {
+        TeamFormationParticipant updatingParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        updatingParticipant.setVisibleInBrowser(submittedData.isVisibleInBrowser());
+        setParticipantDataAndSave(submittedData, updatingParticipant);
     }
 
     @Override
@@ -590,6 +593,17 @@ public class TeamFormationServiceImpl implements TeamFormationService {
 
         foundInvitation.setInvitationAccepted(invitationAccepted);
         teamFormationParticipantInvitationRepository.save(foundInvitation);
+    }
+
+    private void setParticipantDataAndSave(TeamFormationParticipantFormDataDTO submittedData, TeamFormationParticipant participant) {
+        participant.setSpecialization(submittedData.getSpecialization());
+        participant.setObjectiveStatement(submittedData.getObjectiveStatement());
+
+        Set<String> topicAndSkillNames = submittedData.getInterestedTopicsAndSkills();
+        Set<TopicOrSkill> topicsAndSkills = getTopicsAndSkillsFromNames(topicAndSkillNames);
+        participant.setInterestedTopicsAndSkills(topicsAndSkills);
+
+        teamFormationParticipantRepository.save(participant);
     }
 
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {
