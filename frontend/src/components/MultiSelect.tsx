@@ -14,6 +14,8 @@ interface CustomSelectProps extends FieldProps {
   placeholder?: string;
   multiSelectOptions: Option[];
   setMultiSelectOptions: React.Dispatch<React.SetStateAction<Option[]>>;
+  defaultValue?: Option[];
+  disabled?: boolean;
   additionalCheck?: (options: Option[]) => void;
 }
 
@@ -24,6 +26,8 @@ export const MultiSelect = ({
   form,
   multiSelectOptions,
   setMultiSelectOptions,
+  defaultValue,
+  disabled,
   additionalCheck
 }: CustomSelectProps): JSX.Element => {
   const onChange = (options: ValueType<Option | Option[], boolean>) => {
@@ -69,7 +73,9 @@ export const MultiSelect = ({
       onChange={onChange}
       placeholder={placeholder}
       options={multiSelectOptions}
+      defaultValue={defaultValue}
       isMulti={true}
+      isDisabled={disabled}
     />
   );
 };
