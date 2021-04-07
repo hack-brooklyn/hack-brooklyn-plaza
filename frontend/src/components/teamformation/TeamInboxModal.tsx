@@ -159,7 +159,7 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     if (currentIndex === null) return;
 
     const reqBody = {
-      requestAccepted: requestAccepted
+      accepted: requestAccepted
     };
 
     let res;
