@@ -47,6 +47,7 @@ export interface ParticipantSetupStepPropsMultiSelect
 }
 
 const TeamFormationParticipantSetup = (): JSX.Element => {
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const accessToken = useSelector(
@@ -115,6 +116,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
       toast.success(
         'Your team formation profile has been successfully created!'
       );
+      dispatch(refreshHeadingSectionData());
       setSetupComplete(true);
     } else if (res.status === 409) {
       throw new TeamFormationParticipantAlreadyExistsError();
@@ -133,8 +135,6 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
 
   return (
     <>
-      <StyledH1>Team Formation - Participant Setup</StyledH1>
-
       <TopSection>
         <StyledCenteredH2>Welcome to Team Formation!</StyledCenteredH2>
 

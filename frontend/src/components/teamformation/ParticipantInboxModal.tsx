@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { toast } from 'react-toastify';
 
 import { TeamCard } from 'components/teamformation';
@@ -25,6 +26,7 @@ import {
 } from 'common/styles/teamformation/teamFormationModalStyles';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
+import { refreshHeadingSectionData } from 'actions/teamFormation';
 import { API_ROOT } from 'index';
 import {
   CommonModalProps,
@@ -39,11 +41,11 @@ import {
 import closeIcon from 'assets/icons/close.svg';
 import arrowLeftIcon from 'assets/icons/arrow-left.svg';
 import arrowRightIcon from 'assets/icons/arrow-right.svg';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 const ParticipantInboxModal = (props: CommonModalProps): JSX.Element => {
   const { show, setShow } = props;
 
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const accessToken = useSelector(
@@ -186,6 +188,8 @@ const ParticipantInboxModal = (props: CommonModalProps): JSX.Element => {
           toast.success(
             'Successfully accepted the invitation! Welcome to the team!'
           );
+          dispatch(refreshHeadingSectionData());
+          history.push('/teamformation');
           break;
         case false:
           toast.success('The invitation has been dismissed.');

@@ -67,6 +67,7 @@ interface CreateParticipantAndTeamRequest {
 }
 
 const TeamFormationTeamSetup = (): JSX.Element => {
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const accessToken = useSelector(
@@ -171,7 +172,10 @@ const TeamFormationTeamSetup = (): JSX.Element => {
     }
 
     if (res.status === 200) {
-      toast.success('Your profile and team have been successfully created!');
+      toast.success(
+        'Your team formation profile and team have been successfully created!'
+      );
+      dispatch(refreshHeadingSectionData());
       setSetupComplete(true);
     } else if (res.status === 409) {
       throw new TeamFormationParticipantAlreadyExistsError();
