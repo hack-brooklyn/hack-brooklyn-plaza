@@ -394,6 +394,14 @@ export interface TeamFormationJoinRequest {
   requestTimestamp: Date;
 }
 
+export interface TeamFormationParticipantInvitation {
+  invitationId: number;
+  invitingTeam: TeamFormationTeam;
+  message: string;
+  invitationAccepted: boolean;
+  invitationTimestamp: Date;
+}
+
 export interface AnnouncementData {
   body: string;
   participantsOnly: boolean;
