@@ -81,9 +81,26 @@ const TeamCard = (props: TeamFormationTeamCardProps): JSX.Element => {
               {teamData.members.length}/{teamData.size} Members
             </MemberCount>
 
-            <StyledActionButton onClick={() => setRequestModalOpen(true)}>
-              Request to Join
-            </StyledActionButton>
+            <OverlayTrigger
+              overlay={
+                teamData.members.length >= teamData.size ? (
+                  <Tooltip id={`team-card-${teamData.id}-full-tooltip`}>
+                    This team is full.
+                  </Tooltip>
+                ) : (
+                  <span />
+                )
+              }
+            >
+              <span>
+                <StyledActionButton
+                  onClick={() => setRequestModalOpen(true)}
+                  disabled={teamData.members.length >= teamData.size}
+                >
+                  Request to Join
+                </StyledActionButton>
+              </span>
+            </OverlayTrigger>
           </ActionButtonContainer>
         )}
       </BottomHalf>
