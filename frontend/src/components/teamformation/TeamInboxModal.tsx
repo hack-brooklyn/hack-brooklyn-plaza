@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components/macro';
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 
 import { ParticipantCard } from 'components/teamformation';
 import {
-  ModalBody,
-  ModalHeading
-} from 'common/styles/teamformation/teamFormationModalStyles';
+  CloseButton,
+  CloseButtonContainer,
+  CloseIconImg,
+  DecisionButton,
+  DecisionButtonContainer,
+  DisplayText,
+  TeamFormationMessage,
+  PageButton,
+  PageButtonIcon,
+  PageButtonsContainer,
+  PageIndicator
+} from 'common/styles/teamformation/teamFormationInboxModalStyles';
+import { ModalBody, ModalHeading } from 'common/styles/teamformation/teamFormationModalStyles';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
 import {
-  Breakpoints,
   CommonModalProps,
   ConnectionError,
   IdsResponse,
@@ -83,7 +90,7 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     if (res.status === 200) {
       const resBody: IdsResponse = await res.json();
       if (resBody.ids.length > 0) {
-        // Reset to beginning of messages
+        // Reset to beginning of join requests
         setRequestIds(resBody.ids);
         setCurrentIndex(0);
       } else {
@@ -318,72 +325,5 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     </Modal>
   );
 };
-
-const TeamFormationMessage = styled.p`
-  margin: 1.5rem auto;
-  max-width: 600px;
-`;
-
-const CloseButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row-reverse;
-  margin-bottom: -2.25rem;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-`;
-
-const CloseIconImg = styled.img`
-  height: 2rem;
-  width: 2rem;
-`;
-
-const DecisionButton = styled(Button)`
-  width: 100%;
-  margin-bottom: 0.75rem;
-
-  @media screen and (min-width: ${Breakpoints.Medium}px) {
-    width: auto;
-  }
-`;
-
-const DecisionButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const PageButton = styled(Button)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PageButtonIcon = styled.img`
-  width: 1.5rem;
-  height: 1.5rem;
-`;
-
-const PageButtonsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1.5rem;
-`;
-
-const PageIndicator = styled.div`
-  font-weight: bold;
-  margin: 0 1.5rem;
-`;
-
-const DisplayText = styled.div`
-  font-size: 1.1rem;
-  text-align: center;
-  padding-top: 1rem;
-  padding-bottom: 34rem;
-`;
 
 export default TeamInboxModal;
