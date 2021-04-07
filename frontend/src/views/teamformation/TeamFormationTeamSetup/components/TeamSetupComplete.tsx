@@ -78,9 +78,7 @@ const TeamSetupComplete = (): JSX.Element => {
             'Below is a preview of what your team will look like to other participants.'}
         </CompletedViewMessage>
 
-        {teamData !== undefined && (
-          <TeamCard teamData={teamData} />
-        )}
+        {teamData !== undefined && <TeamCard teamData={teamData} />}
       </CompleteViewSection>
 
       <CompleteViewSection>

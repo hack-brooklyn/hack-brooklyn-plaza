@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-import TopicsAndSkillsSelect, {
-  validateTopicsAndSkills
-} from 'components/teamformation/TopicsAndSkillsSelect';
+import { TopicsAndSkillsSelect } from 'components/teamformation/TeamFormationFormFields';
 import {
   TFHomeButton,
   TFLinkButtonContainer
@@ -14,6 +12,7 @@ import {
   SetupParagraph,
   SetupSection
 } from 'common/styles/commonStyles';
+import { validateTopicsAndSkills } from 'util/teamFormation';
 import { TeamSetupStepPropsMultiSelect } from '../TeamFormationTeamSetup';
 
 const TeamStepOne = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {

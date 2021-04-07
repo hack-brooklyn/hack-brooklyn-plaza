@@ -11,7 +11,6 @@ import {
   TeamStepThree,
   TeamStepTwo
 } from './components';
-import { validateTopicsAndSkills } from 'components/teamformation/TopicsAndSkillsSelect';
 import {
   SetupOption,
   SetupOptionDescription,
@@ -20,6 +19,7 @@ import {
 } from 'common/styles/teamformation/teamFormationSetupStyles';
 import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { topicsAndSkillsOptions } from 'common/selectOptions/topicsAndSkillsOptions';
+import { validateTopicsAndSkills } from 'util/teamFormation';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { acCan, refreshAccessToken } from 'util/auth';
 import { refreshHeadingSectionData } from 'actions/teamFormation';
@@ -195,8 +195,6 @@ const TeamFormationTeamSetup = (): JSX.Element => {
 
   return (
     <>
-      <StyledH1>Team Formation - Team Setup</StyledH1>
-
       <TopSection>
         <StyledCenteredH2>Welcome to Team Formation!</StyledCenteredH2>
 

@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import {
   ParticipantObjectiveStatementField,
   ParticipantSpecializationField
-} from 'views/teamformation/TeamFormationParticipantSetup/components/ParticipantStepTwo';
+} from 'components/teamformation/TeamFormationFormFields';
 import {
   CenteredButton,
   CenteredButtonWithMarginBottom,

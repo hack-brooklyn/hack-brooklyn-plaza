@@ -67,5 +67,4 @@ export const DisplayText = styled.div`
   font-size: 1.1rem;
   text-align: center;
   padding-top: 1rem;
-  padding-bottom: 34rem;
 `;

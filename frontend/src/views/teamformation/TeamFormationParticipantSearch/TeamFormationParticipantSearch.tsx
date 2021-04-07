@@ -46,7 +46,9 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
   const [currentSearchQuery, setCurrentSearchQuery] = useState<string | null>(
     null
   );
-  const [currentParticipants, setCurrentParticipants] = useState<TeamFormationParticipant[]>([]);
+  const [currentParticipants, setCurrentParticipants] = useState<
+    TeamFormationParticipant[]
+  >([]);
   const [totalFoundParticipants, setTotalFoundParticipants] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   // Local state to handle infinite scroll and pagination
@@ -176,12 +178,19 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
     <>
       <SearchSection>
         <StyledCenteredH2>
-          {currentSearchQuery !== null && currentSearchQuery !== ''
-            ? `${totalFoundParticipants} result${
-              totalFoundParticipants === 1 ? '' : 's'
-            }
-            for "${currentSearchQuery}"`
-            : 'Browse Participants'}
+          <StyledCenteredH2>
+            {fetchingSearchResults
+              ? // Waiting for search results
+                'Searching...'
+              : // Search results with result count
+              currentSearchQuery !== null && currentSearchQuery !== ''
+              ? `${totalFoundParticipants} result${
+                  totalFoundParticipants === 1 ? '' : 's'
+                }
+                for "${currentSearchQuery}"`
+              : // No search query
+                'Browse Participants'}
+          </StyledCenteredH2>
         </StyledCenteredH2>
 
         <SearchForm
@@ -190,11 +199,11 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
             setCurrentSearchQuery(searchBoxInputValue);
           }}
         >
-          <Form.Group controlId='tfParticipantSearch'>
+          <Form.Group controlId="tfParticipantSearch">
             <Form.Control
-              name='query'
-              type='text'
-              placeholder='Search participants...'
+              name="query"
+              type="text"
+              placeholder="Search participants..."
               onChange={(e) => setSearchBoxInputValue(e.target.value)}
               value={searchBoxInputValue}
               disabled={fetchingSearchResults}
@@ -211,7 +220,7 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
               <div>Loading...</div>
               <SearchLoadingSpinner
                 src={loadingIcon}
-                alt='Loading participants...'
+                alt="Loading participants..."
               />
             </LoadingIndicator>
           }

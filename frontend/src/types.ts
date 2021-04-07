@@ -328,6 +328,7 @@ export interface MenuAction {
 export interface ModularFieldProps {
   controlId: string;
   fieldName: string;
+  disabled?: boolean;
   children?: React.ReactNode;
   placeholder?: string;
 }
