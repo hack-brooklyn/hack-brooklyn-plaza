@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { TeamInboxModal } from 'components/teamformation';
+import {
+  ParticipantInboxModal,
+  TeamInboxModal
+} from 'components/teamformation';
 import { HeadingActions } from 'components';
 import {
   TitleArea,
@@ -10,19 +13,14 @@ import {
   VisibilityStatusText
 } from 'common/styles/teamformation/teamFormationBrowserStyles';
 import { HeadingSection, StyledH1 } from 'common/styles/commonStyles';
-import { refreshAccessToken } from 'util/auth';
+import { getParticipantData } from 'util/teamFormation';
 import { handleError } from 'util/plazaUtils';
-import { API_ROOT } from 'index';
 import {
   Breakpoints,
-  ConnectionError,
-  InvalidSubmittedDataError,
   MenuAction,
-  NoPermissionError,
   RootState,
   TeamFormationParticipant,
-  TeamFormationTeam,
-  UnknownError
+  TeamFormationTeam
 } from 'types';
 
 import browserVisibleIcon from 'assets/icons/team-formation/browser-visible.svg';
@@ -40,50 +38,18 @@ interface TeamHeadingContentsProps {
 const TeamFormationHeadingSection = (): JSX.Element => {
   const history = useHistory();
 
-  const accessToken = useSelector(
-    (state: RootState) => state.auth.jwtAccessToken
-  );
-
   const [
     participantData,
     setParticipantData
   ] = useState<TeamFormationParticipant>();
 
   useEffect(() => {
-    getParticipantData().catch((err) => handleError(err));
+    loadHeading().catch((err) => handleError(err));
   }, []);
 
-  const getParticipantData = async (overriddenAccessToken?: string) => {
-    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
-
-    let res;
-    try {
-      res = await fetch(`${API_ROOT}/teamFormation/participants/userData`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-    } catch (err) {
-      throw new ConnectionError();
-    }
-
-    if (res.status === 200) {
-      const resBody = await res.json();
-      setParticipantData(resBody);
-    } else if (res.status === 404) {
-      history.push('/teamformation');
-    } else if (res.status === 400) {
-      throw new InvalidSubmittedDataError();
-    } else if (res.status === 401) {
-      const refreshedToken = await refreshAccessToken(history);
-      await getParticipantData(refreshedToken);
-    } else if (res.status === 403) {
-      history.push('/');
-      throw new NoPermissionError();
-    } else {
-      throw new UnknownError();
-    }
+  const loadHeading = async () => {
+    const participantData = await getParticipantData(history);
+    setParticipantData(participantData);
   };
 
   return (
@@ -128,9 +94,9 @@ const ParticipantHeadingContents = (
             {windowWidth > Breakpoints.Large && (
               <>
                 {participantData.visibleInBrowser ? (
-                  <img src={browserVisibleIcon} alt='Visible in browser icon' />
+                  <img src={browserVisibleIcon} alt="Visible in browser icon" />
                 ) : (
-                  <img src={browserHiddenIcon} alt='Hidden from browser icon' />
+                  <img src={browserHiddenIcon} alt="Hidden from browser icon" />
                 )}
               </>
             )}
@@ -150,7 +116,15 @@ const ParticipantHeadingContents = (
         )}
       </TitleArea>
 
-      <HeadingActions viewName='Team Formation' actions={participantHeadingActions} />
+      <HeadingActions
+        viewName="Team Formation"
+        actions={participantHeadingActions}
+      />
+
+      <ParticipantInboxModal
+        show={participantInboxOpen}
+        setShow={setParticipantInboxOpen}
+      />
     </>
   );
 };
@@ -180,9 +154,9 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
           {windowWidth > Breakpoints.Large && (
             <>
               {teamData.visibleInBrowser ? (
-                <img src={browserVisibleIcon} alt='Visible in browser icon' />
+                <img src={browserVisibleIcon} alt="Visible in browser icon" />
               ) : (
-                <img src={browserHiddenIcon} alt='Hidden from browser icon' />
+                <img src={browserHiddenIcon} alt="Hidden from browser icon" />
               )}
             </>
           )}
@@ -195,7 +169,7 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
         </VisibilityStatus>
       </TitleArea>
 
-      <HeadingActions viewName='Team Formation' actions={teamHeadingActions} />
+      <HeadingActions viewName="Team Formation" actions={teamHeadingActions} />
 
       <TeamInboxModal show={teamInboxOpen} setShow={setTeamInboxOpen} />
     </>

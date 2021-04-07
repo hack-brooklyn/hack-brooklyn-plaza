@@ -18,6 +18,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "team_formation_participants")
+@JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -36,7 +37,6 @@ public class TeamFormationParticipant {
 
     @ManyToOne
     @JoinColumn(name = "team_id")
-    @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
     private TeamFormationTeam team;
 
     @Column(name = "specialization")

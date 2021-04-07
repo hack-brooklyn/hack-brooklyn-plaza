@@ -15,6 +15,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "team_formation_teams")
+@JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -38,7 +39,6 @@ public class TeamFormationTeam {
 
     @OneToMany(mappedBy = "team")
     @NotNull
-    @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
     private Set<TeamFormationParticipant> members;
 
     @Column(name = "objective_statement")

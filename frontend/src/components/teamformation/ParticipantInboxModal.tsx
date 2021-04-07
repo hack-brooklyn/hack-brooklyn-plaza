@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
+import Tooltip from 'react-bootstrap/Tooltip';
 import { toast } from 'react-toastify';
 
-import { ParticipantCard } from 'components/teamformation';
+import { TeamCard } from 'components/teamformation';
 import {
   CloseButton,
   CloseButtonContainer,
@@ -18,7 +19,10 @@ import {
   PageButtonsContainer,
   PageIndicator
 } from 'common/styles/teamformation/teamFormationInboxModalStyles';
-import { ModalBody, ModalHeading } from 'common/styles/teamformation/teamFormationModalStyles';
+import {
+  ModalBody,
+  ModalHeading
+} from 'common/styles/teamformation/teamFormationModalStyles';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
@@ -28,16 +32,16 @@ import {
   IdsResponse,
   NoPermissionError,
   RootState,
-  TeamFormationJoinRequest,
-  TeamFormationParticipantNotInTeamError,
+  TeamFormationParticipantInvitation,
   UnknownError
 } from 'types';
 
 import closeIcon from 'assets/icons/close.svg';
 import arrowLeftIcon from 'assets/icons/arrow-left.svg';
 import arrowRightIcon from 'assets/icons/arrow-right.svg';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
-const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
+const ParticipantInboxModal = (props: CommonModalProps): JSX.Element => {
   const { show, setShow } = props;
 
   const history = useHistory();
@@ -46,38 +50,38 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
-  const [requestIds, setRequestIds] = useState<number[]>([]);
+  const [invitationIds, setInvitationIds] = useState<number[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [
-    currentRequestData,
-    setCurrentRequestData
-  ] = useState<TeamFormationJoinRequest | null>(null);
+    currentInvitationData,
+    setCurrentInvitationData
+  ] = useState<TeamFormationParticipantInvitation | null>(null);
   const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
     if (show) {
       setDataLoaded(false);
-      getTeamInbox().catch((err) => handleError(err));
+      getParticipantInbox().catch((err) => handleError(err));
     } else {
       // Reset state
-      setRequestIds([]);
+      setInvitationIds([]);
       setCurrentIndex(null);
-      setCurrentRequestData(null);
+      setCurrentInvitationData(null);
     }
   }, [show]);
 
   useEffect(() => {
-    if (currentIndex !== null && requestIds[currentIndex] !== undefined) {
-      getJoinRequestData(currentIndex).catch((err) => handleError(err));
+    if (currentIndex !== null && invitationIds[currentIndex] !== undefined) {
+      getInvitationData(currentIndex).catch((err) => handleError(err));
     }
-  }, [currentIndex, requestIds]);
+  }, [currentIndex, invitationIds]);
 
-  const getTeamInbox = async (overriddenAccessToken?: string) => {
+  const getParticipantInbox = async (overriddenAccessToken?: string) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/teams/inbox`, {
+      res = await fetch(`${API_ROOT}/teamFormation/participants/inbox`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
@@ -89,19 +93,18 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
 
     if (res.status === 200) {
       const resBody: IdsResponse = await res.json();
+
       if (resBody.ids.length > 0) {
-        // Reset to beginning of join requests
-        setRequestIds(resBody.ids);
+        // Reset to beginning of invitations
+        setInvitationIds(resBody.ids);
         setCurrentIndex(0);
       } else {
         resetInboxState();
         setDataLoaded(true);
       }
-    } else if (res.status === 404) {
-      throw new TeamFormationParticipantNotInTeamError();
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
-      await getTeamInbox(refreshedToken);
+      await getParticipantInbox(refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -110,7 +113,7 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     }
   };
 
-  const getJoinRequestData = async (
+  const getInvitationData = async (
     id: number,
     overriddenAccessToken?: string
   ) => {
@@ -121,7 +124,7 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     let res;
     try {
       res = await fetch(
-        `${API_ROOT}/teamFormation/teams/joinRequests/${requestIds[currentIndex]}`,
+        `${API_ROOT}/teamFormation/participants/invitations/${invitationIds[currentIndex]}`,
         {
           method: 'GET',
           headers: {
@@ -134,14 +137,12 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     }
 
     if (res.status === 200) {
-      const resBody: TeamFormationJoinRequest = await res.json();
-      setCurrentRequestData(resBody);
+      const resBody: TeamFormationParticipantInvitation = await res.json();
+      setCurrentInvitationData(resBody);
       setDataLoaded(true);
-    } else if (res.status === 404) {
-      throw new TeamFormationParticipantNotInTeamError();
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
-      await getTeamInbox(refreshedToken);
+      await getParticipantInbox(refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -150,8 +151,8 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     }
   };
 
-  const setCurrentRequestAccepted = async (
-    requestAccepted: boolean | null,
+  const setCurrentInvitationAccepted = async (
+    invitationAccepted: boolean | null,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
@@ -159,13 +160,13 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     if (currentIndex === null) return;
 
     const reqBody = {
-      accepted: requestAccepted
+      accepted: invitationAccepted
     };
 
     let res;
     try {
       res = await fetch(
-        `${API_ROOT}/teamFormation/teams/joinRequests/${requestIds[currentIndex]}/setRequestAccepted`,
+        `${API_ROOT}/teamFormation/participants/invitations/${invitationIds[currentIndex]}/setInvitationAccepted`,
         {
           method: 'POST',
           headers: {
@@ -180,36 +181,36 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     }
 
     if (res.status === 200) {
-      switch (requestAccepted) {
+      switch (invitationAccepted) {
         case true:
-          toast.success('Invitation sent!');
+          toast.success(
+            'Successfully accepted the invitation! Welcome to the team!'
+          );
           break;
         case false:
-          toast.success('The join request has been dismissed.');
+          toast.success('The invitation has been dismissed.');
           break;
         case null:
-          toast.success('The join request decision has been reset.');
+          toast.success('The invitation decision has been reset.');
       }
 
-      if (requestIds[currentIndex + 1] !== undefined) {
-        // Advance to the next join request
-        setRequestIds(
-          requestIds.filter((id) => id !== requestIds[currentIndex])
+      if (invitationIds[currentIndex + 1] !== undefined) {
+        // Advance to the next invitation
+        setInvitationIds(
+          invitationIds.filter((id) => id !== invitationIds[currentIndex])
         );
-      } else if (requestIds[currentIndex - 1] !== undefined) {
-        // Advance to the previous join request
-        setRequestIds(
-          requestIds.filter((id) => id !== requestIds[currentIndex])
+      } else if (invitationIds[currentIndex - 1] !== undefined) {
+        // Advance to the previous invitation
+        setInvitationIds(
+          invitationIds.filter((id) => id !== invitationIds[currentIndex])
         );
         setCurrentIndex(currentIndex - 1);
       } else {
         resetInboxState();
       }
-    } else if (res.status === 404) {
-      throw new TeamFormationParticipantNotInTeamError();
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
-      await setCurrentRequestAccepted(requestAccepted, refreshedToken);
+      await setCurrentInvitationAccepted(invitationAccepted, refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -219,16 +220,16 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
   };
 
   const resetInboxState = () => {
-    setRequestIds([]);
+    setInvitationIds([]);
     setCurrentIndex(null);
-    setCurrentRequestData(null);
+    setCurrentInvitationData(null);
   };
 
-  const handleSetCurrentRequestAccepted = async (
+  const handleSetCurrentInvitationAccepted = async (
     requestAccepted: boolean | null
   ) => {
     try {
-      await setCurrentRequestAccepted(requestAccepted);
+      await setCurrentInvitationAccepted(requestAccepted);
     } catch (err) {
       handleError(err);
     }
@@ -245,46 +246,77 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
       <ModalBody>
         <CloseButtonContainer>
           <CloseButton onClick={() => setShow(false)}>
-            <CloseIconImg src={closeIcon} alt="Close Team Inbox" />
+            <CloseIconImg src={closeIcon} alt="Close Your Inbox" />
           </CloseButton>
         </CloseButtonContainer>
 
-        <ModalHeading>Team Inbox</ModalHeading>
+        <ModalHeading>Your Inbox</ModalHeading>
 
         {show &&
           (dataLoaded ? (
             <>
-              {currentRequestData !== null ? (
+              {currentInvitationData !== null ? (
                 <>
-                  <ParticipantCard
-                    participantData={currentRequestData.requestingParticipant}
+                  <TeamCard
+                    teamData={currentInvitationData.invitingTeam}
                     showActionButton={false}
                   />
 
                   <TeamFormationMessage>
-                    {currentRequestData.message}
+                    {currentInvitationData.message}
                   </TeamFormationMessage>
 
                   <DecisionButtonContainer>
-                    <DecisionButton
-                      variant="success"
-                      onClick={() => handleSetCurrentRequestAccepted(true)}
+                    <OverlayTrigger
+                      overlay={
+                        currentInvitationData.invitingTeam.members.length >=
+                        currentInvitationData.invitingTeam.size ? (
+                          <Tooltip
+                            id={`team-${currentInvitationData.invitingTeam.id}-full-tooltip`}
+                          >
+                            This team is full.
+                          </Tooltip>
+                        ) : (
+                          <span />
+                        )
+                      }
                     >
-                      Accept and Send Invitation
-                    </DecisionButton>
+                      <span>
+                        <DecisionButton
+                          variant="success"
+                          onClick={async () => {
+                            if (
+                              confirm(
+                                'By accepting this invitation, you will be hidden from the participant browser. If you have received any other invitations, they will remain in your inbox. Continue?'
+                              )
+                            ) {
+                              await handleSetCurrentInvitationAccepted(true);
+                            } else {
+                              toast('Not accepted');
+                              return;
+                            }
+                          }}
+                          disabled={
+                            currentInvitationData.invitingTeam.members.length >=
+                            currentInvitationData.invitingTeam.size
+                          }
+                        >
+                          Accept and Join Team
+                        </DecisionButton>
+                      </span>
+                    </OverlayTrigger>
 
                     <DecisionButton
                       variant="danger"
-                      onClick={() => handleSetCurrentRequestAccepted(false)}
+                      onClick={() => handleSetCurrentInvitationAccepted(false)}
                     >
-                      Dismiss Join Request
+                      Decline Invitation
                     </DecisionButton>
                   </DecisionButtonContainer>
                 </>
               ) : (
                 <DisplayText>
-                  There are no new join requests in your team&apos;s inbox at
-                  this time.
+                  There are no new invitations in your inbox at this time.
                 </DisplayText>
               )}
 
@@ -297,22 +329,22 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
                   >
                     <PageButtonIcon
                       src={arrowLeftIcon}
-                      alt="Go To Previous Join Request"
+                      alt="Go To Previous Invitation"
                     />
                   </PageButton>
 
                   <PageIndicator>
-                    {currentIndex + 1} / {requestIds.length}
+                    {currentIndex + 1} / {invitationIds.length}
                   </PageIndicator>
 
                   <PageButton
                     variant="secondary"
                     onClick={() => setCurrentIndex(currentIndex + 1)}
-                    disabled={requestIds.length - 1 === currentIndex}
+                    disabled={invitationIds.length - 1 === currentIndex}
                   >
                     <PageButtonIcon
                       src={arrowRightIcon}
-                      alt="Go To Next Join Request"
+                      alt="Go To Next Invitation"
                     />
                   </PageButton>
                 </PageButtonsContainer>
@@ -326,4 +358,4 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
   );
 };
 
-export default TeamInboxModal;
+export default ParticipantInboxModal;

@@ -15,6 +15,7 @@ import {
   StyledParticipantCard
 } from 'common/styles/teamformation/teamFormationBrowserStyles';
 import { StyledCenteredH2 } from 'common/styles/commonStyles';
+import { getParticipantData } from 'util/teamFormation';
 import { handleError } from 'util/plazaUtils';
 import { refreshAccessToken } from 'util/auth';
 import { API_ROOT } from 'index';
@@ -29,7 +30,6 @@ import {
 } from 'types';
 
 import loadingIcon from 'assets/icons/loading.svg';
-import { checkParticipantHasTeam } from 'util/teamFormation';
 
 const TeamFormationParticipantSearch = (): JSX.Element => {
   const history = useHistory();
@@ -55,10 +55,7 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
 
   useEffect(() => {
     // Get whether or not the participant has a team already
-    checkParticipantHasTeam(history)
-      .then((status) => {
-        status !== undefined && setParticipantHasTeam(status);
-      });
+    checkParticipantTeamStatus().catch((err) => handleError(err));
 
     // Parse the search query on page load
     parseSearchQuery();
@@ -91,6 +88,11 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
         });
     }
   }, [currentSearchQuery]);
+
+  const checkParticipantTeamStatus = async () => {
+    const participantData = await getParticipantData(history);
+    setParticipantHasTeam(participantData.team !== null);
+  };
 
   const parseSearchQuery = () => {
     const parsed = queryString.parse(location.search);

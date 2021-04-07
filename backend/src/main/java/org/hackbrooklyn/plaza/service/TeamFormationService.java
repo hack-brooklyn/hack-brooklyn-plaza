@@ -1,10 +1,7 @@
 package org.hackbrooklyn.plaza.service;
 
 import org.hackbrooklyn.plaza.dto.*;
-import org.hackbrooklyn.plaza.model.TeamFormationParticipant;
-import org.hackbrooklyn.plaza.model.TeamFormationTeam;
-import org.hackbrooklyn.plaza.model.TeamFormationTeamJoinRequest;
-import org.hackbrooklyn.plaza.model.User;
+import org.hackbrooklyn.plaza.model.*;
 
 public interface TeamFormationService {
 
@@ -30,7 +27,15 @@ public interface TeamFormationService {
 
     TeamFormationMessageIdsDTO getTeamInboxMessageIds(User user);
 
-    TeamFormationTeamJoinRequest getJoinRequestDetails(int joinRequestId, User user);
+    TeamFormationTeamJoinRequest getTeamJoinRequestDetails(int joinRequestId, User user);
 
-    void setJoinRequestAccepted(int joinRequestId, Boolean requestAccepted, User user);
+    void setTeamJoinRequestAccepted(int joinRequestId, Boolean requestAccepted, User user);
+
+    TeamFormationParticipantInboxDTO getParticipantInbox(int page, int limit, User user);
+
+    TeamFormationMessageIdsDTO getParticipantInboxMessageIds(User user);
+
+    TeamFormationParticipantInvitation getParticipantInvitationDetails(int invitationId, User user);
+
+    void setParticipantInvitationAccepted(int invitationId, Boolean invitationAccepted, User user);
 }

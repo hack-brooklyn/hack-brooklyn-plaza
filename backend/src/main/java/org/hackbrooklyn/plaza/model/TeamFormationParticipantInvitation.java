@@ -1,5 +1,6 @@
 package org.hackbrooklyn.plaza.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -28,6 +29,7 @@ public class TeamFormationParticipantInvitation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invited_participant_id", referencedColumnName = "id")
     @NotNull
+    @JsonIgnore
     private TeamFormationParticipant invitedParticipant;
 
     @ManyToOne(fetch = FetchType.LAZY)

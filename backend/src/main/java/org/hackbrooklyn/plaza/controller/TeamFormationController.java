@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.*;
-import org.hackbrooklyn.plaza.model.TeamFormationParticipant;
-import org.hackbrooklyn.plaza.model.TeamFormationTeam;
-import org.hackbrooklyn.plaza.model.TeamFormationTeamJoinRequest;
-import org.hackbrooklyn.plaza.model.User;
+import org.hackbrooklyn.plaza.model.*;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -170,10 +167,10 @@ public class TeamFormationController {
      */
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")
     @GetMapping("/teams/joinRequests/{joinRequestId}")
-    public ResponseEntity<TeamFormationTeamJoinRequest> getJoinRequestDetails(
+    public ResponseEntity<TeamFormationTeamJoinRequest> getTeamJoinRequestDetails(
             @PathVariable @Positive int joinRequestId,
             @AuthenticationPrincipal User user) {
-        TeamFormationTeamJoinRequest resBody = teamFormationService.getJoinRequestDetails(joinRequestId, user);
+        TeamFormationTeamJoinRequest resBody = teamFormationService.getTeamJoinRequestDetails(joinRequestId, user);
 
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
@@ -182,9 +179,67 @@ public class TeamFormationController {
     @PostMapping("/teams/joinRequests/{joinRequestId}/setRequestAccepted")
     public ResponseEntity<Void> setJoinRequestAccepted(
             @PathVariable @Positive int joinRequestId,
-            @RequestBody @Valid SetJoinRequestAcceptedRequest reqBody,
+            @RequestBody @Valid SetAcceptedRequest reqBody,
             @AuthenticationPrincipal User user) {
-        teamFormationService.setJoinRequestAccepted(joinRequestId, reqBody.getRequestAccepted(), user);
+        teamFormationService.setTeamJoinRequestAccepted(joinRequestId, reqBody.getAccepted(), user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Gets a pageable list of the messages in the participant's inbox.
+     */
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_PARTICIPANT)")
+    @GetMapping("/participants/invitations")
+    public ResponseEntity<TeamFormationParticipantInboxDTO> getParticipantInbox(
+            @RequestParam(defaultValue = "1") @Min(1) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int limit,
+            @AuthenticationPrincipal User user) {
+        TeamFormationParticipantInboxDTO resBody = teamFormationService.getParticipantInbox(page, limit, user);
+
+        return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    /**
+     * Gets a full list of the message IDs in the participant's inbox.
+     * Includes the IDs only.
+     */
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_PARTICIPANT)")
+    @GetMapping("/participants/inbox")
+    public ResponseEntity<TeamFormationMessageIdsDTO> getParticipantInboxMessageIds(
+            @AuthenticationPrincipal User user) {
+        TeamFormationMessageIdsDTO resBody = teamFormationService.getParticipantInboxMessageIds(user);
+
+        return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    /**
+     * Gets the details about a single invitation for a participant. Only invitations that a participant has received
+     * can be viewed.
+     */
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_PARTICIPANT)")
+    @GetMapping("/participants/invitations/{invitationId}")
+    public ResponseEntity<TeamFormationParticipantInvitation> getParticipantInvitationDetails(
+            @PathVariable @Positive int invitationId,
+            @AuthenticationPrincipal User user) {
+        TeamFormationParticipantInvitation resBody = teamFormationService.getParticipantInvitationDetails(invitationId, user);
+
+        return new ResponseEntity<>(resBody, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_PARTICIPANT)")
+    @PostMapping("/participants/invitations/{invitationId}/setInvitationAccepted")
+    public ResponseEntity<Void> setParticipantInvitationAccepted(
+            @PathVariable @Positive int invitationId,
+            @RequestBody @Valid SetAcceptedRequest reqBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.setParticipantInvitationAccepted(invitationId, reqBody.getAccepted(), user);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -192,8 +247,8 @@ public class TeamFormationController {
     @Data
     @AllArgsConstructor
     @RequiredArgsConstructor
-    private static class SetJoinRequestAcceptedRequest {
+    private static class SetAcceptedRequest {
 
-        private Boolean requestAccepted;
+        private Boolean accepted;
     }
 }
