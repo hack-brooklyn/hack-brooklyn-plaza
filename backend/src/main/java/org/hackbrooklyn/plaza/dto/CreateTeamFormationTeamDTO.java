@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-public class CreateTFTeamDTO {
+public class CreateTeamFormationTeamDTO {
 
     @NotBlank
     private String name;

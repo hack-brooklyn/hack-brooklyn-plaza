@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class CreateTFParticipantDTO {
+public class TeamFormationParticipantFormDataDTO {
 
     @NotNull
     @Size(min = 1, max = 5)

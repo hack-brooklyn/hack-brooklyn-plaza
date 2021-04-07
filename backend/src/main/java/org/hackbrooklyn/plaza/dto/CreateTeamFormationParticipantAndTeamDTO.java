@@ -7,11 +7,11 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
-public class CreateTFParticipantAndTeamDTO {
+public class CreateTeamFormationParticipantAndTeamDTO {
 
     @NotNull
-    private CreateTFParticipantDTO participant;
+    private TeamFormationParticipantFormDataDTO participant;
 
     @NotNull
-    private CreateTFTeamDTO team;
+    private CreateTeamFormationTeamDTO team;
 }
