@@ -19,6 +19,7 @@ import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.hackbrooklyn.plaza.repository.TeamFormationParticipantInvitationRepository.*;
 import static org.hackbrooklyn.plaza.util.TeamFormationUtils.cleanTopicOrSkillName;
 
 @Slf4j
@@ -428,7 +429,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
     }
 
     @Override
-    public TeamFormationTeamJoinRequest getJoinRequestDetails(int joinRequestId, User user) {
+    public TeamFormationTeamJoinRequest getTeamJoinRequestDetails(int joinRequestId, User user) {
         TeamFormationParticipant userParticipant = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
@@ -446,7 +447,8 @@ public class TeamFormationServiceImpl implements TeamFormationService {
     }
 
     @Override
-    public void setJoinRequestAccepted(int joinRequestId, Boolean requestAccepted, User user) {
+    @Transactional
+    public void setTeamJoinRequestAccepted(int joinRequestId, Boolean requestAccepted, User user) {
         TeamFormationParticipant userParticipant = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
@@ -460,8 +462,134 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             throw new TeamFormationTeamJoinRequestInaccessibleException();
         }
 
+        // Send an invitation to the invited participant
+        MessageDTO invitationMessage = new MessageDTO(
+                String.format(
+                        "The team you requested to join, %s, has sent you an invitation!",
+                        foundJoinRequest.getRequestedTeam().getName()
+                )
+        );
+        inviteParticipantToTeam(foundJoinRequest.getRequestingParticipant().getId(), invitationMessage, user);
+
         foundJoinRequest.setRequestAccepted(requestAccepted);
         teamFormationTeamJoinRequestRepository.save(foundJoinRequest);
+    }
+
+    @Override
+    public TeamFormationParticipantInboxDTO getParticipantInbox(int page, int limit, User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TeamFormationParticipantInvitation> query = cb.createQuery(TeamFormationParticipantInvitation.class);
+
+        // Query for all messages that are in the participant's inbox
+        Root<TeamFormationParticipantInvitation> invitations = query.from(TeamFormationParticipantInvitation.class);
+        query.select(invitations);
+        query.distinct(true);
+
+        // Load the lazy-loaded invitingTeam field
+        invitations.fetch(TeamFormationParticipantInvitation_.invitingTeam);
+
+        query.where(cb.and(
+                cb.isNull(invitations.get(TeamFormationParticipantInvitation_.invitationAccepted)),
+                cb.equal(invitations.get(TeamFormationParticipantInvitation_.invitedParticipant), userParticipant)
+        ));
+        query.orderBy(cb.desc(invitations.get(TeamFormationParticipantInvitation_.invitationTimestamp)));
+        TypedQuery<TeamFormationParticipantInvitation> typedQuery = entityManager.createQuery(query);
+
+        // Get total count and results from query
+        long foundInvitationsSize = typedQuery.getResultList().size();
+        int totalPages = (int) Math.ceil((double) foundInvitationsSize / limit);
+
+        // Get paginated join requests from query
+        typedQuery.setFirstResult((page - 1) * limit);
+        typedQuery.setMaxResults(limit);
+        Collection<TeamFormationParticipantInvitation> foundInvitations = typedQuery.getResultList();
+
+        return new TeamFormationParticipantInboxDTO(totalPages, foundInvitations, foundInvitationsSize);
+
+    }
+
+    @Override
+    public TeamFormationMessageIdsDTO getParticipantInboxMessageIds(User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        List<InvitationIdsOnly> messageIdsProjection = teamFormationParticipantInvitationRepository
+                .findAllByInvitedParticipantAndInvitationAcceptedNullOrderByInvitationTimestamp(userParticipant);
+
+        // Convert InvitationIdsOnly projection to list of Integers
+        List<Integer> messageIds = messageIdsProjection.stream()
+                .map(InvitationIdsOnly::getInvitationId)
+                .collect(Collectors.toList());
+
+        return new TeamFormationMessageIdsDTO(Ints.toArray(messageIds));
+    }
+
+    @Override
+    public TeamFormationParticipantInvitation getParticipantInvitationDetails(int invitationId, User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        TeamFormationParticipantInvitation foundInvitation = teamFormationParticipantInvitationRepository
+                .findByIdLoadTeam(invitationId)
+                .orElseThrow(TeamFormationParticipantInvitationNotFoundException::new);
+
+        // Only allow the recipient of the invitation to view the invitation
+        if (foundInvitation.getInvitedParticipant() != userParticipant) {
+            throw new TeamFormationParticipantInvitationInaccessibleException();
+        }
+
+        return foundInvitation;
+    }
+
+    @Override
+    @Transactional
+    public void setParticipantInvitationAccepted(int invitationId, Boolean invitationAccepted, User user) {
+        TeamFormationParticipant userParticipant = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        TeamFormationParticipantInvitation foundInvitation = teamFormationParticipantInvitationRepository
+                .findByIdLoadTeam(invitationId)
+                .orElseThrow(TeamFormationParticipantInvitationNotFoundException::new);
+
+        // Only allow the recipient of the invitation to set the accepted status of an invitation
+        if (foundInvitation.getInvitedParticipant() != userParticipant) {
+            throw new TeamFormationParticipantInvitationInaccessibleException();
+        }
+
+        // Add the participant to the team if the user accepted the invitation
+        if (invitationAccepted) {
+            TeamFormationTeam invitingTeam = foundInvitation.getInvitingTeam();
+
+            int teamCurrentSize = invitingTeam.getMembers().size();
+            int teamMaxSize = invitingTeam.getSize();
+            if (teamCurrentSize >= teamMaxSize) {
+                throw new TeamFormationTeamFullException();
+            }
+
+            // The team has room left, add them to the team
+            invitingTeam.getMembers().add(userParticipant);
+
+            // Hide the team from the team browser if they will be full after the member joins
+            if (teamCurrentSize + 1 >= teamMaxSize) {
+                invitingTeam.setVisibleInBrowser(false);
+            }
+
+            TeamFormationTeam savedInvitingTeam = teamFormationTeamRepository.save(invitingTeam);
+
+            userParticipant.setTeam(savedInvitingTeam);
+            userParticipant.setVisibleInBrowser(false);
+            teamFormationParticipantRepository.save(userParticipant);
+        }
+
+        foundInvitation.setInvitationAccepted(invitationAccepted);
+        teamFormationParticipantInvitationRepository.save(foundInvitation);
     }
 
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {
