@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Formik, FormikHelpers } from 'formik';
-import styled from 'styled-components/macro';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
@@ -15,9 +14,10 @@ import {
 import { RequiredFormLabel } from 'components';
 import {
   ModalBody,
-  ModalHeadingNoMarginBottom
+  ModalCenteredButton,
+  ModalHeadingNoMarginBottom,
+  SlimModalDisplayText
 } from 'common/styles/teamformation/teamFormationModalStyles';
-import { DisplayText } from 'common/styles/teamformation/teamFormationInboxModalStyles';
 import { CenteredButton } from 'common/styles/commonStyles';
 import { refreshAccessToken } from 'util/auth';
 import { getParticipantData } from 'util/teamFormation';
@@ -205,14 +205,5 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
     </Modal>
   );
 };
-
-const ModalCenteredButton = styled(CenteredButton)`
-  margin-top: 1rem;
-  margin-bottom: 0.75rem;
-`;
-
-const SlimModalDisplayText = styled(DisplayText)`
-  padding-top: 2rem;
-`;
 
 export default EditParticipantProfileModal;
