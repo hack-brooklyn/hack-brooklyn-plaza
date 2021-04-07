@@ -20,6 +20,7 @@ import {
   MenuAction,
   RootState,
   TeamFormationParticipant,
+  TeamFormationParticipantNotSetUpError,
   TeamFormationTeam
 } from 'types';
 
@@ -38,33 +39,45 @@ interface TeamHeadingContentsProps {
 const TeamFormationHeadingSection = (): JSX.Element => {
   const history = useHistory();
 
+  const toggleDataRefresh = useSelector(
+    (state: RootState) => state.teamFormation.toggleHeadingSectionDataRefresh
+  );
+
   const [
     participantData,
     setParticipantData
   ] = useState<TeamFormationParticipant>();
 
   useEffect(() => {
-    loadHeading().catch((err) => handleError(err));
-  }, []);
+    loadHeading().catch((err) => {
+      if (!(err instanceof TeamFormationParticipantNotSetUpError)) {
+        handleError(err);
+      }
+    });
+  }, [toggleDataRefresh]);
 
   const loadHeading = async () => {
     const participantData = await getParticipantData(history);
     setParticipantData(participantData);
   };
 
-  return (
-    <HeadingSection>
-      {participantData !== undefined && (
-        <>
-          {participantData.team === null ? (
-            <ParticipantHeadingContents participantData={participantData} />
-          ) : (
-            <TeamHeadingContents teamData={participantData.team} />
-          )}
-        </>
-      )}
-    </HeadingSection>
-  );
+  if (participantData !== undefined) {
+    return (
+      <HeadingSection>
+        {participantData.team === null ? (
+          <ParticipantHeadingContents participantData={participantData} />
+        ) : (
+          <TeamHeadingContents teamData={participantData.team} />
+        )}
+      </HeadingSection>
+    );
+  } else {
+    return (
+      <HeadingSection>
+        <StyledH1>Team Formation</StyledH1>
+      </HeadingSection>
+    );
+  }
 };
 
 const ParticipantHeadingContents = (

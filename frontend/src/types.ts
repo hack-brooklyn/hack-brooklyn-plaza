@@ -12,6 +12,7 @@ import {
   EXIT_APPLICATION_REVIEW_MODE,
   LOG_IN,
   LOG_OUT,
+  REFRESH_HEADING_SECTION_DATA,
   SET_APPLICATIONS_LOADING,
   SET_JWT_ACCESS_TOKEN,
   SET_USER_DATA,
@@ -25,6 +26,7 @@ export interface RootState {
   auth: AuthState;
   user: UserState;
   applicationReview: ApplicationReviewState;
+  teamFormation: TeamFormationState;
   burgerMenu: { isOpen: boolean };
 }
 
@@ -138,6 +140,17 @@ export type ApplicationReviewActionTypes =
   | ExitApplicationReviewModeAction
   | AdvanceApplicationIndexAction
   | SetApplicationsLoadingAction;
+
+// Team Formation
+export interface TeamFormationState {
+  toggleHeadingSectionDataRefresh: boolean;
+}
+
+interface RefreshHeadingSectionDataAction {
+  type: typeof REFRESH_HEADING_SECTION_DATA;
+}
+
+export type TeamFormationActionTypes = RefreshHeadingSectionDataAction;
 
 // General Types
 // The access token returned from an authentication response
@@ -603,6 +616,16 @@ export class TeamFormationParticipantNotInTeamError extends Error {
     super();
     this.name = 'TeamFormationParticipantNotInTeamError';
     this.message = 'You must be in a team formation team to use this feature.';
+  }
+}
+
+// Thrown when a team formation participant is not in a team.
+export class TeamFormationParticipantNotSetUpError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantNotSetUpError';
+    this.message =
+      'Please set up your team formation participant profile to access this feature.';
   }
 }
 

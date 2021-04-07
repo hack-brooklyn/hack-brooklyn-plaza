@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import Form from 'react-bootstrap/Form';
@@ -18,10 +18,11 @@ import {
   SetupOptionIcon,
   TopSection
 } from 'common/styles/teamformation/teamFormationSetupStyles';
-import { StyledCenteredH2, StyledH1 } from 'common/styles/commonStyles';
+import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import { topicsAndSkillsOptions } from 'common/selectOptions/topicsAndSkillsOptions';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { acCan, refreshAccessToken } from 'util/auth';
+import { refreshHeadingSectionData } from 'actions/teamFormation';
 import { Resources } from 'security/accessControl';
 import {
   ConnectionError,
@@ -67,6 +68,7 @@ interface CreateParticipantAndTeamRequest {
 }
 
 const TeamFormationTeamSetup = (): JSX.Element => {
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const accessToken = useSelector(
@@ -171,7 +173,10 @@ const TeamFormationTeamSetup = (): JSX.Element => {
     }
 
     if (res.status === 200) {
-      toast.success('Your profile and team have been successfully created!');
+      toast.success(
+        'Your team formation profile and team have been successfully created!'
+      );
+      dispatch(refreshHeadingSectionData());
       setSetupComplete(true);
     } else if (res.status === 409) {
       throw new TeamFormationParticipantAlreadyExistsError();
