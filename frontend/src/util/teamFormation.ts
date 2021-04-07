@@ -50,3 +50,9 @@ export const getParticipantData = async (
   // The function must return a TeamFormationParticipant, otherwise throw an error
   throw new UnknownError();
 };
+
+export const validateTopicsAndSkills = (topicsAndSkills: string[]): void => {
+  if (topicsAndSkills.length < 1 || topicsAndSkills.length > 5) {
+    throw new Error('Please select 1 to 5 topics to continue.');
+  }
+};

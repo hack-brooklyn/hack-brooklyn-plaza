@@ -2,8 +2,8 @@ import React from 'react';
 import { FastField } from 'formik';
 import Form from 'react-bootstrap/Form';
 
+import { TopicsAndSkillsSelect } from 'components/teamformation/TeamFormationFormFields';
 import { RequiredFormLabel } from 'components';
-import TopicsAndSkillsSelect from 'components/teamformation/TopicsAndSkillsSelect';
 import {
   CenteredButton,
   CenteredButtonWithMarginBottom,
