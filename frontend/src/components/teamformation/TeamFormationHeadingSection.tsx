@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import {
+  EditParticipantProfileModal,
   ParticipantInboxModal,
   TeamInboxModal
 } from 'components/teamformation';
@@ -27,6 +28,7 @@ import {
 import browserVisibleIcon from 'assets/icons/team-formation/browser-visible.svg';
 import browserHiddenIcon from 'assets/icons/team-formation/browser-hidden.svg';
 import mailboxIcon from 'assets/icons/mailbox.svg';
+import profileCardIcon from 'assets/icons/profile-card.svg';
 
 interface ParticipantHeadingContentsProps {
   participantData: TeamFormationParticipant;
@@ -88,13 +90,23 @@ const ParticipantHeadingContents = (
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
   const [participantInboxOpen, setParticipantInboxOpen] = useState(false);
+  const [
+    participantProfileEditorOpen,
+    setParticipantProfileEditorOpen
+  ] = useState(false);
 
   const participantHeadingActions: MenuAction[] = [
     {
       onClick: () => setParticipantInboxOpen(true),
-      text: 'Inbox',
+      text: 'My Inbox',
       type: 'button',
       icon: mailboxIcon
+    },
+    {
+      onClick: () => setParticipantProfileEditorOpen(true),
+      text: 'Edit My Profile',
+      type: 'button',
+      icon: profileCardIcon
     }
   ];
 
@@ -138,6 +150,10 @@ const ParticipantHeadingContents = (
         show={participantInboxOpen}
         setShow={setParticipantInboxOpen}
       />
+      <EditParticipantProfileModal
+        show={participantProfileEditorOpen}
+        setShow={setParticipantProfileEditorOpen}
+      />
     </>
   );
 };
@@ -148,13 +164,23 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
   const [teamInboxOpen, setTeamInboxOpen] = useState(false);
+  const [
+    participantProfileEditorOpen,
+    setParticipantProfileEditorOpen
+  ] = useState(false);
 
   const teamHeadingActions: MenuAction[] = [
     {
       onClick: () => setTeamInboxOpen(true),
-      text: 'Inbox',
+      text: 'Team Inbox',
       type: 'button',
       icon: mailboxIcon
+    },
+    {
+      onClick: () => setParticipantProfileEditorOpen(true),
+      text: 'Edit My Profile',
+      type: 'button',
+      icon: profileCardIcon
     }
   ];
 
@@ -185,6 +211,10 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
       <HeadingActions viewName="Team Formation" actions={teamHeadingActions} />
 
       <TeamInboxModal show={teamInboxOpen} setShow={setTeamInboxOpen} />
+      <EditParticipantProfileModal
+        show={participantProfileEditorOpen}
+        setShow={setParticipantProfileEditorOpen}
+      />
     </>
   );
 };
