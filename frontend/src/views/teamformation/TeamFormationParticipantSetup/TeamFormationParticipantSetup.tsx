@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import Form from 'react-bootstrap/Form';
@@ -10,7 +10,7 @@ import {
   ParticipantStepOne,
   ParticipantStepTwo
 } from './components';
-import { StyledCenteredH2, StyledH1 } from 'common/styles/commonStyles';
+import { StyledCenteredH2 } from 'common/styles/commonStyles';
 import {
   SetupOption,
   SetupOptionDescription,
@@ -19,6 +19,7 @@ import {
 } from 'common/styles/teamformation/teamFormationSetupStyles';
 import { acCan, refreshAccessToken } from 'util/auth';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
+import { refreshHeadingSectionData } from 'actions/teamFormation';
 import { Resources } from 'security/accessControl';
 import { topicsAndSkillsOptions } from 'common/selectOptions/topicsAndSkillsOptions';
 import {
@@ -86,7 +87,6 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
       await sendCreateProfileRequest(profileData);
     } catch (err) {
       handleError(err);
-      return;
     } finally {
       setSubmitting(false);
     }
