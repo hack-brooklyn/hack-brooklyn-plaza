@@ -619,6 +619,16 @@ export class TeamFormationParticipantNotInTeamError extends Error {
   }
 }
 
+// Thrown when a team formation participant is not in a team.
+export class TeamFormationParticipantNotSetUpError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantNotSetUpError';
+    this.message =
+      'Please set up your team formation participant profile to access this feature.';
+  }
+}
+
 export class AnnouncementNotFoundError extends Error {
   constructor() {
     super();

@@ -11,7 +11,10 @@ import {
   UnknownError
 } from 'types';
 
-export const getParticipantData = async (history: History<LocationState>, overriddenAccessToken?: string): Promise<TeamFormationParticipant> => {
+export const getParticipantData = async (
+  history: History<LocationState>,
+  overriddenAccessToken?: string
+): Promise<TeamFormationParticipant> => {
   const state = store.getState();
   const accessToken = state.auth.jwtAccessToken;
   const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
@@ -32,6 +35,7 @@ export const getParticipantData = async (history: History<LocationState>, overri
     return await res.json();
   } else if (res.status === 404) {
     history.push('/teamformation');
+    throw new TeamFormationParticipantNotSetUpError();
   } else if (res.status === 400) {
     throw new InvalidSubmittedDataError();
   } else if (res.status === 401) {
