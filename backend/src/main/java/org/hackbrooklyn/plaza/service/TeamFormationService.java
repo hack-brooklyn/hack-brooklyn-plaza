@@ -7,7 +7,7 @@ public interface TeamFormationService {
 
     void createParticipant(User user, TeamFormationParticipantFormDataDTO participantProfileData);
 
-    void createTeam(User user, CreateTeamFormationTeamDTO teamData);
+    void createTeam(User user, TeamFormationTeamFormDataDTO teamData);
 
     void createParticipantAndTeam(CreateTeamFormationParticipantAndTeamDTO participantAndTeamData, User user);
 
@@ -40,4 +40,12 @@ public interface TeamFormationService {
     void setParticipantInvitationAccepted(int invitationId, Boolean invitationAccepted, User user);
 
     void updateLoggedInParticipantData(TeamFormationParticipantFormDataWithBrowserVisibilityDTO submittedData, User user);
+
+    void updateLoggedInParticipantTeamData(TeamFormationTeamFormDataWithBrowserVisibilityDTO submittedData, User user);
+
+    void removeMemberFromLoggedInParticipantTeam(int participantId, User user);
+
+    void deleteLoggedInParticipantTeam(User user);
+
+    void leaveTeam(User user);
 }

@@ -53,12 +53,12 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         TeamFormationParticipant newParticipant = new TeamFormationParticipant();
         newParticipant.setUser(user);
         newParticipant.setVisibleInBrowser(true);
-        setParticipantDataAndSave(submittedData, newParticipant);
+        setCommonParticipantDataAndSave(submittedData, newParticipant);
     }
 
     @Override
     @Transactional
-    public void createTeam(User user, CreateTeamFormationTeamDTO submittedData) {
+    public void createTeam(User user, TeamFormationTeamFormDataDTO submittedData) {
         TeamFormationParticipant userParticipant = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
@@ -75,18 +75,14 @@ public class TeamFormationServiceImpl implements TeamFormationService {
 
         // Create and save the team
         TeamFormationTeam newTeam = new TeamFormationTeam();
-        newTeam.setName(submittedData.getName());
-        newTeam.setSize(submittedData.getSize());
-        newTeam.setObjectiveStatement(submittedData.getObjectiveStatement());
+        newTeam.setLeader(userParticipant);
         newTeam.setVisibleInBrowser(true);
+        newTeam.setName(submittedData.getName());
+        setCommonTeamData(submittedData, newTeam);
 
         Set<TeamFormationParticipant> newTeamMembers = new HashSet<>(1);
         newTeamMembers.add(userParticipant);
         newTeam.setMembers(newTeamMembers);
-
-        Set<String> topicAndSkillNames = submittedData.getInterestedTopicsAndSkills();
-        Set<TopicOrSkill> topicsAndSkills = getTopicsAndSkillsFromNames(topicAndSkillNames);
-        newTeam.setInterestedTopicsAndSkills(topicsAndSkills);
 
         TeamFormationTeam savedNewTeam = teamFormationTeamRepository.save(newTeam);
 
@@ -120,13 +116,122 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
 
+        if (submittedData.isVisibleInBrowser() && updatingParticipant.getTeam() != null) {
+            throw new TeamFormationParticipantAlreadyInTeamException();
+        }
+
         updatingParticipant.setVisibleInBrowser(submittedData.isVisibleInBrowser());
-        setParticipantDataAndSave(submittedData, updatingParticipant);
+        setCommonParticipantDataAndSave(submittedData, updatingParticipant);
     }
 
     @Override
     public TeamFormationTeam getLoggedInParticipantTeamData(User user) {
         return getLoggedInParticipantData(user).getTeam();
+    }
+
+    @Override
+    public void updateLoggedInParticipantTeamData(TeamFormationTeamFormDataWithBrowserVisibilityDTO submittedData, User user) {
+        TeamFormationParticipant updatingTeamMember = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        TeamFormationTeam updatingTeam = updatingTeamMember.getTeam();
+
+        if (updatingTeam == null) {
+            throw new TeamFormationParticipantNotInTeamException();
+        }
+
+        if (submittedData.isVisibleInBrowser() && updatingTeam.getMembers().size() >= updatingTeam.getSize()) {
+            throw new TeamFormationTeamFullException();
+        }
+
+        // Check if a team already exists with the provided team name
+        if (!submittedData.getName().equals(updatingTeam.getName())
+                && teamFormationTeamRepository.findFirstByName(submittedData.getName()).isPresent()) {
+            throw new TeamFormationTeamNameConflictException();
+        }
+
+        updatingTeam.setName(submittedData.getName());
+        updatingTeam.setVisibleInBrowser(submittedData.isVisibleInBrowser());
+        setCommonTeamData(submittedData, updatingTeam);
+
+        teamFormationTeamRepository.save(updatingTeam);
+    }
+
+    @Override
+    @Transactional
+    public void removeMemberFromLoggedInParticipantTeam(int participantId, User user) {
+        TeamFormationParticipant memberPerformingRemoval = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        TeamFormationTeam teamToModify = memberPerformingRemoval.getTeam();
+
+        if (teamToModify == null) {
+            throw new TeamFormationParticipantNotInTeamException();
+        }
+
+        if (teamToModify.getLeader() != memberPerformingRemoval) {
+            throw new TeamFormationNoPermissionException();
+        }
+
+        TeamFormationParticipant memberToRemove = teamToModify.getMembers().stream()
+                .filter(member -> member.getId() == participantId)
+                .findFirst()
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        // Remove the team from the participant's side
+        memberToRemove.setTeam(null);
+        teamFormationParticipantRepository.save(memberToRemove);
+
+        // Remove the member from the team on the team's side
+        teamToModify.getMembers().remove(memberToRemove);
+        teamFormationTeamRepository.save(teamToModify);
+    }
+
+    @Override
+    @Transactional
+    public void deleteLoggedInParticipantTeam(User user) {
+        TeamFormationParticipant memberPerformingDeletion = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        TeamFormationTeam teamToDelete = memberPerformingDeletion.getTeam();
+        if (teamToDelete == null) throw new TeamFormationParticipantNotInTeamException();
+        if (teamToDelete.getLeader() != memberPerformingDeletion) throw new TeamFormationNoPermissionException();
+
+        // Remove each team member from the team
+        for (TeamFormationParticipant teamMember : teamToDelete.getMembers()) {
+            teamMember.setTeam(null);
+            teamFormationParticipantRepository.save(teamMember);
+        }
+
+        // Manually delete many-to-many relation for interested topics and skills
+        teamToDelete.getInterestedTopicsAndSkills().clear();
+        teamFormationTeamRepository.save(teamToDelete);
+
+        // The cascade will remove the one-to-many relations for the team's join requests and invitations
+        teamFormationTeamRepository.delete(teamToDelete);
+    }
+
+    @Override
+    @Transactional
+    public void leaveTeam(User user) {
+        TeamFormationParticipant leavingMember = teamFormationParticipantRepository
+                .findFirstByUser(user)
+                .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
+        TeamFormationTeam leftTeam = leavingMember.getTeam();
+
+        if (leftTeam == null) {
+            throw new TeamFormationParticipantNotInTeamException();
+        }
+
+        leavingMember.setTeam(null);
+        teamFormationParticipantRepository.save(leavingMember);
+
+        leftTeam.getMembers().remove(leavingMember);
+        teamFormationTeamRepository.save(leftTeam);
     }
 
     @Override
@@ -331,7 +436,15 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 .findById(teamId)
                 .orElseThrow(TeamFormationTeamNotFoundException::new);
 
-        // Check if the participant already sent the team a request
+        if (requestingParticipant.getTeam() != null) {
+            throw new TeamFormationParticipantAlreadyInTeamException();
+        }
+
+        if (requestedTeam.getMembers().size() >= requestedTeam.getSize()) {
+            throw new TeamFormationTeamFullException();
+        }
+
+        // Try to find an invitation already sent by the participant and throw an exception if there is
         if (requestedTeam.getReceivedTeamJoinRequests().stream()
                 .anyMatch(joinRequest -> joinRequest
                         .getRequestingParticipant()
@@ -353,7 +466,16 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         TeamFormationParticipant invitingTeamMember = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
+
         TeamFormationTeam invitingTeam = invitingTeamMember.getTeam();
+
+        if (invitingTeam == null) {
+            throw new TeamFormationParticipantNotInTeamException();
+        }
+
+        if (invitingTeam.getMembers().size() >= invitingTeam.getSize()) {
+            throw new TeamFormationTeamFullException();
+        }
 
         TeamFormationParticipant invitedParticipant = teamFormationParticipantRepository
                 .findById(participantId)
@@ -381,7 +503,10 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         TeamFormationParticipant userParticipant = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
-        if (userParticipant.getTeam() == null) throw new TeamFormationParticipantNotInTeamException();
+
+        if (userParticipant.getTeam() == null) {
+            throw new TeamFormationParticipantNotInTeamException();
+        }
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<TeamFormationTeamJoinRequest> query = cb.createQuery(TeamFormationTeamJoinRequest.class);
@@ -418,7 +543,10 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         TeamFormationParticipant userParticipant = teamFormationParticipantRepository
                 .findFirstByUser(user)
                 .orElseThrow(TeamFormationParticipantNotFoundException::new);
-        if (userParticipant.getTeam() == null) throw new TeamFormationParticipantNotInTeamException();
+
+        if (userParticipant.getTeam() == null) {
+            throw new TeamFormationParticipantNotInTeamException();
+        }
 
         List<RequestIdsOnly> messageIdsProjection = teamFormationTeamJoinRequestRepository.
                 findAllByRequestedTeamAndRequestAcceptedNullOrderByRequestTimestamp(userParticipant.getTeam());
@@ -443,7 +571,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
 
         // Only allow team members in the team receiving the join request to view the join request
         if (foundJoinRequest.getRequestedTeam() != userParticipant.getTeam() || userParticipant.getTeam() == null) {
-            throw new TeamFormationTeamJoinRequestInaccessibleException();
+            throw new TeamFormationNoPermissionException();
         }
 
         return foundJoinRequest;
@@ -462,7 +590,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
 
         // Only allow team members in the team receiving the join request to set the accepted status of a join request
         if (foundJoinRequest.getRequestedTeam() != userParticipant.getTeam() || userParticipant.getTeam() == null) {
-            throw new TeamFormationTeamJoinRequestInaccessibleException();
+            throw new TeamFormationNoPermissionException();
         }
 
         // Send an invitation to the invited participant
@@ -561,14 +689,20 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 .findByIdLoadTeam(invitationId)
                 .orElseThrow(TeamFormationParticipantInvitationNotFoundException::new);
 
+        TeamFormationParticipant invitedParticipant = foundInvitation.getInvitedParticipant();
+
         // Only allow the recipient of the invitation to set the accepted status of an invitation
-        if (foundInvitation.getInvitedParticipant() != userParticipant) {
+        if (invitedParticipant != userParticipant) {
             throw new TeamFormationParticipantInvitationInaccessibleException();
         }
 
         // Add the participant to the team if the user accepted the invitation
         if (invitationAccepted) {
             TeamFormationTeam invitingTeam = foundInvitation.getInvitingTeam();
+
+            if (invitedParticipant.getTeam() != null) {
+                throw new TeamFormationParticipantAlreadyInTeamException();
+            }
 
             int teamCurrentSize = invitingTeam.getMembers().size();
             int teamMaxSize = invitingTeam.getSize();
@@ -577,7 +711,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             }
 
             // The team has room left, add them to the team
-            invitingTeam.getMembers().add(userParticipant);
+            invitingTeam.getMembers().add(invitedParticipant);
 
             // Hide the team from the team browser if they will be full after the member joins
             if (teamCurrentSize + 1 >= teamMaxSize) {
@@ -586,16 +720,16 @@ public class TeamFormationServiceImpl implements TeamFormationService {
 
             TeamFormationTeam savedInvitingTeam = teamFormationTeamRepository.save(invitingTeam);
 
-            userParticipant.setTeam(savedInvitingTeam);
-            userParticipant.setVisibleInBrowser(false);
-            teamFormationParticipantRepository.save(userParticipant);
+            invitedParticipant.setTeam(savedInvitingTeam);
+            invitedParticipant.setVisibleInBrowser(false);
+            teamFormationParticipantRepository.save(invitedParticipant);
         }
 
         foundInvitation.setInvitationAccepted(invitationAccepted);
         teamFormationParticipantInvitationRepository.save(foundInvitation);
     }
 
-    private void setParticipantDataAndSave(TeamFormationParticipantFormDataDTO submittedData, TeamFormationParticipant participant) {
+    private void setCommonParticipantDataAndSave(TeamFormationParticipantFormDataDTO submittedData, TeamFormationParticipant participant) {
         participant.setSpecialization(submittedData.getSpecialization());
         participant.setObjectiveStatement(submittedData.getObjectiveStatement());
 
@@ -604,6 +738,15 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         participant.setInterestedTopicsAndSkills(topicsAndSkills);
 
         teamFormationParticipantRepository.save(participant);
+    }
+
+    private void setCommonTeamData(TeamFormationTeamFormDataDTO submittedData, TeamFormationTeam newTeam) {
+        newTeam.setSize(submittedData.getSize());
+        newTeam.setObjectiveStatement(submittedData.getObjectiveStatement());
+
+        Set<String> topicAndSkillNames = submittedData.getInterestedTopicsAndSkills();
+        Set<TopicOrSkill> topicsAndSkills = getTopicsAndSkillsFromNames(topicAndSkillNames);
+        newTeam.setInterestedTopicsAndSkills(topicsAndSkills);
     }
 
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {
