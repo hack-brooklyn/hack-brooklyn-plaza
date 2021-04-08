@@ -29,7 +29,7 @@ import {
   Option,
   RootState,
   TeamFormationParticipantAlreadyExistsError,
-  TeamFormationParticipantSetupData,
+  TeamFormationParticipantFormData,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
@@ -37,7 +37,7 @@ import { API_ROOT } from 'index';
 import lookingForTeamIcon from 'assets/icons/team-formation/looking-for-team.svg';
 
 export interface ParticipantSetupStepProps {
-  formik: FormikProps<TeamFormationParticipantSetupData>;
+  formik: FormikProps<TeamFormationParticipantFormData>;
   setCurrentStep: React.Dispatch<React.SetStateAction<1 | 2>>;
 }
 
@@ -62,7 +62,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
     ...topicsAndSkillsOptions
   ]);
 
-  const initialValues: TeamFormationParticipantSetupData = {
+  const initialValues: TeamFormationParticipantFormData = {
     interestedTopicsAndSkills: [],
     specialization: '',
     objectiveStatement: ''
@@ -80,8 +80,8 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
   }, []);
 
   const createProfile = async (
-    profileData: TeamFormationParticipantSetupData,
-    { setSubmitting }: FormikHelpers<TeamFormationParticipantSetupData>
+    profileData: TeamFormationParticipantFormData,
+    { setSubmitting }: FormikHelpers<TeamFormationParticipantFormData>
   ) => {
     try {
       await sendCreateProfileRequest(profileData);
@@ -93,7 +93,7 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
   };
 
   const sendCreateProfileRequest = async (
-    profileData: TeamFormationParticipantSetupData,
+    profileData: TeamFormationParticipantFormData,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;

@@ -38,7 +38,7 @@ const TeamFormationHome = (): JSX.Element => {
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/participants/userData`, {
+      res = await fetch(`${API_ROOT}/teamFormation/participants/currentUser`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
