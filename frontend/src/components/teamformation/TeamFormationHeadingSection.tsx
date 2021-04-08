@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import {
+  CreateTeamModal,
   EditParticipantProfileModal,
   EditTeamProfileModal,
   ParticipantInboxModal,
@@ -28,6 +29,7 @@ import {
 
 import browserVisibleIcon from 'assets/icons/team-formation/browser-visible.svg';
 import browserHiddenIcon from 'assets/icons/team-formation/browser-hidden.svg';
+import createTeamIcon from 'assets/icons/team-formation/create-team.svg';
 import mailboxIcon from 'assets/icons/mailbox.svg';
 import profileCardIcon from 'assets/icons/profile-card.svg';
 import profileCardMultiIcon from 'assets/icons/profile-card-multi.svg';
@@ -96,6 +98,7 @@ const ParticipantHeadingContents = (
     participantProfileEditorOpen,
     setParticipantProfileEditorOpen
   ] = useState(false);
+  const [createTeamModalOpen, setCreateTeamModalOpen] = useState(false);
 
   const participantHeadingActions: MenuAction[] = [
     {
@@ -109,6 +112,12 @@ const ParticipantHeadingContents = (
       text: 'Edit My Profile',
       type: 'button',
       icon: profileCardIcon
+    },
+    {
+      onClick: () => setCreateTeamModalOpen(true),
+      text: 'Create Team',
+      type: 'button',
+      icon: createTeamIcon
     }
   ];
 
@@ -155,6 +164,10 @@ const ParticipantHeadingContents = (
       <EditParticipantProfileModal
         show={participantProfileEditorOpen}
         setShow={setParticipantProfileEditorOpen}
+      />
+      <CreateTeamModal
+        show={createTeamModalOpen}
+        setShow={setCreateTeamModalOpen}
       />
     </>
   );
