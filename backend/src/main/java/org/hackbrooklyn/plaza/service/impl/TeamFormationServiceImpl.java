@@ -76,9 +76,14 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         // Create and save the team
         TeamFormationTeam newTeam = new TeamFormationTeam();
         newTeam.setLeader(userParticipant);
-        newTeam.setVisibleInBrowser(true);
         newTeam.setName(submittedData.getName());
-        setCommonTeamData(submittedData, newTeam);
+        newTeam.setObjectiveStatement(submittedData.getObjectiveStatement());
+        newTeam.setSize(submittedData.getSize());
+        newTeam.setVisibleInBrowser(true);
+
+        Set<String> topicAndSkillNames = submittedData.getInterestedTopicsAndSkills();
+        Set<TopicOrSkill> topicsAndSkills = getTopicsAndSkillsFromNames(topicAndSkillNames);
+        newTeam.setInterestedTopicsAndSkills(topicsAndSkills);
 
         Set<TeamFormationParticipant> newTeamMembers = new HashSet<>(1);
         newTeamMembers.add(userParticipant);
@@ -141,19 +146,29 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             throw new TeamFormationParticipantNotInTeamException();
         }
 
-        if (submittedData.isVisibleInBrowser() && updatingTeam.getMembers().size() >= updatingTeam.getSize()) {
+        // Check if the new team size would exceed the current team size
+        int currentTeamSize = updatingTeam.getMembers().size();
+        if (currentTeamSize > submittedData.getSize()) {
             throw new TeamFormationTeamFullException();
         }
 
         // Check if a team already exists with the provided team name
-        if (!submittedData.getName().equals(updatingTeam.getName())
-                && teamFormationTeamRepository.findFirstByName(submittedData.getName()).isPresent()) {
+        if (!submittedData.getName().equals(updatingTeam.getName()) && teamFormationTeamRepository.findFirstByName(submittedData.getName()).isPresent()) {
             throw new TeamFormationTeamNameConflictException();
         }
 
         updatingTeam.setName(submittedData.getName());
+        updatingTeam.setObjectiveStatement(submittedData.getObjectiveStatement());
+        updatingTeam.setSize(submittedData.getSize());
+
         updatingTeam.setVisibleInBrowser(submittedData.isVisibleInBrowser());
-        setCommonTeamData(submittedData, updatingTeam);
+        if (currentTeamSize >= submittedData.getSize()) {
+            updatingTeam.setVisibleInBrowser(false);
+        }
+
+        Set<String> topicAndSkillNames = submittedData.getInterestedTopicsAndSkills();
+        Set<TopicOrSkill> topicsAndSkills = getTopicsAndSkillsFromNames(topicAndSkillNames);
+        updatingTeam.setInterestedTopicsAndSkills(topicsAndSkills);
 
         teamFormationTeamRepository.save(updatingTeam);
     }
@@ -737,15 +752,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         participant.setInterestedTopicsAndSkills(topicsAndSkills);
 
         teamFormationParticipantRepository.save(participant);
-    }
-
-    private void setCommonTeamData(TeamFormationTeamFormDataDTO submittedData, TeamFormationTeam newTeam) {
-        newTeam.setSize(submittedData.getSize());
-        newTeam.setObjectiveStatement(submittedData.getObjectiveStatement());
-
-        Set<String> topicAndSkillNames = submittedData.getInterestedTopicsAndSkills();
-        Set<TopicOrSkill> topicsAndSkills = getTopicsAndSkillsFromNames(topicAndSkillNames);
-        newTeam.setInterestedTopicsAndSkills(topicsAndSkills);
     }
 
     private Set<TopicOrSkill> getTopicsAndSkillsFromNames(Set<String> topicAndSkillNames) {

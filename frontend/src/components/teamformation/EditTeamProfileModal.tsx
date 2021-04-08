@@ -98,6 +98,14 @@ const EditTeamProfileModal = (props: CommonModalProps): JSX.Element => {
     }: FormikHelpers<TeamFormationTeamFormDataWithBrowserVisibility>
   ) => {
     try {
+      if (teamData !== null && teamData.members.length > profileData.size) {
+        toast.warn(
+          'Your team size cannot be smaller than the number of members in your team.'
+        );
+        setSubmitting(false);
+        return;
+      }
+
       await sendUpdateTeamProfileRequest(profileData);
     } catch (err) {
       handleError(err);

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 import { toast } from 'react-toastify';
 
 import { ParticipantCard } from 'components/teamformation';
@@ -18,7 +20,11 @@ import {
   PageButtonsContainer,
   PageIndicator
 } from 'common/styles/teamformation/teamFormationInboxModalStyles';
-import { ModalBody, ModalHeading } from 'common/styles/teamformation/teamFormationModalStyles';
+import {
+  ModalBody,
+  ModalHeading
+} from 'common/styles/teamformation/teamFormationModalStyles';
+import { getTeamData } from 'util/teamFormation';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
@@ -30,6 +36,8 @@ import {
   RootState,
   TeamFormationJoinRequest,
   TeamFormationParticipantNotInTeamError,
+  TeamFormationTeam,
+  TeamFormationTeamFullError,
   UnknownError
 } from 'types';
 
@@ -46,6 +54,7 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
+  const [teamData, setTeamData] = useState<TeamFormationTeam | null>(null);
   const [requestIds, setRequestIds] = useState<number[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [
@@ -57,7 +66,7 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
   useEffect(() => {
     if (show) {
       setDataLoaded(false);
-      getTeamInbox().catch((err) => handleError(err));
+      loadTeamInbox().catch((err) => handleError(err));
     } else {
       // Reset state
       setRequestIds([]);
@@ -65,6 +74,11 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
       setCurrentRequestData(null);
     }
   }, [show]);
+
+  const loadTeamInbox = async () => {
+    await getTeamInbox();
+    setTeamData(await getTeamData(history));
+  };
 
   useEffect(() => {
     if (currentIndex !== null && requestIds[currentIndex] !== undefined) {
@@ -207,6 +221,8 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
       }
     } else if (res.status === 404) {
       throw new TeamFormationParticipantNotInTeamError();
+    } else if (res.status === 400) {
+      throw new TeamFormationTeamFullError();
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
       await setCurrentRequestAccepted(requestAccepted, refreshedToken);
@@ -254,7 +270,7 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
         {show &&
           (dataLoaded ? (
             <>
-              {currentRequestData !== null ? (
+              {currentRequestData !== null && teamData !== null ? (
                 <>
                   <ParticipantCard
                     participantData={currentRequestData.requestingParticipant}
@@ -266,12 +282,27 @@ const TeamInboxModal = (props: CommonModalProps): JSX.Element => {
                   </TeamFormationMessage>
 
                   <DecisionButtonContainer>
-                    <DecisionButton
-                      variant="success"
-                      onClick={() => handleSetCurrentRequestAccepted(true)}
+                    <OverlayTrigger
+                      overlay={
+                        teamData.members.length >= teamData.size ? (
+                          <Tooltip id={`team-${teamData.id}-full-tooltip`}>
+                            Your team is full.
+                          </Tooltip>
+                        ) : (
+                          <span />
+                        )
+                      }
                     >
-                      Accept and Send Invitation
-                    </DecisionButton>
+                      <span>
+                        <DecisionButton
+                          variant="success"
+                          onClick={() => handleSetCurrentRequestAccepted(true)}
+                          disabled={teamData.members.length >= teamData.size}
+                        >
+                          Accept and Send Invitation
+                        </DecisionButton>
+                      </span>
+                    </OverlayTrigger>
 
                     <DecisionButton
                       variant="danger"
