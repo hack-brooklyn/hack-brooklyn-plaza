@@ -38,6 +38,12 @@ public class TeamFormationTeam {
     @NotNull
     private int size;
 
+    @OneToOne
+    @JoinColumn(name = "team_leader_id", referencedColumnName = "id")
+    @JsonIdentityInfo(generator = PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private TeamFormationParticipant leader;
+
     @OneToMany(mappedBy = "team")
     @NotNull
     private Set<TeamFormationParticipant> members;
