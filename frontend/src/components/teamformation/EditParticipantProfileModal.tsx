@@ -7,9 +7,10 @@ import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import {
-  TopicsAndSkillsSelect,
   ParticipantObjectiveStatementField,
-  ParticipantSpecializationField
+  ParticipantSpecializationField,
+  ShowParticipantOnBrowserCheckbox,
+  TopicsAndSkillsSelect
 } from 'components/teamformation/TeamFormationFormFields';
 import { RequiredFormLabel } from 'components';
 import {
@@ -31,7 +32,7 @@ import {
   NoPermissionError,
   RootState,
   TeamFormationParticipant,
-  TeamFormationParticipantSetupData,
+  TeamFormationParticipantFormDataWithBrowserVisibility,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
@@ -76,8 +77,10 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
   }, [show]);
 
   const updateProfile = async (
-    profileData: TeamFormationParticipantSetupData,
-    { setSubmitting }: FormikHelpers<TeamFormationParticipantSetupData>
+    profileData: TeamFormationParticipantFormDataWithBrowserVisibility,
+    {
+      setSubmitting
+    }: FormikHelpers<TeamFormationParticipantFormDataWithBrowserVisibility>
   ) => {
     try {
       await sendUpdateProfileRequest(profileData);
@@ -89,14 +92,14 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
   };
 
   const sendUpdateProfileRequest = async (
-    profileData: TeamFormationParticipantSetupData,
+    profileData: TeamFormationParticipantFormDataWithBrowserVisibility,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/participants/userData`, {
+      res = await fetch(`${API_ROOT}/teamFormation/participants/currentUser`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -140,15 +143,11 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
           (formLoaded && participantData !== null ? (
             <Formik
               initialValues={{
-                interestedTopicsAndSkills: participantData
-                  ? participantData.interestedTopicsAndSkills
-                  : [],
-                specialization: participantData
-                  ? participantData.specialization
-                  : '',
-                objectiveStatement: participantData
-                  ? participantData.objectiveStatement
-                  : ''
+                interestedTopicsAndSkills:
+                  participantData.interestedTopicsAndSkills,
+                specialization: participantData.specialization,
+                objectiveStatement: participantData.objectiveStatement,
+                visibleInBrowser: participantData.visibleInBrowser
               }}
               onSubmit={updateProfile}
             >
@@ -178,6 +177,13 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
                   <ParticipantObjectiveStatementField
                     controlId="tfpeObjectiveStatement"
                     fieldName="objectiveStatement"
+                    formik={formik}
+                  />
+
+                  <ShowParticipantOnBrowserCheckbox
+                    participantData={participantData}
+                    controlId="tfpeVisibileInBrowser"
+                    fieldName="visibleInBrowser"
                     formik={formik}
                   />
 
