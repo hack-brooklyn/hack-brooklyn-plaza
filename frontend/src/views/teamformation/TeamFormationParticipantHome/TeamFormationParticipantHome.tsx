@@ -1,6 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import queryString from 'query-string';
 import Form from 'react-bootstrap/Form';
 
 import { LinkButton } from 'components';
@@ -22,6 +23,7 @@ import {
   ConnectionError,
   NoPermissionError,
   RootState,
+  TeamFormationParticipantSearchParams,
   TeamFormationParticipantSearchResponse,
   UnknownError
 } from 'types';
@@ -56,10 +58,16 @@ const TeamFormationParticipantHome = (): JSX.Element => {
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
+    const searchOptions: TeamFormationParticipantSearchParams = {
+      personalized: true,
+      hideSentInvitations: true
+    };
+    const queryParams = '?' + queryString.stringify(searchOptions);
+
     let res;
     try {
       res = await fetch(
-        `${API_ROOT}/teamFormation/participants?personalized=true`,
+        `${API_ROOT}/teamFormation/participants${queryParams}`,
         {
           method: 'GET',
           headers: {

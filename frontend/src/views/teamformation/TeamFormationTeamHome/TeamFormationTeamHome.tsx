@@ -1,6 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import queryString from 'query-string';
 import Form from 'react-bootstrap/Form';
 
 import { LinkButton } from 'components';
@@ -23,6 +24,7 @@ import {
   ConnectionError,
   NoPermissionError,
   RootState,
+  TeamFormationTeamSearchParams,
   TeamFormationTeamSearchResponse,
   UnknownError
 } from 'types';
@@ -65,9 +67,15 @@ const TeamFormationTeamHome = (): JSX.Element => {
   const getPersonalizedTeams = async (overriddenAccessToken?: string) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
+    const searchOptions: TeamFormationTeamSearchParams = {
+      personalized: true,
+      hideSentJoinRequests: true
+    };
+    const queryParams = '?' + queryString.stringify(searchOptions);
+
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/teams?personalized=true`, {
+      res = await fetch(`${API_ROOT}/teamFormation/teams${queryParams}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
