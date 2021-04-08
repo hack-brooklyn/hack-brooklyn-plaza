@@ -261,4 +261,14 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EventNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEventNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The requested event does not exists");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
 }
