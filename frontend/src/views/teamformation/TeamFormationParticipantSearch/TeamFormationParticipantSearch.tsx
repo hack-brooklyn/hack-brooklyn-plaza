@@ -38,9 +38,9 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
-  // Whether or not the participant has a team.
+  // Whether or not the participant has a team
   const [participantHasTeam, setParticipantHasTeam] = useState(false);
-  // Whether or
+  // Whether or not the participant's team has room remaining for new members to join
   const [participantTeamHasRoom, setParticipantTeamHasRoom] = useState(false);
   // The state to hold the controlled search box input value
   const [searchBoxInputValue, setSearchBoxInputValue] = useState('');
