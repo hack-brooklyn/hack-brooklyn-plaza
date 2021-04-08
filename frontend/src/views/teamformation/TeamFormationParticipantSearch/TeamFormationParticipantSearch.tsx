@@ -94,6 +94,9 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
   const checkParticipantTeamStatus = async () => {
     const participantData = await getParticipantData(history);
     setParticipantHasTeam(participantData.team !== null);
+    setParticipantTeamHasRoom(
+      participantData.team.members.length < participantData.team.size
+    );
   };
 
   const parseSearchQuery = () => {
@@ -232,7 +235,9 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
               {currentParticipants.map((participant) => (
                 <StyledParticipantCard
                   participantData={participant}
-                  showActionButton={participantHasTeam}
+                  showActionButton={
+                    participantHasTeam && participantTeamHasRoom
+                  }
                   key={participant.id}
                 />
               ))}
