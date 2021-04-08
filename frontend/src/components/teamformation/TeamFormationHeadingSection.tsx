@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 import {
   EditParticipantProfileModal,
+  EditTeamProfileModal,
   ParticipantInboxModal,
   TeamInboxModal
 } from 'components/teamformation';
@@ -29,6 +30,7 @@ import browserVisibleIcon from 'assets/icons/team-formation/browser-visible.svg'
 import browserHiddenIcon from 'assets/icons/team-formation/browser-hidden.svg';
 import mailboxIcon from 'assets/icons/mailbox.svg';
 import profileCardIcon from 'assets/icons/profile-card.svg';
+import profileCardMultiIcon from 'assets/icons/profile-card-multi.svg';
 
 interface ParticipantHeadingContentsProps {
   participantData: TeamFormationParticipant;
@@ -168,6 +170,7 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
     participantProfileEditorOpen,
     setParticipantProfileEditorOpen
   ] = useState(false);
+  const [teamProfileEditorOpen, setTeamProfileEditorOpen] = useState(false);
 
   const teamHeadingActions: MenuAction[] = [
     {
@@ -181,6 +184,12 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
       text: 'Edit My Profile',
       type: 'button',
       icon: profileCardIcon
+    },
+    {
+      onClick: () => setTeamProfileEditorOpen(true),
+      text: 'Edit Team Profile',
+      type: 'button',
+      icon: profileCardMultiIcon
     }
   ];
 
@@ -214,6 +223,10 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
       <EditParticipantProfileModal
         show={participantProfileEditorOpen}
         setShow={setParticipantProfileEditorOpen}
+      />
+      <EditTeamProfileModal
+        show={teamProfileEditorOpen}
+        setShow={setTeamProfileEditorOpen}
       />
     </>
   );
