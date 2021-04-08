@@ -641,6 +641,23 @@ export class TeamFormationParticipantNotSetUpError extends Error {
   }
 }
 
+export class TeamFormationTeamNameConflictError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamNameConflictError';
+    this.message =
+      'A team with this name already exists. Please choose another one.';
+  }
+}
+
+export class TeamFormationTeamFullError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamFullError';
+    this.message = 'Team is full.';
+  }
+}
+
 export class AnnouncementNotFoundError extends Error {
   constructor() {
     super();
