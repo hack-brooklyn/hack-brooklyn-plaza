@@ -640,7 +640,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         Collection<TeamFormationParticipantInvitation> foundInvitations = typedQuery.getResultList();
 
         return new TeamFormationParticipantInboxDTO(totalPages, foundInvitations, foundInvitationsSize);
-
     }
 
     @Override
