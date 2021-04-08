@@ -13,5 +13,5 @@ public class CreateTeamFormationParticipantAndTeamDTO {
     private TeamFormationParticipantFormDataDTO participant;
 
     @NotNull
-    private CreateTeamFormationTeamDTO team;
+    private TeamFormationTeamFormDataDTO team;
 }
