@@ -42,7 +42,7 @@ const TeamSetupComplete = (): JSX.Element => {
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/teams/userData`, {
+      res = await fetch(`${API_ROOT}/teamFormation/teams/currentUser`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
@@ -78,7 +78,9 @@ const TeamSetupComplete = (): JSX.Element => {
             'Below is a preview of what your team will look like to other participants.'}
         </CompletedViewMessage>
 
-        {teamData !== undefined && <TeamCard teamData={teamData} />}
+        {teamData !== undefined && (
+          <TeamCard teamData={teamData} showActionButton={false} />
+        )}
       </CompleteViewSection>
 
       <CompleteViewSection>

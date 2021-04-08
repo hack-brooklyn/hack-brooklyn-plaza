@@ -45,7 +45,7 @@ const ParticipantSetupComplete = (): JSX.Element => {
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/participants/userData`, {
+      res = await fetch(`${API_ROOT}/teamFormation/participants/currentUser`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`
@@ -82,7 +82,10 @@ const ParticipantSetupComplete = (): JSX.Element => {
         </CompletedViewMessage>
 
         {participantData !== undefined && (
-          <ParticipantCard participantData={participantData} />
+          <ParticipantCard
+            participantData={participantData}
+            showActionButton={false}
+          />
         )}
       </CompleteViewSection>
 
