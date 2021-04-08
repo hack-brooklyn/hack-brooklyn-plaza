@@ -64,11 +64,11 @@ public class TeamFormationParticipant {
     @JsonSerialize(using = TopicOrSkillSetSerializer.class)
     private Set<TopicOrSkill> interestedTopicsAndSkills;
 
-    @OneToMany(mappedBy = "requestingParticipant")
+    @OneToMany(mappedBy = "requestingParticipant", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<TeamFormationTeamJoinRequest> sentTeamJoinRequests;
 
-    @OneToMany(mappedBy = "invitedParticipant")
+    @OneToMany(mappedBy = "invitedParticipant", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<TeamFormationParticipantInvitation> receivedParticipantInvitations;
 }

@@ -1,6 +1,7 @@
 package org.hackbrooklyn.plaza.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators.PropertyGenerator;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -61,11 +62,11 @@ public class TeamFormationTeam {
     @JsonSerialize(using = TopicOrSkillSetSerializer.class)
     private Set<TopicOrSkill> interestedTopicsAndSkills;
 
-    @OneToMany(mappedBy = "requestedTeam")
+    @OneToMany(mappedBy = "requestedTeam", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<TeamFormationTeamJoinRequest> receivedTeamJoinRequests;
 
-    @OneToMany(mappedBy = "invitingTeam")
+    @OneToMany(mappedBy = "invitingTeam", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<TeamFormationParticipantInvitation> sentParticipantInvitations;
 }
