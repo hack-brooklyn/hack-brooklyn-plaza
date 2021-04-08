@@ -1,14 +1,18 @@
 package org.hackbrooklyn.plaza.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.*;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @AllArgsConstructor
-public class CreateTeamFormationTeamDTO {
+public class TeamFormationTeamFormDataDTO {
 
     @NotBlank
     private String name;

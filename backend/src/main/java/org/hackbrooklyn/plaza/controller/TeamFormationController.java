@@ -74,7 +74,7 @@ public class TeamFormationController {
     @PostMapping("/teams")
     public ResponseEntity<Void> createTeam(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreateTeamFormationTeamDTO reqBody) {
+            @RequestBody @Valid TeamFormationTeamFormDataDTO reqBody) {
         teamFormationService.createTeam(user, reqBody);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -95,7 +95,7 @@ public class TeamFormationController {
     }
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_PARTICIPANT)")
-    @GetMapping("/participants/userData")
+    @GetMapping("/participants/currentUser")
     public ResponseEntity<TeamFormationParticipant> getLoggedInParticipantData(
             @AuthenticationPrincipal User user) {
         TeamFormationParticipant foundParticipant = teamFormationService.getLoggedInParticipantData(user);
@@ -104,7 +104,7 @@ public class TeamFormationController {
     }
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_PARTICIPANT)")
-    @PutMapping("/participants/userData")
+    @PutMapping("/participants/currentUser")
     public ResponseEntity<Void> updateLoggedInParticipantData(
             @RequestBody @Valid TeamFormationParticipantFormDataWithBrowserVisibilityDTO reqBody,
             @AuthenticationPrincipal User user) {
@@ -114,12 +114,50 @@ public class TeamFormationController {
     }
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_READ_TEAM)")
-    @GetMapping("/teams/userData")
+    @GetMapping("/teams/currentUser")
     public ResponseEntity<TeamFormationTeam> getLoggedInParticipantTeamData(
             @AuthenticationPrincipal User user) {
         TeamFormationTeam foundTeam = teamFormationService.getLoggedInParticipantTeamData(user);
 
         return new ResponseEntity<>(foundTeam, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_TEAM)")
+    @PostMapping("/teams/currentUser/leaveTeam")
+    public ResponseEntity<Void> leaveTeam(
+            @AuthenticationPrincipal User user) {
+        teamFormationService.leaveTeam(user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_TEAM)")
+    @PostMapping("/teams/currentUser/removeMember")
+    public ResponseEntity<Void> removeMemberFromLoggedInParticipantTeam(
+            @RequestBody @Valid RemoveMemberRequest reqBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.removeMemberFromLoggedInParticipantTeam(reqBody.getParticipantId(), user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_TEAM)")
+    @PutMapping("/teams/currentUser")
+    public ResponseEntity<Void> updateLoggedInParticipantTeamData(
+            @RequestBody @Valid TeamFormationTeamFormDataWithBrowserVisibilityDTO reqBody,
+            @AuthenticationPrincipal User user) {
+        teamFormationService.updateLoggedInParticipantTeamData(reqBody, user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_DELETE_TEAM)")
+    @DeleteMapping("/teams/currentUser")
+    public ResponseEntity<Void> deleteLoggedInParticipantTeam(
+            @AuthenticationPrincipal User user) {
+        teamFormationService.deleteLoggedInParticipantTeam(user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority(@authorities.TEAM_FORMATION_UPDATE_PARTICIPANT)")
@@ -254,5 +292,13 @@ public class TeamFormationController {
     private static class SetAcceptedRequest {
 
         private Boolean accepted;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    private static class RemoveMemberRequest {
+
+        private int participantId;
     }
 }

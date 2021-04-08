@@ -12,8 +12,8 @@ import java.util.Set;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class TeamFormationParticipantFormDataDTO {
 
     @NotNull

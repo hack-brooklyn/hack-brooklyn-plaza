@@ -253,6 +253,43 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TeamFormationTeamNameConflictException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationTeamNameConflictException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "A team with this name already exists.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TeamFormationParticipantAlreadyInTeamException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantAlreadyInTeamException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The participant is already in a team.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TeamFormationTeamFullException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationTeamFullException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The participant is already in a team.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    // 403 Forbidden is already used to check if the user is able to access team formation at all
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TeamFormationNoPermissionException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationNoPermissionException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "You do not have permission to perform this action.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AnnouncementNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleAnnouncementNotFoundException() {
