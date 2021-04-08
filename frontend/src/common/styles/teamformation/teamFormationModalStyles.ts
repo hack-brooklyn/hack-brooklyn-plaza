@@ -3,7 +3,12 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-import { StyledCenteredH2 } from 'common/styles/commonStyles';
+import { DisplayText } from 'common/styles/teamformation/teamFormationInboxModalStyles';
+import {
+  CenteredButton,
+  StyledCenteredH2,
+  StyledCenteredH3
+} from 'common/styles/commonStyles';
 import { Breakpoints } from 'types';
 
 export const ModalBody = styled(Modal.Body)`
@@ -32,4 +37,17 @@ export const MessageFormGroup = styled(Form.Group)`
 export const StyledButton = styled(Button)`
   display: block;
   margin: 0 auto 1rem;
+`;
+
+export const ModalCenteredButton = styled(CenteredButton)`
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+`;
+
+export const SlimModalDisplayText = styled(DisplayText)`
+  padding-top: 2rem;
+`;
+
+export const ModalSubheading = styled(StyledCenteredH3)`
+  margin: 1rem auto 0;
 `;

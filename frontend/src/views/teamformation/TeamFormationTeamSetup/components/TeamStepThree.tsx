@@ -1,14 +1,16 @@
 import React from 'react';
-import { FastField } from 'formik';
-import Form from 'react-bootstrap/Form';
 
-import { TopicsAndSkillsSelect } from 'components/teamformation/TeamFormationFormFields';
+import {
+  TeamNameField,
+  TeamObjectiveStatementField,
+  TeamSizeField,
+  TopicsAndSkillsSelect
+} from 'components/teamformation/TeamFormationFormFields';
 import { RequiredFormLabel } from 'components';
 import {
   CenteredButton,
   CenteredButtonWithMarginBottom,
   SetupContent,
-  SetupFormGroup,
   SetupParagraph,
   SetupSection
 } from 'common/styles/commonStyles';
@@ -30,16 +32,11 @@ const TeamStepThree = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {
           profile.
         </SetupParagraph>
 
-        <SetupFormGroup controlId="tftsTeamName">
-          <RequiredFormLabel>Team Name</RequiredFormLabel>
-          <FastField
-            as={Form.Control}
-            name="teamName"
-            type="text"
-            disabled={formik.isSubmitting}
-            required
-          />
-        </SetupFormGroup>
+        <TeamNameField
+          formik={formik}
+          controlId="tftsTeamName"
+          fieldName="teamName"
+        />
 
         <TopicsAndSkillsSelect
           controlId="tftsTeamInterestedTopicsAndSkills"
@@ -51,33 +48,17 @@ const TeamStepThree = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {
           <RequiredFormLabel>Interested Topics and Skills</RequiredFormLabel>
         </TopicsAndSkillsSelect>
 
-        <SetupFormGroup controlId="tftsTeamObjectiveStatement">
-          <RequiredFormLabel>Team Objective Statement</RequiredFormLabel>
-          <FastField
-            as="textarea"
-            className="form-control"
-            name="teamObjectiveStatement"
-            rows="5"
-            maxlength="200"
-            placeholder="In under 200 characters, describe what your team is looking for in a potential team member."
-            disabled={formik.isSubmitting}
-            required
-          />
-        </SetupFormGroup>
+        <TeamObjectiveStatementField
+          formik={formik}
+          controlId="tftsTeamObjectiveStatement"
+          fieldName="teamObjectiveStatement"
+        />
 
-        <SetupFormGroup controlId="tftsTeamSize">
-          <RequiredFormLabel>Team Size</RequiredFormLabel>
-          <FastField
-            as={Form.Control}
-            name="teamSize"
-            type="number"
-            min="2"
-            max="4"
-            placeholder="Teams can have between 2 to 4 members."
-            disabled={formik.isSubmitting}
-            required
-          />
-        </SetupFormGroup>
+        <TeamSizeField
+          formik={formik}
+          controlId="tftsTeamSize"
+          fieldName="teamSize"
+        />
       </SetupContent>
 
       <CenteredButtonWithMarginBottom

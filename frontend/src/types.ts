@@ -351,37 +351,48 @@ export interface PageParams {
   applicationNumberParam?: string;
 }
 
-export interface TeamFormationSetupCommon {
-  interestedTopicsAndSkills: string[];
-  objectiveStatement: string;
-}
-
 export interface TeamFormationCommon {
   id: number;
   visibleInBrowser: boolean;
 }
 
-export interface TeamFormationParticipantSetupData
-  extends TeamFormationSetupCommon {
+export interface TeamFormationCommonFormData {
+  interestedTopicsAndSkills: string[];
+  objectiveStatement: string;
+}
+
+export interface TeamFormationParticipantFormData
+  extends TeamFormationCommonFormData {
   specialization: string;
 }
 
-export interface TeamFormationTeamSetupData extends TeamFormationSetupCommon {
+export interface TeamFormationParticipantFormDataWithBrowserVisibility
+  extends TeamFormationParticipantFormData {
+  visibleInBrowser: boolean;
+}
+
+export interface TeamFormationTeamFormData extends TeamFormationCommonFormData {
   name: string;
   size: number;
 }
 
 export interface TeamFormationParticipant
-  extends TeamFormationParticipantSetupData,
+  extends TeamFormationParticipantFormData,
     TeamFormationCommon {
   team: TeamFormationTeam;
   user: UserFullName;
 }
 
 export interface TeamFormationTeam
-  extends TeamFormationTeamSetupData,
+  extends TeamFormationTeamFormData,
     TeamFormationCommon {
+  leader: number;
   members: TeamFormationParticipant[];
+}
+
+export interface TeamFormationTeamFormDataWithBrowserVisibility
+  extends TeamFormationTeamFormData {
+  visibleInBrowser: boolean;
 }
 
 export interface TeamFormationTeamSearchResponse {
@@ -627,6 +638,23 @@ export class TeamFormationParticipantNotSetUpError extends Error {
     this.name = 'TeamFormationParticipantNotSetUpError';
     this.message =
       'Please set up your team formation participant profile to access this feature.';
+  }
+}
+
+export class TeamFormationTeamNameConflictError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamNameConflictError';
+    this.message =
+      'A team with this name already exists. Please choose another one.';
+  }
+}
+
+export class TeamFormationTeamFullError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamFullError';
+    this.message = 'Team is full.';
   }
 }
 

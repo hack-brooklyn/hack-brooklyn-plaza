@@ -17,12 +17,12 @@ import {
 import {
   CommonModalProps,
   ConnectionError,
-  InvalidSubmittedDataError,
   MessageData,
   NoPermissionError,
   RootState,
   TeamFormationParticipant,
   TeamFormationParticipantInvitationAlreadySentError,
+  TeamFormationTeamFullError,
   UnknownError
 } from 'types';
 import { refreshAccessToken } from 'util/auth';
@@ -92,7 +92,7 @@ const ParticipantInvitationModal = (
       setShow(false);
       throw new TeamFormationParticipantInvitationAlreadySentError();
     } else if (res.status === 400) {
-      throw new InvalidSubmittedDataError();
+      throw new TeamFormationTeamFullError();
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
       await sendInvitation(formData, refreshedToken);

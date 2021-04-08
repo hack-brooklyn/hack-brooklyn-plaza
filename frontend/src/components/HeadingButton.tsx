@@ -49,9 +49,7 @@ const ButtonContent = (props: ButtonContentProps) => {
         <img src={icon} alt={text} />
       </IconArea>
 
-      <ButtonText>
-        {text}
-      </ButtonText>
+      <ButtonText>{text}</ButtonText>
     </ButtonContainer>
   );
 };
@@ -99,6 +97,7 @@ const CommonHeadingButtonStyles = css`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 
   text-align: center;
   text-decoration: none;
@@ -136,12 +135,7 @@ const StyledAnchor = styled.a`
 const StyledHeadingButton = styled.button`
   background: none;
   border: none;
-  width: 100%;
   ${CommonHeadingButtonStyles};
-
-  @media screen and (min-width: ${Breakpoints.Large}px) {
-    width: auto;    
-  }
 `;
 
 const ButtonText = styled.p`

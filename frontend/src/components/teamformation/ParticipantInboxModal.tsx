@@ -35,6 +35,7 @@ import {
   NoPermissionError,
   RootState,
   TeamFormationParticipantInvitation,
+  TeamFormationTeamFullError,
   UnknownError
 } from 'types';
 
@@ -212,6 +213,8 @@ const ParticipantInboxModal = (props: CommonModalProps): JSX.Element => {
       } else {
         resetInboxState();
       }
+    } else if (res.status === 400) {
+      throw new TeamFormationTeamFullError();
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
       await setCurrentInvitationAccepted(invitationAccepted, refreshedToken);
@@ -295,9 +298,6 @@ const ParticipantInboxModal = (props: CommonModalProps): JSX.Element => {
                               )
                             ) {
                               await handleSetCurrentInvitationAccepted(true);
-                            } else {
-                              toast('Not accepted');
-                              return;
                             }
                           }}
                           disabled={

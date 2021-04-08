@@ -2,22 +2,23 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Formik, FormikHelpers } from 'formik';
-import styled from 'styled-components/macro';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import {
-  TopicsAndSkillsSelect,
   ParticipantObjectiveStatementField,
-  ParticipantSpecializationField
+  ParticipantSpecializationField,
+  ShowParticipantOnBrowserCheckbox,
+  TopicsAndSkillsSelect
 } from 'components/teamformation/TeamFormationFormFields';
 import { RequiredFormLabel } from 'components';
 import {
   ModalBody,
-  ModalHeadingNoMarginBottom
+  ModalCenteredButton,
+  ModalHeadingNoMarginBottom,
+  SlimModalDisplayText
 } from 'common/styles/teamformation/teamFormationModalStyles';
-import { DisplayText } from 'common/styles/teamformation/teamFormationInboxModalStyles';
 import { CenteredButton } from 'common/styles/commonStyles';
 import { refreshAccessToken } from 'util/auth';
 import { getParticipantData } from 'util/teamFormation';
@@ -31,7 +32,7 @@ import {
   NoPermissionError,
   RootState,
   TeamFormationParticipant,
-  TeamFormationParticipantSetupData,
+  TeamFormationParticipantFormDataWithBrowserVisibility,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
@@ -76,8 +77,10 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
   }, [show]);
 
   const updateProfile = async (
-    profileData: TeamFormationParticipantSetupData,
-    { setSubmitting }: FormikHelpers<TeamFormationParticipantSetupData>
+    profileData: TeamFormationParticipantFormDataWithBrowserVisibility,
+    {
+      setSubmitting
+    }: FormikHelpers<TeamFormationParticipantFormDataWithBrowserVisibility>
   ) => {
     try {
       await sendUpdateProfileRequest(profileData);
@@ -89,14 +92,14 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
   };
 
   const sendUpdateProfileRequest = async (
-    profileData: TeamFormationParticipantSetupData,
+    profileData: TeamFormationParticipantFormDataWithBrowserVisibility,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
     try {
-      res = await fetch(`${API_ROOT}/teamFormation/participants/userData`, {
+      res = await fetch(`${API_ROOT}/teamFormation/participants/currentUser`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -140,15 +143,11 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
           (formLoaded && participantData !== null ? (
             <Formik
               initialValues={{
-                interestedTopicsAndSkills: participantData
-                  ? participantData.interestedTopicsAndSkills
-                  : [],
-                specialization: participantData
-                  ? participantData.specialization
-                  : '',
-                objectiveStatement: participantData
-                  ? participantData.objectiveStatement
-                  : ''
+                interestedTopicsAndSkills:
+                  participantData.interestedTopicsAndSkills,
+                specialization: participantData.specialization,
+                objectiveStatement: participantData.objectiveStatement,
+                visibleInBrowser: participantData.visibleInBrowser
               }}
               onSubmit={updateProfile}
             >
@@ -181,6 +180,13 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
                     formik={formik}
                   />
 
+                  <ShowParticipantOnBrowserCheckbox
+                    participantData={participantData}
+                    controlId="tfpeVisibileInBrowser"
+                    fieldName="visibleInBrowser"
+                    formik={formik}
+                  />
+
                   <ModalCenteredButton
                     type="submit"
                     disabled={formik.isSubmitting}
@@ -205,14 +211,5 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
     </Modal>
   );
 };
-
-const ModalCenteredButton = styled(CenteredButton)`
-  margin-top: 1rem;
-  margin-bottom: 0.75rem;
-`;
-
-const SlimModalDisplayText = styled(DisplayText)`
-  padding-top: 2rem;
-`;
 
 export default EditParticipantProfileModal;
