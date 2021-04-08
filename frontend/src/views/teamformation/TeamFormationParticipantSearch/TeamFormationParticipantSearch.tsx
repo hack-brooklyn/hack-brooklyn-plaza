@@ -40,6 +40,8 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
 
   // Whether or not the participant has a team.
   const [participantHasTeam, setParticipantHasTeam] = useState(false);
+  // Whether or
+  const [participantTeamHasRoom, setParticipantTeamHasRoom] = useState(false);
   // The state to hold the controlled search box input value
   const [searchBoxInputValue, setSearchBoxInputValue] = useState('');
   // The current search query's state, updated on each search query change only
