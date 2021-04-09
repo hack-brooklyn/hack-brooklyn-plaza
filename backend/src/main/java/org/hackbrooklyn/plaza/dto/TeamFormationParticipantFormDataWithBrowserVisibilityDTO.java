@@ -16,8 +16,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class TeamFormationParticipantFormDataWithBrowserVisibilityDTO extends TeamFormationParticipantFormDataDTO {
 
-    public TeamFormationParticipantFormDataWithBrowserVisibilityDTO(@NotNull @Size(min = 1, max = 5) Set<String> interestedTopicsAndSkills, @NotBlank String specialization, @NotBlank String objectiveStatement, boolean visibleInBrowser) {
-        super(interestedTopicsAndSkills, specialization, objectiveStatement);
+    public TeamFormationParticipantFormDataWithBrowserVisibilityDTO(@NotNull @Size(min = 1, max = 5) Set<String> interestedTopicsAndSkills, @NotBlank String specialization, @NotBlank String objectiveStatement, @NotBlank String contactInfo, boolean visibleInBrowser) {
+        super(interestedTopicsAndSkills, specialization, objectiveStatement, contactInfo);
         this.visibleInBrowser = visibleInBrowser;
     }
 

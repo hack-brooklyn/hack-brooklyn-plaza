@@ -50,6 +50,12 @@ public class TeamFormationParticipant {
     @NotNull
     private String objectiveStatement;
 
+    @Column(name = "contact_info")
+    @Size(min = 1, max = 200)
+    @NotBlank
+    @NotNull
+    private String contactInfo;
+
     @Column(name = "visible_in_browser")
     @NotNull
     private boolean visibleInBrowser;

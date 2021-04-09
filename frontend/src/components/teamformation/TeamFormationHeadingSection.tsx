@@ -7,6 +7,7 @@ import {
   EditParticipantProfileModal,
   EditTeamProfileModal,
   ParticipantInboxModal,
+  TeamContactModal,
   TeamInboxModal
 } from 'components/teamformation';
 import { HeadingActions } from 'components';
@@ -33,6 +34,8 @@ import createTeamIcon from 'assets/icons/team-formation/create-team.svg';
 import mailboxIcon from 'assets/icons/mailbox.svg';
 import profileCardIcon from 'assets/icons/profile-card.svg';
 import profileCardMultiIcon from 'assets/icons/profile-card-multi.svg';
+import listIcon from 'assets/icons/list.svg';
+
 
 interface ParticipantHeadingContentsProps {
   participantData: TeamFormationParticipant;
@@ -184,6 +187,7 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
     setParticipantProfileEditorOpen
   ] = useState(false);
   const [teamProfileEditorOpen, setTeamProfileEditorOpen] = useState(false);
+  const [teamContactOpen, setTeamContactOpen] = useState(false);
 
   const teamHeadingActions: MenuAction[] = [
     {
@@ -203,6 +207,12 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
       text: 'Edit Team Profile',
       type: 'button',
       icon: profileCardMultiIcon
+    },
+    {
+      onClick: () => setTeamContactOpen(true),
+      text: 'Team Contact Info',
+      type: 'button',
+      icon: listIcon
     }
   ];
 
@@ -241,6 +251,7 @@ const TeamHeadingContents = (props: TeamHeadingContentsProps): JSX.Element => {
         show={teamProfileEditorOpen}
         setShow={setTeamProfileEditorOpen}
       />
+      <TeamContactModal show={teamContactOpen} setShow={setTeamContactOpen} />
     </>
   );
 };

@@ -65,7 +65,8 @@ const TeamFormationParticipantSetup = (): JSX.Element => {
   const initialValues: TeamFormationParticipantFormData = {
     interestedTopicsAndSkills: [],
     specialization: '',
-    objectiveStatement: ''
+    objectiveStatement: '',
+    contactInfo: ''
   };
 
   useEffect(() => {

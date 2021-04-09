@@ -746,6 +746,7 @@ public class TeamFormationServiceImpl implements TeamFormationService {
     private void setCommonParticipantDataAndSave(TeamFormationParticipantFormDataDTO submittedData, TeamFormationParticipant participant) {
         participant.setSpecialization(submittedData.getSpecialization());
         participant.setObjectiveStatement(submittedData.getObjectiveStatement());
+        participant.setContactInfo(submittedData.getContactInfo());
 
         Set<String> topicAndSkillNames = submittedData.getInterestedTopicsAndSkills();
         Set<TopicOrSkill> topicsAndSkills = getTopicsAndSkillsFromNames(topicAndSkillNames);

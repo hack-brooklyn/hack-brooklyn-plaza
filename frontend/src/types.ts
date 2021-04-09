@@ -364,6 +364,7 @@ export interface TeamFormationCommonFormData {
 export interface TeamFormationParticipantFormData
   extends TeamFormationCommonFormData {
   specialization: string;
+  contactInfo: string;
 }
 
 export interface TeamFormationParticipantFormDataWithBrowserVisibility

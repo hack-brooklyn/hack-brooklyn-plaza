@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+  ParticipantContactInfoField,
   ParticipantObjectiveStatementField,
   ParticipantSpecializationField
 } from 'components/teamformation/TeamFormationFormFields';
@@ -33,6 +34,12 @@ const ParticipantStepTwo = (props: ParticipantSetupStepProps): JSX.Element => {
         <ParticipantObjectiveStatementField
           controlId="tfpsObjectiveStatement"
           fieldName="objectiveStatement"
+          formik={formik}
+        />
+
+        <ParticipantContactInfoField
+          controlId="tfpsContactInfo"
+          fieldName="contactInfo"
           formik={formik}
         />
       </SetupContent>
