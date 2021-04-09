@@ -776,7 +776,6 @@ public class TeamFormationServiceImpl implements TeamFormationService {
                 topicsAndSkills.add(savedTopicOrSkill);
             }
         }
-
         return topicsAndSkills;
     }
 }
