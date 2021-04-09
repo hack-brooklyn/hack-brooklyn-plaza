@@ -92,6 +92,7 @@ const CreateTeamModal = (props: CommonModalProps): JSX.Element => {
       toast.success('Your team has been created!');
       dispatch(refreshHeadingSectionData());
       setShow(false);
+      history.push('/teamformation');
     } else if (res.status === 409) {
       throw new TeamFormationTeamNameConflictError();
     } else if (res.status === 400) {

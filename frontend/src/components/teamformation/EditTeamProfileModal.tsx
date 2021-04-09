@@ -179,6 +179,7 @@ const EditTeamProfileModal = (props: CommonModalProps): JSX.Element => {
       toast.success('Your team has been deleted.');
       dispatch(refreshHeadingSectionData());
       setShow(false);
+      history.push('/teamformation');
     } else if (res.status === 404) {
       throw new TeamFormationParticipantNotInTeamError();
     } else if (res.status === 400) {
@@ -224,6 +225,7 @@ const EditTeamProfileModal = (props: CommonModalProps): JSX.Element => {
       toast.success('You have left the team.');
       dispatch(refreshHeadingSectionData());
       setShow(false);
+      history.push('/teamformation');
     } else if (res.status === 404) {
       throw new TeamFormationParticipantNotInTeamError();
     } else if (res.status === 400) {
