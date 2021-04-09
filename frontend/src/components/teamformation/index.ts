@@ -8,4 +8,5 @@ export { default as ParticipantInboxModal } from './ParticipantInboxModal';
 export { default as EditTeamProfileModal } from './EditTeamProfileModal';
 export { default as EditParticipantProfileModal } from './EditParticipantProfileModal';
 export { default as CreateTeamModal } from './CreateTeamModal';
+export { default as TeamContactModal } from './TeamContactModal';
 export { default as TeamFormationHeadingSection } from './TeamFormationHeadingSection';
