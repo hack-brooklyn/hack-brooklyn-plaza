@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import {
+  ParticipantContactInfoField,
   ParticipantObjectiveStatementField,
   ParticipantSpecializationField,
   ShowParticipantOnBrowserCheckbox,
@@ -147,7 +148,8 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
                   participantData.interestedTopicsAndSkills,
                 specialization: participantData.specialization,
                 objectiveStatement: participantData.objectiveStatement,
-                visibleInBrowser: participantData.visibleInBrowser
+                visibleInBrowser: participantData.visibleInBrowser,
+                contactInfo: participantData.contactInfo,
               }}
               onSubmit={updateProfile}
             >
@@ -177,6 +179,12 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
                   <ParticipantObjectiveStatementField
                     controlId="tfpeObjectiveStatement"
                     fieldName="objectiveStatement"
+                    formik={formik}
+                  />
+
+                  <ParticipantContactInfoField
+                    controlId="tfpeContactInfo"
+                    fieldName="contactInfo"
                     formik={formik}
                   />
 

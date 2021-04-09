@@ -44,6 +44,7 @@ interface ParticipantAndTeamSetupFormData {
   participantInterestedTopicsAndSkills: string[];
   participantSpecialization: string;
   participantObjectiveStatement: string;
+  participantContactInfo: string;
 
   // Team
   teamName: string;
@@ -102,6 +103,7 @@ const TeamFormationTeamSetup = (): JSX.Element => {
     participantInterestedTopicsAndSkills: [],
     participantSpecialization: '',
     participantObjectiveStatement: '',
+    participantContactInfo: '',
 
     // Team
     teamName: '',
@@ -148,7 +150,8 @@ const TeamFormationTeamSetup = (): JSX.Element => {
         interestedTopicsAndSkills:
           formData.participantInterestedTopicsAndSkills,
         specialization: formData.participantSpecialization,
-        objectiveStatement: formData.participantObjectiveStatement
+        objectiveStatement: formData.participantObjectiveStatement,
+        contactInfo: formData.participantContactInfo,
       },
       team: {
         name: formData.teamName,

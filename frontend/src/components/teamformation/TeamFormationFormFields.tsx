@@ -121,6 +121,28 @@ export const ParticipantObjectiveStatementField = (
   );
 };
 
+export const ParticipantContactInfoField = (
+  props: FormikModularFieldProps
+): JSX.Element => {
+  const { controlId, fieldName, formik } = props;
+
+  return (
+    <SetupFormGroup controlId={controlId}>
+      <RequiredFormLabel>Contact Info</RequiredFormLabel>
+      <FastField
+        as="textarea"
+        className="form-control"
+        name={fieldName}
+        rows="2"
+        maxlength="200"
+        placeholder="Enter the best way to contact you, such as your Discord. Will only be shown to your team members."
+        disabled={formik.isSubmitting}
+        required
+      />
+    </SetupFormGroup>
+  );
+};
+
 export const ShowParticipantOnBrowserCheckbox = (
   props: ParticipantBrowserVisibilityFieldProps
 ): JSX.Element => {

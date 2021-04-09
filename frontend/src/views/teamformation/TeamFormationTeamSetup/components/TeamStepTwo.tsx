@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import {
+  ParticipantContactInfoField,
   ParticipantObjectiveStatementField,
   ParticipantSpecializationField
 } from 'components/teamformation/TeamFormationFormFields';
@@ -37,6 +38,11 @@ const TeamStepTwo = (props: TeamSetupStepProps): JSX.Element => {
       return;
     }
 
+    if (formik.values.participantContactInfo.length < 1) {
+      handleInvalidFormData('Please enter your contact info.');
+      return;
+    }
+
     setIsProceeding(false);
     setCurrentStep(3);
   };
@@ -64,6 +70,12 @@ const TeamStepTwo = (props: TeamSetupStepProps): JSX.Element => {
           controlId="tftsParticipantObjectiveStatement"
           fieldName="participantObjectiveStatement"
           placeholder="Assume that you were looking for teams to join. In under 200 characters, describe what you would look for in those teams, as well as your skills, interests, ideas, or anything else you would want teams to know about you."
+          formik={formik}
+        />
+
+        <ParticipantContactInfoField
+          controlId="tftsContactInfo"
+          fieldName="participantContactInfo"
           formik={formik}
         />
       </SetupContent>
