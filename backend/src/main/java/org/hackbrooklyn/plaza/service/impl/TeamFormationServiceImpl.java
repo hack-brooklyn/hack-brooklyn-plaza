@@ -608,14 +608,17 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             throw new TeamFormationNoPermissionException();
         }
 
-        // Send an invitation to the invited participant
-        MessageDTO invitationMessage = new MessageDTO(
-                String.format(
-                        "The team you requested to join, %s, has sent you an invitation!",
-                        foundJoinRequest.getRequestedTeam().getName()
-                )
-        );
-        inviteParticipantToTeam(foundJoinRequest.getRequestingParticipant().getId(), invitationMessage, user);
+        if (requestAccepted) {
+            // Send an invitation to the invited participant
+            MessageDTO invitationMessage = new MessageDTO(
+                    String.format(
+                            "The team you requested to join, %s, has sent you an invitation!",
+                            foundJoinRequest.getRequestedTeam().getName()
+                    )
+            );
+
+            inviteParticipantToTeam(foundJoinRequest.getRequestingParticipant().getId(), invitationMessage, user);
+        }
 
         foundJoinRequest.setRequestAccepted(requestAccepted);
         teamFormationTeamJoinRequestRepository.save(foundJoinRequest);
