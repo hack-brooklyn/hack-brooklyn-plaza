@@ -1,13 +1,21 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
 import { LinkContainer } from 'react-router-bootstrap';
+import styled from 'styled-components/macro';
+import Button from 'react-bootstrap/Button';
 import { ButtonVariant } from 'react-bootstrap/types';
 
-interface LinkButtonProps {
+import { ButtonActiveOverrideStyles } from 'common/styles/commonStyles';
+
+interface StyledButtonProps {
+  overrideActiveStyles?: boolean;
+}
+
+export interface LinkButtonProps extends StyledButtonProps {
   to: string;
   size?: 'sm' | 'lg' | undefined;
   variant?: ButtonVariant;
   children?: React.ReactNode;
+  className?: string;
 }
 
 const LinkButton = (props: LinkButtonProps): JSX.Element => {
@@ -15,11 +23,16 @@ const LinkButton = (props: LinkButtonProps): JSX.Element => {
 
   return (
     <LinkContainer to={to}>
-      <Button variant={variant} size={size} {...props}>
+      <StyledButton variant={variant} size={size} {...props}>
         {children}
-      </Button>
+      </StyledButton>
     </LinkContainer>
   );
 };
+
+const StyledButton = styled(Button)`
+  ${(props: StyledButtonProps) =>
+    props.overrideActiveStyles === true && ButtonActiveOverrideStyles};
+`;
 
 export default LinkButton;

@@ -16,6 +16,8 @@ export enum Resources {
   SavedEvents = 'SAVED_EVENTS',
   ScheduleBuilder = 'SCHEDULE_BUILDER',
   TeamFormation = 'TEAM_FORMATION',
+  TeamFormationParticipants = 'TEAM_FORMATION_PARTICIPANTS',
+  TeamFormationTeams = 'TEAM_FORMATION_TEAMS',
   Users = 'USERS'
 }
 
@@ -67,8 +69,17 @@ const grants = {
     [Resources.ScheduleBuilder]: {
       'read:any': ['*']
     },
-    [Resources.TeamFormation]: {
-      'read:any': ['*']
+    [Resources.TeamFormationParticipants]: {
+      'create:own': ['*'],
+      'read:any': ['*'],
+      'update:own': ['*'],
+      'delete:own': ['*']
+    },
+    [Resources.TeamFormationTeams]: {
+      'create:own': ['*'],
+      'read:any': ['*'],
+      'update:own': ['*'],
+      'delete:own': ['*']
     },
     [Resources.Users]: {
       'create:any': ['*'],
@@ -89,6 +100,18 @@ const grants = {
     [Resources.SavedEvents]: {
       'create:own': ['*'],
       'read:own': ['*'],
+      'delete:own': ['*']
+    },
+    [Resources.TeamFormationParticipants]: {
+      'create:own': ['*'],
+      'read:any': ['*'],
+      'update:own': ['*'],
+      'delete:own': ['*']
+    },
+    [Resources.TeamFormationTeams]: {
+      'create:own': ['*'],
+      'read:any': ['*'],
+      'update:own': ['*'],
       'delete:own': ['*']
     }
   },

@@ -2,13 +2,13 @@ package org.hackbrooklyn.plaza.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.opencsv.bean.CsvIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import org.hackbrooklyn.plaza.util.LocalDateTimeWithUTCSerializer;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.hackbrooklyn.plaza.serializer.LocalDateTimeWithUTCSerializer;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
@@ -22,9 +22,11 @@ import java.time.LocalDateTime;
  * Represents a submitted application for the hackathon.
  */
 @Entity
-@Data
 @Table(name = "applications")
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class SubmittedApplication {
 
     // Internal data
@@ -130,7 +132,6 @@ public class SubmittedApplication {
     // accept it to submit the application in the first place.
     @Transient
     @NotNull
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @CsvIgnore
     private boolean acceptTocAndCoc;
 

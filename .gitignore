@@ -328,4 +328,6 @@ target/
 
 ## Other
 *.env
+*.sql
+*.sh
 dev/

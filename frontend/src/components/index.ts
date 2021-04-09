@@ -1,7 +1,9 @@
 export { default as BurgerMenu } from './BurgerMenu';
+export { default as BadgeBS5 } from './BadgeBS5';
 export { default as Date } from './Date';
 export { default as HeadingActions } from './HeadingActions';
 export { default as HeadingButton } from './HeadingButton';
+export { default as LinkBadge } from './LinkBadge';
 export { default as LinkButton } from './LinkButton';
 export { default as LinkButtonNavItem } from './LinkButtonNavItem';
 export { default as LinkNavItem } from './LinkNavItem';
@@ -9,5 +11,4 @@ export { default as Navbar } from './Navbar';
 export { default as ProfileDropdownMenu } from './ProfileDropdownMenu';
 export { default as RequiredAsterisk } from './RequiredAsterisk';
 export { default as RequiredFormLabel } from './RequiredFormLabel';
-export { default as Announcement } from './Announcement';
-export { default as AnnouncementBrowser } from './AnnouncementBrowser';
+export { default as MultiSelect } from './MultiSelect';

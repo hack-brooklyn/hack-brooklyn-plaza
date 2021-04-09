@@ -9,7 +9,7 @@ import NavLink from 'react-bootstrap/NavLink';
 
 import { LinkNavItem } from 'components';
 import { AdminNavItems, LoggedInNavItems, LoggedOutNavItems } from 'components/Navbar';
-import { Logo } from 'commonStyles';
+import { Logo } from 'common/styles/commonStyles';
 import { handleLogOut } from 'util/auth';
 import { Roles } from 'security/accessControl';
 import { Breakpoints, RootState } from 'types';

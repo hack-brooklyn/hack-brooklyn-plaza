@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.ApplicationNumbersDTO;
 import org.hackbrooklyn.plaza.dto.LinkDTO;
-import org.hackbrooklyn.plaza.dto.MultipleApplicationsResponse;
+import org.hackbrooklyn.plaza.dto.MultipleApplicationsDTO;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
 import org.hackbrooklyn.plaza.model.SubmittedApplication.Decision;
 import org.hackbrooklyn.plaza.service.ApplicationsService;
@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import static org.hackbrooklyn.plaza.model.SubmittedApplication.ExportFormat;
 
-
 @Slf4j
 @Validated
 @RestController
@@ -41,12 +40,12 @@ public class ApplicationsController {
 
     @PreAuthorize("hasAuthority(@authorities.APPLICATIONS_READ)")
     @GetMapping
-    public ResponseEntity<MultipleApplicationsResponse> getMultipleApplications(
+    public ResponseEntity<MultipleApplicationsDTO> getMultipleApplications(
             @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "25") @Min(1) int limit,
             @RequestParam(required = false) String searchQuery,
             @RequestParam(required = false) Decision decision) {
-        MultipleApplicationsResponse foundApplications = applicationsService.getMultipleApplications(page, limit, searchQuery, decision);
+        MultipleApplicationsDTO foundApplications = applicationsService.getMultipleApplications(page, limit, searchQuery, decision);
 
         return new ResponseEntity<>(foundApplications, HttpStatus.OK);
     }

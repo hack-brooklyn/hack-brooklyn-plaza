@@ -55,6 +55,15 @@ public class Roles {
                 Authorities.SAVED_EVENTS_REMOVE,
                 Authorities.SAVED_EVENTS_READ,
 
+                // Team Formation
+                Authorities.TEAM_FORMATION_CREATE_TEAM,
+                Authorities.TEAM_FORMATION_CREATE_PARTICIPANT,
+                Authorities.TEAM_FORMATION_READ_TEAM,
+                Authorities.TEAM_FORMATION_READ_PARTICIPANT,
+                Authorities.TEAM_FORMATION_UPDATE_TEAM,
+                Authorities.TEAM_FORMATION_UPDATE_PARTICIPANT,
+                Authorities.TEAM_FORMATION_DELETE_TEAM,
+
                 // Users
                 Authorities.USERS_CREATE,
                 Authorities.USERS_UPDATE_ROLE
@@ -79,7 +88,16 @@ public class Roles {
                 // Saved Events
                 Authorities.SAVED_EVENTS_ADD,
                 Authorities.SAVED_EVENTS_REMOVE,
-                Authorities.SAVED_EVENTS_READ
+                Authorities.SAVED_EVENTS_READ,
+
+                // Team Formation
+                Authorities.TEAM_FORMATION_CREATE_TEAM,
+                Authorities.TEAM_FORMATION_CREATE_PARTICIPANT,
+                Authorities.TEAM_FORMATION_READ_TEAM,
+                Authorities.TEAM_FORMATION_READ_PARTICIPANT,
+                Authorities.TEAM_FORMATION_UPDATE_TEAM,
+                Authorities.TEAM_FORMATION_UPDATE_PARTICIPANT,
+                Authorities.TEAM_FORMATION_DELETE_TEAM
         );
 
         // Applicants

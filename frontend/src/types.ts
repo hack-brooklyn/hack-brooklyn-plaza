@@ -1,5 +1,8 @@
+import React from 'react';
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { FormikProps } from 'formik';
+
 import { Roles } from 'security/accessControl';
 import {
   ADVANCE_APPLICATION_INDEX,
@@ -9,6 +12,7 @@ import {
   EXIT_APPLICATION_REVIEW_MODE,
   LOG_IN,
   LOG_OUT,
+  REFRESH_HEADING_SECTION_DATA,
   SET_APPLICATIONS_LOADING,
   SET_JWT_ACCESS_TOKEN,
   SET_USER_DATA,
@@ -22,11 +26,16 @@ export interface RootState {
   auth: AuthState;
   user: UserState;
   applicationReview: ApplicationReviewState;
+  teamFormation: TeamFormationState;
   burgerMenu: { isOpen: boolean };
 }
 
-export type AppThunk<ReturnType = void> =
-  ThunkAction<ReturnType, RootState, unknown, Action<string>>
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;
 
 // General app state
 export interface AppState {
@@ -125,12 +134,23 @@ interface SetApplicationsLoadingAction {
 }
 
 export type ApplicationReviewActionTypes =
-  EnterApplicationReviewModeAction
+  | EnterApplicationReviewModeAction
   | EnterApplicationReviewModeSuccessAction
   | EnterApplicationReviewModeFailureAction
   | ExitApplicationReviewModeAction
   | AdvanceApplicationIndexAction
   | SetApplicationsLoadingAction;
+
+// Team Formation
+export interface TeamFormationState {
+  toggleHeadingSectionDataRefresh: boolean;
+}
+
+interface RefreshHeadingSectionDataAction {
+  type: typeof REFRESH_HEADING_SECTION_DATA;
+}
+
+export type TeamFormationActionTypes = RefreshHeadingSectionDataAction;
 
 // General Types
 // The access token returned from an authentication response
@@ -144,14 +164,18 @@ export interface Option {
   label: string;
 }
 
-// A user's full name with their email address.
-export interface UserIdentity {
+// A user's first and last name.
+export interface UserFullName {
   firstName: string;
   lastName: string;
+}
+
+// A user's full name with their email address.
+export interface UserIdentity extends UserFullName {
   email: string;
 }
 
-// The form data for submitting an email as a request.
+// Holds an email only.
 export interface EmailData {
   email: string;
 }
@@ -166,6 +190,11 @@ export interface SetPasswordData {
 export interface KeyPasswordData {
   key: string;
   password: string;
+}
+
+// Holds a message for a team join request or a participant invitation.
+export interface MessageData {
+  message: string;
 }
 
 // Hackathon Applications
@@ -253,11 +282,28 @@ export interface SubmittedApplicationLite extends SubmittedApplicationCommon {
   applicationNumber: number;
 }
 
-export interface GetApplicationsRequestParams {
+export interface PageableSearchParams {
   page?: number;
   limit?: number;
-  decision?: ApplicationDecisions;
   searchQuery?: string;
+}
+
+export interface GetApplicationsRequestParams extends PageableSearchParams {
+  decision?: ApplicationDecisions;
+}
+
+export interface TeamFormationSearchParams extends PageableSearchParams {
+  personalized?: boolean;
+}
+
+export interface TeamFormationTeamSearchParams
+  extends TeamFormationSearchParams {
+  hideSentJoinRequests?: boolean;
+}
+
+export interface TeamFormationParticipantSearchParams
+  extends TeamFormationSearchParams {
+  hideSentInvitations?: boolean;
 }
 
 export interface GetApplicationsResponse {
@@ -275,12 +321,116 @@ export interface MenuAction {
   type: 'anchor' | 'link' | 'button';
   text: string;
   link?: string;
-  onClick?: () => void;
+  onClick?(...args: any[]): void;
   icon: string;
+}
+
+export interface ModularFieldProps {
+  controlId: string;
+  fieldName: string;
+  disabled?: boolean;
+  children?: React.ReactNode;
+  placeholder?: string;
+}
+
+export interface FormikModularFieldProps extends ModularFieldProps {
+  formik: FormikProps<any>;
+}
+
+export interface CommonModalProps {
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface CommonTeamFormationCardProps {
+  showActionButton?: boolean;
+  className?: string;
 }
 
 export interface PageParams {
   applicationNumberParam?: string;
+}
+
+export interface TeamFormationCommon {
+  id: number;
+  visibleInBrowser: boolean;
+}
+
+export interface TeamFormationCommonFormData {
+  interestedTopicsAndSkills: string[];
+  objectiveStatement: string;
+}
+
+export interface TeamFormationParticipantFormData
+  extends TeamFormationCommonFormData {
+  specialization: string;
+  contactInfo: string;
+}
+
+export interface TeamFormationParticipantFormDataWithBrowserVisibility
+  extends TeamFormationParticipantFormData {
+  visibleInBrowser: boolean;
+}
+
+export interface TeamFormationTeamFormData extends TeamFormationCommonFormData {
+  name: string;
+  size: number;
+}
+
+export interface TeamFormationParticipant
+  extends TeamFormationParticipantFormData,
+    TeamFormationCommon {
+  team: TeamFormationTeam;
+  user: UserFullName;
+}
+
+export interface TeamFormationTeam
+  extends TeamFormationTeamFormData,
+    TeamFormationCommon {
+  leader: number;
+  members: TeamFormationParticipant[];
+}
+
+export interface TeamFormationTeamFormDataWithBrowserVisibility
+  extends TeamFormationTeamFormData {
+  visibleInBrowser: boolean;
+}
+
+export interface TeamFormationTeamSearchResponse {
+  teams: TeamFormationTeam[];
+  pages: number;
+  totalFoundTeams: number;
+}
+
+export interface TeamFormationParticipantSearchResponse {
+  participants: TeamFormationParticipant[];
+  pages: number;
+  totalFoundParticipants: number;
+}
+
+export interface IdsResponse {
+  ids: number[];
+}
+
+export interface TeamFormationJoinRequest {
+  requestId: number;
+  requestingParticipant: TeamFormationParticipant;
+  message: string;
+  requestAccepted: boolean;
+  requestTimestamp: Date;
+}
+
+export interface TeamFormationParticipantInvitation {
+  invitationId: number;
+  invitingTeam: TeamFormationTeam;
+  message: string;
+  invitationAccepted: boolean;
+  invitationTimestamp: Date;
+}
+
+export interface AnnouncementData {
+  body: string;
+  participantsOnly: boolean;
 }
 
 export const roleOptions: Option[] = [
@@ -327,7 +477,8 @@ export class ConnectionError extends Error {
   constructor() {
     super();
     this.name = 'ConnectionError';
-    this.message = 'An error occurred while connecting to the server. Please check your Internet connection and try again.';
+    this.message =
+      'An error occurred while connecting to the server. Please check your Internet connection and try again.';
   }
 }
 
@@ -336,7 +487,8 @@ export class AuthenticationError extends Error {
   constructor() {
     super();
     this.name = 'AuthenticationError';
-    this.message = 'An error occurred while trying to authenticate your account. Please refresh the page or log out and in and try again.';
+    this.message =
+      'An error occurred while trying to authenticate your account. Please refresh the page or log out and in and try again.';
   }
 }
 
@@ -345,7 +497,8 @@ export class InvalidCredentialsError extends Error {
   constructor() {
     super();
     this.name = 'InvalidCredentialsError';
-    this.message = 'The email or password you entered is incorrect. Please try again.';
+    this.message =
+      'The email or password you entered is incorrect. Please try again.';
   }
 }
 
@@ -372,7 +525,8 @@ export class PasswordTooShortError extends Error {
   constructor() {
     super();
     this.name = 'PasswordTooShortError';
-    this.message = 'The password you entered is too short. Please choose a password that is 12 characters or longer.';
+    this.message =
+      'The password you entered is too short. Please choose a password that is 12 characters or longer.';
   }
 }
 
@@ -381,7 +535,8 @@ export class NoPermissionError extends Error {
   constructor() {
     super();
     this.name = 'NoPermissionError';
-    this.message = 'You do not have access to this part of Hack Brooklyn Plaza.';
+    this.message =
+      'You do not have access to this part of Hack Brooklyn Plaza.';
   }
 }
 
@@ -410,7 +565,7 @@ export class RoleNotFoundError extends Error {
   constructor() {
     super();
     this.name = 'RoleNotFoundError';
-    this.message = 'A user role hasn\'t been assigned to you. Please contact us for further assistance.';
+    this.message = `A user role hasn't been assigned to you. Please contact us for further assistance.`;
   }
 }
 
@@ -438,5 +593,76 @@ export class UserNotFoundError extends Error {
     super();
     this.name = 'UserNotFoundError';
     this.message = 'No user with the data you provided was found.';
+  }
+}
+
+// Thrown when a team formation participant profile has already been set up.
+export class TeamFormationParticipantAlreadyExistsError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantAlreadyExistsError';
+    this.message = 'You already have a team formation participant profile.';
+  }
+}
+
+// Thrown when a team formation participant tries to send a request to a team they already sent one to.
+export class TeamFormationTeamJoinRequestAlreadySentError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamJoinRequestAlreadySentError';
+    this.message = 'You already sent this team a join request.';
+  }
+}
+
+// Thrown when a team formation team tries to send an invitation to a participant they already sent one to.
+export class TeamFormationParticipantInvitationAlreadySentError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantInvitationAlreadySentError';
+    this.message = 'Your team has already sent this participant an invitation.';
+  }
+}
+
+// Thrown when a team formation participant is not in a team.
+export class TeamFormationParticipantNotInTeamError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantNotInTeamError';
+    this.message = 'You must be in a team formation team to use this feature.';
+  }
+}
+
+// Thrown when a team formation participant is not in a team.
+export class TeamFormationParticipantNotSetUpError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationParticipantNotSetUpError';
+    this.message =
+      'Please set up your team formation participant profile to access this feature.';
+  }
+}
+
+export class TeamFormationTeamNameConflictError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamNameConflictError';
+    this.message =
+      'A team with this name already exists. Please choose another one.';
+  }
+}
+
+export class TeamFormationTeamFullError extends Error {
+  constructor() {
+    super();
+    this.name = 'TeamFormationTeamFullError';
+    this.message = 'Team is full.';
+  }
+}
+
+export class AnnouncementNotFoundError extends Error {
+  constructor() {
+    super();
+    this.name = 'AnnouncementNotFoundError';
+    this.message = 'The requested announcement does not exist';
   }
 }

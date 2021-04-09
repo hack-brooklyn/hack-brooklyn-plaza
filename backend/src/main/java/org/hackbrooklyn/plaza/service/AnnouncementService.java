@@ -9,6 +9,8 @@ public interface AnnouncementService {
 
     Collection<Announcement> getMultipleAnnouncements(boolean participant, int page, int limit);
 
+    Announcement getAnnouncementById(boolean participant, int announcementId);
+
     int createNewAnnouncement(String body, boolean participantsOnly, User author);
 
     void updateAnnouncement(int id, String body, boolean participantsOnly);

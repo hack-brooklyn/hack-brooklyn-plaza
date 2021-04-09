@@ -198,4 +198,114 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TeamFormationParticipantAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantAlreadyExistsException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "You have already created a team formation participant profile.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TeamFormationParticipantNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No team formation participant was found.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TeamFormationParticipantNotInTeamException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantNotInTeamException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "You are not in a team formation team.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TeamFormationTeamNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationTeamNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No team formation team was found.");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TeamFormationTeamJoinRequestAlreadySentException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationTeamJoinRequestAlreadySentException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "You have already sent a join request to this team.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TeamFormationParticipantInvitationAlreadySentException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantInvitationAlreadySentException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "Your team has already sent an invitation to this participant.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(TeamFormationTeamNameConflictException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationTeamNameConflictException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "A team with this name already exists.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TeamFormationParticipantAlreadyInTeamException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationParticipantAlreadyInTeamException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The participant is already in a team.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TeamFormationTeamFullException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationTeamFullException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The participant is already in a team.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    // 403 Forbidden is already used to check if the user is able to access team formation at all
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TeamFormationNoPermissionException.class)
+    public ResponseEntity<Map<String, String>> handleTeamFormationNoPermissionException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "You do not have permission to perform this action.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(AnnouncementNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleAnnouncementNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "No announcement was found with the requested id");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EventNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleEventNotFoundException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "The requested event does not exists");
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
 }

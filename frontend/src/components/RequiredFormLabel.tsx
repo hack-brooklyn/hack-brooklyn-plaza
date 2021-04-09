@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { StyledFormLabel } from 'commonStyles';
+import { StyledFormLabel } from 'common/styles/commonStyles';
 
 export interface RequiredFormLabelProps {
   children: React.ReactNode;

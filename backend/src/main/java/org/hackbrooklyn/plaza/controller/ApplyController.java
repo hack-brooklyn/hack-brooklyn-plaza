@@ -12,10 +12,7 @@ import org.hackbrooklyn.plaza.service.ApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ConstraintViolation;
@@ -31,13 +28,13 @@ import java.util.Set;
 @RequestMapping("/apply")
 public class ApplyController {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
+    private final ObjectMapper objectMapper;
     private final ApplyService applyService;
     private final Validator validator;
 
     @Autowired
-    public ApplyController(ApplyService applyService) {
+    public ApplyController(ObjectMapper objectMapper, ApplyService applyService) {
+        this.objectMapper = objectMapper;
         this.applyService = applyService;
         this.validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
@@ -45,11 +42,13 @@ public class ApplyController {
     // There are two parts to the uploaded application - the resume file and the submitted application data.
     // The submitted application data is serialized to JSON by the client to retain strong data typing
     @PostMapping
-    public ResponseEntity<Void> processApplication(@Valid ApplicationFormRequest applicationFormRequest) throws Exception {
+    public ResponseEntity<Void> processApplication(
+            @RequestParam("formDataJson") String formDataJson,
+            @RequestParam(value = "resumeFile", required = false) MultipartFile resumeFile
+    ) throws Exception {
         // Parse the JSON from submitted form multipart data
         ObjectReader reader = objectMapper.reader();
-        SubmittedApplication parsedApplication = reader.readValue(applicationFormRequest.getFormDataJson(), SubmittedApplication.class);
-        MultipartFile resumeFile = applicationFormRequest.getResumeFile();
+        SubmittedApplication parsedApplication = reader.readValue(formDataJson, SubmittedApplication.class);
 
         // Because the submitted data is JSON serialized in a multipart form field, we can't automatically verify it
         // Validate the parsed body input before submitting
