@@ -133,9 +133,9 @@ export const ParticipantContactInfoField = (
         as="textarea"
         className="form-control"
         name={fieldName}
-        rows="2"
+        rows="5"
         maxlength="200"
-        placeholder="Enter the best way to contact you, such as your Discord. Will only be shown to your team members."
+        placeholder="Enter the best way for potential team members to contact you. For your safety, do not provide personal contact information (such as your email or phone number) and instead provide publicly available contact methods (like Discord)."
         disabled={formik.isSubmitting}
         required
       />
