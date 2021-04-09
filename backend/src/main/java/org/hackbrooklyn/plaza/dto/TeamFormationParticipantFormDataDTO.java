@@ -25,4 +25,7 @@ public class TeamFormationParticipantFormDataDTO {
 
     @NotBlank
     private String objectiveStatement;
+
+    @NotBlank
+    private String contactInfo;
 }
