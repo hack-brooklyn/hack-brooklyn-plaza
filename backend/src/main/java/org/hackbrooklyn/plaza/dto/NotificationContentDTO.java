@@ -11,4 +11,7 @@ public class NotificationContentDTO {
 
     private String title;
     private String body;
+    private String tag;
+    private boolean renotify;
+    private boolean silent;
 }

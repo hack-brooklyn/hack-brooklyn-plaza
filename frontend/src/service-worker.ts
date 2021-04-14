@@ -21,6 +21,9 @@ declare const self: ServiceWorkerGlobalScope;
 interface NotificationContent {
   title: string;
   body: string;
+  tag: string;
+  renotify: boolean;
+  silent: boolean;
 }
 
 clientsClaim();
@@ -92,7 +95,10 @@ self.addEventListener('push', (e) => {
 
     const notificationOptions: NotificationOptions = {
       body: notificationData.body,
-      icon: logo
+      icon: logo,
+      tag: notificationData.tag,
+      renotify: notificationData.renotify,
+      silent: notificationData.silent
     };
 
     const promiseChain = self.registration.showNotification(
@@ -107,8 +113,42 @@ self.addEventListener('notificationclick', function (e) {
   const notification = e.notification;
   notification.close();
 
-  const promiseChain = self.clients.openWindow(
-    'https://plaza.hackbrooklyn.org'
-  );
+  // Open the correct route depending on the tag, or to the homepage otherwise
+  let targetPath = '';
+  const tag = e.notification.tag;
+  if (tag.startsWith('announcement-')) {
+    targetPath = '/announcements';
+  } else if (tag.startsWith('teamformation-')) {
+    targetPath = '/teamformation';
+  }
+
+  const urlToOpen = new URL(
+    `https://plaza.hackbrooklyn.org${targetPath}`,
+    self.location.origin
+  ).href;
+
+  const promiseChain = self.clients
+    .matchAll({
+      type: 'window',
+      includeUncontrolled: true
+    })
+    .then((windowClients) => {
+      let matchingClient = null;
+
+      for (let i = 0; i < windowClients.length; i++) {
+        const windowClient = windowClients[i];
+        if (windowClient.url === urlToOpen) {
+          matchingClient = windowClient;
+          break;
+        }
+      }
+
+      if (matchingClient) {
+        return matchingClient.focus();
+      } else {
+        return self.clients.openWindow(urlToOpen);
+      }
+    });
+
   e.waitUntil(promiseChain);
 });
