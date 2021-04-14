@@ -36,7 +36,6 @@ import profileCardIcon from 'assets/icons/profile-card.svg';
 import profileCardMultiIcon from 'assets/icons/profile-card-multi.svg';
 import listIcon from 'assets/icons/list.svg';
 
-
 interface ParticipantHeadingContentsProps {
   participantData: TeamFormationParticipant;
 }
