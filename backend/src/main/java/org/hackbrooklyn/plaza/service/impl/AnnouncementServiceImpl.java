@@ -72,7 +72,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         NotificationContentDTO notification = new NotificationContentDTO(
                 "A new announcement has been posted!",
-                body
+                body,
+                String.format("announcement-posted-%s", newAnnouncement.getId()),
+                true,
+                false
         );
         pushNotificationUtils.sendBackgroundSimplePushNotificationToAllSubscribers(notification);
 
@@ -89,7 +92,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
         NotificationContentDTO notification = new NotificationContentDTO(
                 "An announcement has been updated!",
-                body
+                body,
+                String.format("announcement-updated-%s", announcement.getId()),
+                true,
+                false
         );
         pushNotificationUtils.sendBackgroundSimplePushNotificationToAllSubscribers(notification);
     }
