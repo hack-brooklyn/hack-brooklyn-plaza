@@ -11,6 +11,8 @@ import 'typeface-anonymous-pro';
 import 'normalize.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+
 import App from './App';
 
 export const API_ROOT = process.env.REACT_APP_API_ROOT ? process.env.REACT_APP_API_ROOT : '';
@@ -24,3 +26,5 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
+
+serviceWorkerRegistration.register();
