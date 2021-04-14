@@ -9,6 +9,7 @@ import org.hackbrooklyn.plaza.model.*;
 import org.hackbrooklyn.plaza.repository.*;
 import org.hackbrooklyn.plaza.repository.TeamFormationTeamJoinRequestRepository.RequestIdsOnly;
 import org.hackbrooklyn.plaza.service.TeamFormationService;
+import org.hackbrooklyn.plaza.util.PushNotificationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,15 +33,17 @@ public class TeamFormationServiceImpl implements TeamFormationService {
     private final TeamFormationParticipantInvitationRepository teamFormationParticipantInvitationRepository;
     private final TopicOrSkillRepository topicOrSkillRepository;
     private final EntityManager entityManager;
+    private final PushNotificationUtils pushNotificationUtils;
 
     @Autowired
-    public TeamFormationServiceImpl(TeamFormationParticipantRepository teamFormationParticipantRepository, TeamFormationTeamRepository teamFormationTeamRepository, TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository, TeamFormationParticipantInvitationRepository teamFormationParticipantInvitationRepository, TopicOrSkillRepository topicOrSkillRepository, EntityManager entityManager) {
+    public TeamFormationServiceImpl(TeamFormationParticipantRepository teamFormationParticipantRepository, TeamFormationTeamRepository teamFormationTeamRepository, TeamFormationTeamJoinRequestRepository teamFormationTeamJoinRequestRepository, TeamFormationParticipantInvitationRepository teamFormationParticipantInvitationRepository, TopicOrSkillRepository topicOrSkillRepository, EntityManager entityManager, PushNotificationUtils pushNotificationUtils) {
         this.teamFormationParticipantRepository = teamFormationParticipantRepository;
         this.teamFormationTeamRepository = teamFormationTeamRepository;
         this.teamFormationTeamJoinRequestRepository = teamFormationTeamJoinRequestRepository;
         this.teamFormationParticipantInvitationRepository = teamFormationParticipantInvitationRepository;
         this.topicOrSkillRepository = topicOrSkillRepository;
         this.entityManager = entityManager;
+        this.pushNotificationUtils = pushNotificationUtils;
     }
 
     @Override
@@ -474,6 +477,22 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         joinRequest.setMessage(requestData.getMessage());
 
         teamFormationTeamJoinRequestRepository.save(joinRequest);
+
+        // Send a push notification to each team member, but don't renotify to avoid spamming them with many requests at once
+        NotificationContentDTO notification = new NotificationContentDTO(
+                String.format("%s %s has requested to join your team.",
+                        requestingParticipant.getUser().getFirstName(),
+                        requestingParticipant.getUser().getLastName()),
+                requestData.getMessage(),
+                "teamformation-team-joinrequest-received",
+                false,
+                false
+        );
+
+        Set<User> teamMemberUsers = requestedTeam.getMembers().stream()
+                .map(TeamFormationParticipant::getUser)
+                .collect(Collectors.toSet());
+        pushNotificationUtils.sendBackgroundSimplePushNotificationToUsers(teamMemberUsers, notification);
     }
 
     @Override
@@ -505,12 +524,21 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         }
 
         TeamFormationParticipantInvitation participantInvitation = new TeamFormationParticipantInvitation();
-
         participantInvitation.setInvitingTeam(invitingTeam);
         participantInvitation.setInvitedParticipant(invitedParticipant);
         participantInvitation.setMessage(invitationData.getMessage());
 
         teamFormationParticipantInvitationRepository.save(participantInvitation);
+
+        // Send a push notification to the invited participant, but don't renotify to avoid spamming them with many requests at once
+        NotificationContentDTO notification = new NotificationContentDTO(
+                String.format("You have been invited to the team \"%s\".", invitingTeam.getName()),
+                invitationData.getMessage(),
+                "teamformation-participant-invitation-received",
+                false,
+                false
+        );
+        pushNotificationUtils.sendBackgroundSimplePushNotificationToUser(invitedParticipant.getUser(), notification);
     }
 
     @Override
@@ -609,15 +637,23 @@ public class TeamFormationServiceImpl implements TeamFormationService {
         }
 
         if (requestAccepted) {
-            // Send an invitation to the invited participant
-            MessageDTO invitationMessage = new MessageDTO(
-                    String.format(
-                            "The team you requested to join, %s, has sent you an invitation!",
-                            foundJoinRequest.getRequestedTeam().getName()
-                    )
-            );
+            TeamFormationParticipant requestingParticipant = foundJoinRequest.getRequestingParticipant();
+            String teamName = foundJoinRequest.getRequestedTeam().getName();
 
-            inviteParticipantToTeam(foundJoinRequest.getRequestingParticipant().getId(), invitationMessage, user);
+            // Send an invitation and push notification to the invited participant
+            MessageDTO invitationMessage = new MessageDTO(
+                    String.format("The team you requested to join, %s, has sent you an invitation!", teamName)
+            );
+            inviteParticipantToTeam(requestingParticipant.getId(), invitationMessage, user);
+
+            NotificationContentDTO notification = new NotificationContentDTO(
+                    String.format("The team \"%s\" has accepted your join request!", teamName),
+                    foundJoinRequest.getMessage(),
+                    String.format("teamformation-participant-joinrequest-accepted-%s", joinRequestId),
+                    true,
+                    false
+            );
+            pushNotificationUtils.sendBackgroundSimplePushNotificationToUser(requestingParticipant.getUser(), notification);
         }
 
         foundJoinRequest.setRequestAccepted(requestAccepted);
@@ -740,6 +776,23 @@ public class TeamFormationServiceImpl implements TeamFormationService {
             invitedParticipant.setTeam(savedInvitingTeam);
             invitedParticipant.setVisibleInBrowser(false);
             teamFormationParticipantRepository.save(invitedParticipant);
+
+            // Send a push notification to each team member about the acceptance
+            NotificationContentDTO notification = new NotificationContentDTO(
+                    String.format("%s %s has accepted your team's invitation!",
+                            invitedParticipant.getUser().getFirstName(),
+                            invitedParticipant.getUser().getLastName()),
+                    "Visit Team Formation and click \"Team Contact Info\" to contact your new team member.",
+                    String.format("teamformation-team-invitation-accepted-%s", invitationId),
+                    true,
+                    false
+            );
+
+            Set<User> teamMemberUsers = savedInvitingTeam.getMembers().stream()
+                    .filter(participant -> participant != invitedParticipant)  // Don't notify the new team member
+                    .map(TeamFormationParticipant::getUser)
+                    .collect(Collectors.toSet());
+            pushNotificationUtils.sendBackgroundSimplePushNotificationToUsers(teamMemberUsers, notification);
         }
 
         foundInvitation.setInvitationAccepted(invitationAccepted);

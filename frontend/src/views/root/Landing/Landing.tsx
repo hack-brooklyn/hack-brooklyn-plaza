@@ -38,7 +38,7 @@ const Landing = (): JSX.Element => {
         <StyledCol md>
           <ActionLink
             name="Activate"
-            description="Already accepted to Hack Brooklyn? Click here to activate your account and access Hack Brooklyn Plaza."
+            description="Already applied? Click here to activate your account and access Hack Brooklyn Plaza."
             link="/activate"
           />
         </StyledCol>

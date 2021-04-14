@@ -72,7 +72,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        System.out.println(environment.getProperty("FRONTEND_DOMAIN"));
         configuration.setAllowedOrigins(Collections.singletonList(environment.getProperty("FRONTEND_DOMAIN")));
         configuration.setAllowedMethods(Collections.singletonList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

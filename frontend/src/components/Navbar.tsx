@@ -14,7 +14,7 @@ import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'common/styles/c
 import { enumHasValue } from 'util/plazaUtils';
 import ac, { Resources, Roles } from 'security/accessControl';
 import { Breakpoints, RootState } from 'types';
-import { APPLICATIONS_ACTIVE, HACKATHON_ACTIVE } from 'index';
+import { APPLICATIONS_ACTIVE } from 'index';
 
 import logo from 'assets/logo.png';
 import burgerMenuIcon from 'assets/icons/burger-menu.svg';
@@ -90,11 +90,6 @@ export const LoggedInNavItems = (): JSX.Element => {
           {ac.can(userRole).readAny(Resources.ScheduleBuilder).granted && (
             <LinkNavItem to="/schedule">Schedule Builder</LinkNavItem>
           )}
-
-          {HACKATHON_ACTIVE &&
-            ac.can(userRole).readAny(Resources.MentorMatcher).granted && (
-              <LinkNavItem to="/mentorship">Mentor Matcher</LinkNavItem>
-            )}
         </>
       )}
     </>
