@@ -308,4 +308,12 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ClientAlreadySubscribedException.class)
+    public ResponseEntity<Map<String, String>> handleClientAlreadySubscribedException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "This client is already subscribed.");
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
 }
