@@ -35,6 +35,7 @@ jobs:
           BACKEND_DOMAIN: http://localhost:8080
           USER_ACTIVATION_KEY_EXPIRATION_TIME_MS: 3600000
           USER_PASSWORD_RESET_KEY_EXPIRATION_TIME_MS: 3600000
+          DISCORD_WEBHOOK=https://discord.com/api/webhooks
           DISCORD_URL: https://discord.com
           DEVPOST_URL: https://devpost.com
 
