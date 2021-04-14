@@ -21,6 +21,9 @@ declare const self: ServiceWorkerGlobalScope;
 interface NotificationContent {
   title: string;
   body: string;
+  tag: string;
+  renotify: boolean;
+  silent: boolean;
 }
 
 clientsClaim();
@@ -92,7 +95,10 @@ self.addEventListener('push', (e) => {
 
     const notificationOptions: NotificationOptions = {
       body: notificationData.body,
-      icon: logo
+      icon: logo,
+      tag: notificationData.tag,
+      renotify: notificationData.renotify,
+      silent: notificationData.silent
     };
 
     const promiseChain = self.registration.showNotification(
