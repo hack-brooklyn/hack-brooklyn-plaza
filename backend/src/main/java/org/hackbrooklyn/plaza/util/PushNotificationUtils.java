@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -78,7 +79,7 @@ public class PushNotificationUtils {
             try {
                 sendPushNotificationToSubscription(subscription, payload);
             } catch (Exception e) {
-                log.warn(String.format("Could not send push notification for subscription ID %s.",
+                log.warn(String.format("Could not send push notification for subscription ID: %s.",
                         subscription.getId()));
                 e.printStackTrace();
             }
@@ -86,32 +87,55 @@ public class PushNotificationUtils {
     }
 
     /**
-     * A simplified way to send a push notification in a separate thread.
+     * A simplified way to send a push notification to all subscribers in a separate thread.
      *
-     * @param notificationContent The notification's title and body to send.
+     * @param notificationContent The notification's content to send.
      */
     public void sendBackgroundSimplePushNotificationToAllSubscribers(NotificationContentDTO notificationContent) {
         new Thread(() -> {
             try {
                 sendPushNotificationToAllSubscribers(objectMapper.writeValueAsBytes(notificationContent));
             } catch (Exception e) {
-                log.warn("Could not send push notification to all subscribers.");
+                log.warn("Could not send simple push notification to all subscribers.");
                 e.printStackTrace();
             }
         }).start();
     }
 
     /**
-     * A simplified way to send a push notification in a separate thread.
+     * A simplified way to send a push notification to a specific user in a separate thread.
      *
-     * @param notificationContent The notification's title and body to send.
+     * @param user THe user to send the notification to.
+     * @param notificationContent The notification's content to send.
      */
     public void sendBackgroundSimplePushNotificationToUser(User user, NotificationContentDTO notificationContent) {
         new Thread(() -> {
             try {
                 sendPushNotificationToUser(user, objectMapper.writeValueAsBytes(notificationContent));
             } catch (Exception e) {
-                log.warn("Could not send push notification to user with ID: " + user.getId());
+                log.warn(String.format("Could not send simple push notification to user with ID: %s", user.getId()));
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    /**
+     * A simplified way to send a push notification to a collection of users in a separate thread.
+     *
+     * @param users The collection of users to send the notification to.
+     * @param notificationContent The notification's content to send.
+     */
+    public void sendBackgroundSimplePushNotificationToUsers(
+            Collection<User> users,
+            NotificationContentDTO notificationContent
+    ) {
+        new Thread(() -> {
+            try {
+                for (User user : users) {
+                    sendBackgroundSimplePushNotificationToUser(user, notificationContent);
+                }
+            } catch (Exception e) {
+                log.warn("Could not send simple push notification to users.");
                 e.printStackTrace();
             }
         }).start();
