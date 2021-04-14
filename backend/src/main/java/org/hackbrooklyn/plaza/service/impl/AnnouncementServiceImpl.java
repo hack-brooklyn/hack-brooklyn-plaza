@@ -1,5 +1,8 @@
 package org.hackbrooklyn.plaza.service.impl;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.NotificationContentDTO;
 import org.hackbrooklyn.plaza.exception.AnnouncementNotFoundException;
@@ -9,7 +12,11 @@ import org.hackbrooklyn.plaza.repository.AnnouncementRepository;
 import org.hackbrooklyn.plaza.service.AnnouncementService;
 import org.hackbrooklyn.plaza.util.PushNotificationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -17,6 +24,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -24,15 +34,22 @@ import java.util.Collection;
 @Service
 public class AnnouncementServiceImpl implements AnnouncementService {
 
+    @Value("${DISCORD_WEBHOOK}")
+    private String DISCORD_WEBHOOK;
+
     private final EntityManager entityManager;
     private final AnnouncementRepository announcementRepository;
     private final PushNotificationUtils pushNotificationUtils;
+    private final WebClient webClient;
 
     @Autowired
-    public AnnouncementServiceImpl(EntityManager entityManager, AnnouncementRepository announcementRepository, PushNotificationUtils pushNotificationUtils) {
+    public AnnouncementServiceImpl(EntityManager entityManager, AnnouncementRepository announcementRepository, PushNotificationUtils pushNotificationUtils, WebClient.Builder webClientBuilder) {
         this.entityManager = entityManager;
         this.announcementRepository = announcementRepository;
         this.pushNotificationUtils = pushNotificationUtils;
+        this.webClient = webClientBuilder
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
     }
 
     @Override
@@ -70,6 +87,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setParticipantsOnly(participantsOnly);
         Announcement newAnnouncement = announcementRepository.save(announcement);
 
+        // Send a push notification to all members
         NotificationContentDTO notification = new NotificationContentDTO(
                 "A new announcement has been posted!",
                 body,
@@ -78,6 +96,20 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                 false
         );
         pushNotificationUtils.sendBackgroundSimplePushNotificationToAllSubscribers(notification);
+
+        // Post the announcement on Discord as well
+        try {
+            DiscordContent discordContent = new DiscordContent(body);
+            webClient.post()
+                    .uri(DISCORD_WEBHOOK)
+                    .bodyValue(discordContent)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .subscribe();
+        } catch (Exception e) {
+            log.warn("Unable to post announcement on Discord.");
+            e.printStackTrace();
+        }
 
         return newAnnouncement.getId();
     }
@@ -104,5 +136,16 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void deleteAnnouncement(int id) {
         Announcement announcement = announcementRepository.getOne(id);
         announcementRepository.delete(announcement);
+    }
+
+    @Data
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    private static class DiscordContent {
+
+        @Size(min = 1, max = 2000)
+        @NotBlank
+        @NotNull
+        private String content;
     }
 }
