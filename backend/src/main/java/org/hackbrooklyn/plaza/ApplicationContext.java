@@ -2,6 +2,7 @@ package org.hackbrooklyn.plaza;
 
 import com.sendgrid.SendGrid;
 import lombok.extern.slf4j.Slf4j;
+import nl.martijndwars.webpush.PushService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+
+import java.security.GeneralSecurityException;
 
 @Slf4j
 @Configuration
@@ -54,6 +57,14 @@ public class ApplicationContext {
     @Bean
     SendGrid sendGrid() {
         return new SendGrid(environment.getProperty("SENDGRID_API_KEY"));
+    }
+
+    @Bean
+    PushService pushService() throws GeneralSecurityException {
+        return new PushService(
+                environment.getProperty("VAPID_PUBLIC_KEY"),
+                environment.getProperty("VAPID_PRIVATE_KEY")
+        );
     }
 
     @Bean

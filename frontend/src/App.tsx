@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import Container from 'react-bootstrap/Container';
@@ -11,9 +11,11 @@ import Routes from './Routes';
 import store from './store';
 import { setWindowWidth } from 'actions/app';
 import { refreshAccessToken, refreshUserData } from 'util/auth';
+import { subscribeToPushNotifications } from 'util/notificationService';
 import logo from 'assets/logo.png';
 import loadingIcon from 'assets/icons/loading.svg';
 import { logIn } from 'actions/auth';
+import { Breakpoints, RootState } from 'types';
 
 const App = (): JSX.Element => {
   return (
@@ -32,11 +34,14 @@ const AppContent = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
+  const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
+
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
     // Add window width event listener
-    const handleWindowResize = () => dispatch(setWindowWidth(window.innerWidth));
+    const handleWindowResize = () =>
+      dispatch(setWindowWidth(window.innerWidth));
     window.addEventListener('resize', handleWindowResize);
 
     // Attempt to refresh login token only if the user logged in before
@@ -60,6 +65,38 @@ const AppContent = () => {
       localStorage.setItem('isUserLoggedIn', JSON.stringify(false));
       setAppReady(true);
     }
+
+    const isNotificationPromptClosed = localStorage.getItem(
+      'isNotificationPromptClosed'
+    );
+
+    if (isNotificationPromptClosed === null) {
+      localStorage.setItem('isNotificationPromptClosed', JSON.stringify(false));
+    }
+
+    if (
+      isUserLoggedIn &&
+      !JSON.parse(isNotificationPromptClosed as string) &&
+      'Notification' in window
+    ) {
+      toast.info(
+        `Want to receive the latest updates updates about Hack Brooklyn even when Hack Brooklyn Plaza is closed? Click here to enable real-time browser notifications.`,
+        {
+          delay: 5000, // Wait 5 seconds before prompting to enable notifications.
+          position:
+            windowWidth < Breakpoints.Medium ? 'bottom-center' : 'top-left',
+          autoClose: false,
+          draggable: false,
+          onClick: () => subscribeToPushNotifications(),
+          onClose: () =>
+            localStorage.setItem(
+              'isNotificationPromptClosed',
+              JSON.stringify(true)
+            )
+        }
+      );
+    }
+
     return () => {
       // Clean up event listeners
       window.removeEventListener('resize', handleWindowResize);

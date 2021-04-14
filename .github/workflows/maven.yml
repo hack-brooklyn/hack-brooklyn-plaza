@@ -41,11 +41,13 @@ jobs:
           # Security
           BCRYPT_SALT_ROUNDS: 10
 
-          # This secret is a random string not used in production
+          # The following secrets and keys are randomly generated and are not used in production.
           JWT_SECRET: GBbbzRAJ4QJWkdKQqNcB8Sws5TzYcMuMxPkJTPrgrhTvbmFADm95GLHHLNAWkmE4fsmp7y7AhygbP5SH455AtybExf6dWmV3nwxgGbG3qMkGnCTCfw8YsETpsGWj2rPg
           JWT_COOKIE_NAME: refresh_token
           JWT_ACCESS_TOKEN_EXPIRATION_TIME_MS: 900000
           JWT_REFRESH_TOKEN_EXPIRATION_TIME_MS: 2629800000
+          VAPID_PUBLIC_KEY: BHQYqLruGFsGLY-k4HynIuRbuLsNh4hCXSDslV1wxf_bNHERubvBLWa-57HV4zO3Ab3_B07ZHav13emWhscDmkQ
+          VAPID_PRIVATE_KEY: 7Oju-A7o63PYV2arPlHaP3wtVU9RXzAwcnWlwXqRpeM
 
           # Mailchimp
           MAILCHIMP_API_KEY: fake_mailchimp_key
