@@ -1,10 +1,13 @@
 package org.hackbrooklyn.plaza.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.hackbrooklyn.plaza.dto.NotificationContentDTO;
 import org.hackbrooklyn.plaza.exception.AnnouncementNotFoundException;
 import org.hackbrooklyn.plaza.model.Announcement;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.repository.AnnouncementRepository;
 import org.hackbrooklyn.plaza.service.AnnouncementService;
+import org.hackbrooklyn.plaza.util.PushNotificationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +20,19 @@ import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+@Slf4j
 @Service
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     private final EntityManager entityManager;
     private final AnnouncementRepository announcementRepository;
+    private final PushNotificationUtils pushNotificationUtils;
 
     @Autowired
-    public AnnouncementServiceImpl(EntityManager entityManager, AnnouncementRepository announcementRepository) {
+    public AnnouncementServiceImpl(EntityManager entityManager, AnnouncementRepository announcementRepository, PushNotificationUtils pushNotificationUtils) {
         this.entityManager = entityManager;
         this.announcementRepository = announcementRepository;
+        this.pushNotificationUtils = pushNotificationUtils;
     }
 
     @Override
@@ -64,6 +70,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setParticipantsOnly(participantsOnly);
         Announcement newAnnouncement = announcementRepository.save(announcement);
 
+        NotificationContentDTO notification = new NotificationContentDTO(
+                "A new announcement has been posted!",
+                body
+        );
+        pushNotificationUtils.sendBackgroundSimplePushNotificationToAllSubscribers(notification);
+
         return newAnnouncement.getId();
     }
 
@@ -74,6 +86,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcement.setParticipantsOnly(participantsOnly);
         announcement.setLastUpdated(LocalDateTime.now());
         announcementRepository.save(announcement);
+
+        NotificationContentDTO notification = new NotificationContentDTO(
+                "An announcement has been updated!",
+                body
+        );
+        pushNotificationUtils.sendBackgroundSimplePushNotificationToAllSubscribers(notification);
     }
 
     @Override
@@ -81,5 +99,4 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         Announcement announcement = announcementRepository.getOne(id);
         announcementRepository.delete(announcement);
     }
-
 }
