@@ -80,7 +80,7 @@ const AppContent = () => {
       'Notification' in window
     ) {
       toast.info(
-        `Want to receive the latest updates updates about Hack Brooklyn even when Hack Brooklyn Plaza is closed? Click here to enable real-time browser notifications.`,
+        `Want to receive the latest updates about Hack Brooklyn even when Hack Brooklyn Plaza is closed? Click here to enable real-time browser notifications.`,
         {
           delay: 5000, // Wait 5 seconds before prompting to enable notifications.
           position:

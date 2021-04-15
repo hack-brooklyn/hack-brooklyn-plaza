@@ -6,12 +6,11 @@ import org.hibernate.validator.constraints.URL;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Entity
 @Data
+@Table(name = "events")
 public class Event {
 
     @Id

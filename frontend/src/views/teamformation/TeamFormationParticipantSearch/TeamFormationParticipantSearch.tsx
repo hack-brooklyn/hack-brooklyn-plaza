@@ -95,10 +95,13 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
 
   const checkParticipantTeamStatus = async () => {
     const participantData = await getParticipantData(history);
-    setParticipantHasTeam(participantData.team !== null);
-    setParticipantTeamHasRoom(
-      participantData.team.members.length < participantData.team.size
-    );
+
+    if (participantData.team !== null) {
+      setParticipantHasTeam(true);
+      setParticipantTeamHasRoom(
+        participantData.team.members.length < participantData.team.size
+      );
+    }
   };
 
   const parseSearchQuery = () => {
@@ -183,19 +186,17 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
     <>
       <SearchSection>
         <StyledCenteredH2>
-          <StyledCenteredH2>
-            {fetchingSearchResults
-              ? // Waiting for search results
-                'Searching...'
-              : // Search results with result count
-              currentSearchQuery !== null && currentSearchQuery !== ''
-              ? `${totalFoundParticipants} result${
-                  totalFoundParticipants === 1 ? '' : 's'
-                }
+          {fetchingSearchResults
+            ? // Waiting for search results
+              'Searching...'
+            : // Search results with result count
+            currentSearchQuery !== null && currentSearchQuery !== ''
+            ? `${totalFoundParticipants} result${
+                totalFoundParticipants === 1 ? '' : 's'
+              }
                 for "${currentSearchQuery}"`
-              : // No search query
-                'Browse Participants'}
-          </StyledCenteredH2>
+            : // No search query
+              'Browse Participants'}
         </StyledCenteredH2>
 
         <SearchForm
