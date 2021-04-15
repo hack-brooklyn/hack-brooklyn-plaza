@@ -1,11 +1,14 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components/macro';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import queryString from 'query-string';
 import Form from 'react-bootstrap/Form';
 
+import { LinkButton } from 'components';
 import {
+  LinkButtonContainer,
   LoadingIndicator,
   MessageText,
   ResultsGrid,
@@ -210,19 +213,51 @@ const TeamFormationTeamSearch = (): JSX.Element => {
               <SearchLoadingSpinner src={loadingIcon} alt="Loading teams..." />
             </LoadingIndicator>
           }
-          endMessage={null}
+          endMessage={
+            participantDoesNotHaveTeam ? (
+              <EndMessageContainer>
+                <MessageText>
+                  Not finding any teams that interest you? Consider starting
+                  your own team!
+                </MessageText>
+
+                <MessageText>
+                  To begin, select &quot;Create Team&quot; on the top of a Team
+                  Formation page, fill out your team profile, and start
+                  inviting.
+                </MessageText>
+
+                <MessageText>
+                  Click the button below to preview all of the participants (and
+                  potential team members) that you could invite to your team.
+                </MessageText>
+
+                <LinkButtonContainer>
+                  <LinkButton
+                    to="/teamformation/participants/search"
+                    variant="secondary"
+                    size="lg"
+                  >
+                    Browse All Participants
+                  </LinkButton>
+                </LinkButtonContainer>
+              </EndMessageContainer>
+            ) : null
+          }
           style={{ overflow: 'visible' }}
         >
           {currentTeams.length > 0 ? (
-            <ResultsGrid>
-              {currentTeams.map((team) => (
-                <StyledTeamCard
-                  teamData={team}
-                  showActionButton={participantDoesNotHaveTeam}
-                  key={team.id}
-                />
-              ))}
-            </ResultsGrid>
+            <>
+              <ResultsGrid>
+                {currentTeams.map((team) => (
+                  <StyledTeamCard
+                    teamData={team}
+                    showActionButton={participantDoesNotHaveTeam}
+                    key={team.id}
+                  />
+                ))}
+              </ResultsGrid>
+            </>
           ) : (
             <MessageText>No teams were found.</MessageText>
           )}
@@ -231,5 +266,9 @@ const TeamFormationTeamSearch = (): JSX.Element => {
     </>
   );
 };
+
+const EndMessageContainer = styled.div`
+  margin: 2rem auto;
+`;
 
 export default TeamFormationTeamSearch;
