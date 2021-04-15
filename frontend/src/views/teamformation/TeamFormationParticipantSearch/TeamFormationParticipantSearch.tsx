@@ -186,19 +186,17 @@ const TeamFormationParticipantSearch = (): JSX.Element => {
     <>
       <SearchSection>
         <StyledCenteredH2>
-          <StyledCenteredH2>
-            {fetchingSearchResults
-              ? // Waiting for search results
-                'Searching...'
-              : // Search results with result count
-              currentSearchQuery !== null && currentSearchQuery !== ''
-              ? `${totalFoundParticipants} result${
-                  totalFoundParticipants === 1 ? '' : 's'
-                }
+          {fetchingSearchResults
+            ? // Waiting for search results
+              'Searching...'
+            : // Search results with result count
+            currentSearchQuery !== null && currentSearchQuery !== ''
+            ? `${totalFoundParticipants} result${
+                totalFoundParticipants === 1 ? '' : 's'
+              }
                 for "${currentSearchQuery}"`
-              : // No search query
-                'Browse Participants'}
-          </StyledCenteredH2>
+            : // No search query
+              'Browse Participants'}
         </StyledCenteredH2>
 
         <SearchForm
