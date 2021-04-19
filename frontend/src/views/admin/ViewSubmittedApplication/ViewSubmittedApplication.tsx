@@ -438,7 +438,7 @@ const StyledLinkButton = styled(LinkButton)`
   ${ButtonActiveOverrideStyles};
 `;
 
-const DeleteApplicationButton = styled(Button)`;
+const DeleteApplicationButton = styled(Button)`
   display: block;
   margin: 0 auto;
 `;
