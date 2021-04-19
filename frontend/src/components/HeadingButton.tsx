@@ -26,7 +26,7 @@ const HeadingButton = (props: HeadingButtonProps): JSX.Element | null => {
     );
   } else if (type === 'anchor' && link !== undefined) {
     return (
-      <StyledAnchor href={link}>
+      <StyledAnchor href={link} target="_blank" rel="noreferrer noopener">
         <ButtonContent icon={icon} text={text} />
       </StyledAnchor>
     );

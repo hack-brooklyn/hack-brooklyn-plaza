@@ -19,12 +19,14 @@ const HeadingActions = (props: HeadingActionsProps): JSX.Element => {
     return (
       <HeadingButtons>
         {actions.map((action, index) => (
-          <HeadingButton type={action.type}
-                         text={action.text}
-                         link={action.link}
-                         onClick={action.onClick}
-                         icon={action.icon}
-                         key={index} />
+          <HeadingButton
+            type={action.type}
+            text={action.text}
+            link={action.link}
+            onClick={action.onClick}
+            icon={action.icon}
+            key={index}
+          />
         ))}
       </HeadingButtons>
     );
@@ -37,12 +39,14 @@ const HeadingActions = (props: HeadingActionsProps): JSX.Element => {
 
         <StyledDropdownMenu>
           {actions.map((action, index) => (
-            <Dropdown.Item key={index}>
-              <HeadingButton type={action.type}
-                             text={action.text}
-                             link={action.link}
-                             onClick={action.onClick}
-                             icon={action.icon} />
+            <Dropdown.Item as="div" key={index}>
+              <HeadingButton
+                type={action.type}
+                text={action.text}
+                link={action.link}
+                onClick={action.onClick}
+                icon={action.icon}
+              />
             </Dropdown.Item>
           ))}
         </StyledDropdownMenu>
