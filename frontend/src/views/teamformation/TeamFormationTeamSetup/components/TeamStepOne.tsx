@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { TopicsAndSkillsSelect } from 'components/teamformation/TeamFormationFormFields';
-import {
-  TFHomeButton,
-  TFLinkButtonContainer
-} from 'common/styles/teamformation/teamFormationSetupStyles';
+import { TFHomeButton } from 'common/styles/teamformation/teamFormationSetupStyles';
 import {
   CenteredButtonWithMarginBottom,
   SetupContent,
@@ -73,11 +70,13 @@ const TeamStepOne = (props: TeamSetupStepPropsMultiSelect): JSX.Element => {
         Continue
       </CenteredButtonWithMarginBottom>
 
-      <TFLinkButtonContainer>
-        <TFHomeButton variant="outline-secondary" to="/teamformation">
-          Back to Selection
-        </TFHomeButton>
-      </TFLinkButtonContainer>
+      <TFHomeButton
+        variant="outline-secondary"
+        to="/teamformation"
+        centered={true}
+      >
+        Back to Selection
+      </TFHomeButton>
     </SetupSection>
   );
 };

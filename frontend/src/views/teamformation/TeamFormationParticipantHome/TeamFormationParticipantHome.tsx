@@ -179,6 +179,7 @@ const TeamFormationParticipantHome = (): JSX.Element => {
             to="/teamformation/participants/search"
             variant="secondary"
             size="lg"
+            centered={true}
           >
             Browse All Participants
           </LinkButton>

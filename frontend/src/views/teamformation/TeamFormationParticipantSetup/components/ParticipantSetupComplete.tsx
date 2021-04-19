@@ -6,8 +6,7 @@ import { ParticipantCard } from 'components/teamformation';
 import { LinkButton } from 'components';
 import {
   CompletedViewMessage,
-  CompleteViewSection,
-  TFLinkButtonContainer
+  CompleteViewSection
 } from 'common/styles/teamformation/teamFormationSetupStyles';
 import { SetupParagraph, StyledCenteredH3 } from 'common/styles/commonStyles';
 import { handleError } from 'util/plazaUtils';
@@ -96,15 +95,14 @@ const ParticipantSetupComplete = (): JSX.Element => {
           discover teams looking for team members to work with.
         </SetupParagraph>
 
-        <TFLinkButtonContainer>
-          <LinkButton
-            variant="primary"
-            to="/teamformation/teams"
-            overrideActiveStyles
-          >
-            Browse Teams
-          </LinkButton>
-        </TFLinkButtonContainer>
+        <LinkButton
+          variant="primary"
+          to="/teamformation/teams"
+          overrideActiveStyles
+          centered={true}
+        >
+          Browse Teams
+        </LinkButton>
       </CompleteViewSection>
     </>
   );
