@@ -34,13 +34,16 @@ interface SetUserRoleData {
 const SetUserRole = (): JSX.Element => {
   const history = useHistory();
 
-  const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
+  const accessToken = useSelector(
+    (state: RootState) => state.auth.jwtAccessToken
+  );
   const userRole = useSelector((state: RootState) => state.user.role);
 
   useEffect(() => {
     try {
       const permission = acCan(userRole).updateAny(Resources.Users);
-      if (!permission.attributes.includes(UsersAttributes.Roles)) throw new NoPermissionError();
+      if (!permission.attributes.includes(UsersAttributes.Roles))
+        throw new NoPermissionError();
     } catch (err) {
       handleErrorAndPush(err, history);
     }
@@ -51,7 +54,9 @@ const SetUserRole = (): JSX.Element => {
     role: null
   };
 
-  const submitSetUserRole = async (setUserRoleData: SetUserRoleData): Promise<void> => {
+  const submitSetUserRole = async (
+    setUserRoleData: SetUserRoleData
+  ): Promise<void> => {
     if (setUserRoleData.role === null) {
       toast.error('Please select a valid role for the user.');
       return;
@@ -64,7 +69,10 @@ const SetUserRole = (): JSX.Element => {
     }
   };
 
-  const sendSetUserRoleRequest = async (setUserRoleData: SetUserRoleData, overriddenAccessToken?: string) => {
+  const sendSetUserRoleRequest = async (
+    setUserRoleData: SetUserRoleData,
+    overriddenAccessToken?: string
+  ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
@@ -82,7 +90,7 @@ const SetUserRole = (): JSX.Element => {
     }
 
     if (res.status === 200) {
-      toast.success('The user\'s role has been successfully updated.');
+      toast.success(`The user's role has been successfully updated.`);
     } else if (res.status === 404) {
       throw new UserNotFoundError();
     } else if (res.status === 400) {
@@ -102,31 +110,37 @@ const SetUserRole = (): JSX.Element => {
     <>
       <StyledCenteredMarginH1>Set User Role</StyledCenteredMarginH1>
 
-      <Formik
-        initialValues={initialValues}
-        onSubmit={submitSetUserRole}
-      >
-        {formik => (
+      <Formik initialValues={initialValues} onSubmit={submitSetUserRole}>
+        {(formik) => (
           <StyledAuthForm onSubmit={formik.handleSubmit}>
             <Form.Group controlId="createUserEmail">
               <RequiredFormLabel>Email</RequiredFormLabel>
-              <FastField as={Form.Control}
-                         name="email"
-                         type="email"
-                         disabled={formik.isSubmitting}
-                         required />
+              <FastField
+                as={Form.Control}
+                name="email"
+                type="email"
+                disabled={formik.isSubmitting}
+                required
+              />
             </Form.Group>
 
             <Form.Group controlId="createUserRole">
               <RequiredFormLabel>Role</RequiredFormLabel>
-              <Select options={roleOptions}
-                      onChange={(option) => option && formik.setFieldValue('role', option.value)}
-                      isDisabled={formik.isSubmitting}
-                      required
+              <Select
+                options={roleOptions}
+                onChange={(option) =>
+                  option && formik.setFieldValue('role', option.value)
+                }
+                isDisabled={formik.isSubmitting}
+                required
               />
             </Form.Group>
 
-            <StyledSubmitButton type="submit" size="lg" disabled={formik.isSubmitting}>
+            <StyledSubmitButton
+              type="submit"
+              size="lg"
+              disabled={formik.isSubmitting}
+            >
               Set Role
             </StyledSubmitButton>
           </StyledAuthForm>

@@ -37,7 +37,9 @@ interface CreateUserData {
 const CreateUser = (): JSX.Element => {
   const history = useHistory();
 
-  const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
+  const accessToken = useSelector(
+    (state: RootState) => state.auth.jwtAccessToken
+  );
   const userRole = useSelector((state: RootState) => state.user.role);
 
   useEffect(() => {
@@ -57,7 +59,9 @@ const CreateUser = (): JSX.Element => {
     role: null
   };
 
-  const submitCreateUser = async (createUserData: CreateUserData): Promise<void> => {
+  const submitCreateUser = async (
+    createUserData: CreateUserData
+  ): Promise<void> => {
     if (createUserData.role === null) {
       toast.error('Please select a valid role for the new user.');
       return;
@@ -70,7 +74,10 @@ const CreateUser = (): JSX.Element => {
     }
   };
 
-  const sendCreateUserRequest = async (createUserData: CreateUserData, overriddenAccessToken?: string) => {
+  const sendCreateUserRequest = async (
+    createUserData: CreateUserData,
+    overriddenAccessToken?: string
+  ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
@@ -108,60 +115,72 @@ const CreateUser = (): JSX.Element => {
     <>
       <StyledCenteredMarginH1>Create New User Account</StyledCenteredMarginH1>
 
-      <Formik
-        initialValues={initialValues}
-        onSubmit={submitCreateUser}
-      >
-        {formik => (
+      <Formik initialValues={initialValues} onSubmit={submitCreateUser}>
+        {(formik) => (
           <StyledAuthForm onSubmit={formik.handleSubmit}>
             <Form.Group controlId="createUserFirstName">
               <RequiredFormLabel>First Name</RequiredFormLabel>
-              <FastField as={Form.Control}
-                         name="firstName"
-                         type="text"
-                         disabled={formik.isSubmitting}
-                         required />
+              <FastField
+                as={Form.Control}
+                name="firstName"
+                type="text"
+                disabled={formik.isSubmitting}
+                required
+              />
             </Form.Group>
 
             <Form.Group controlId="createUserLastName">
               <RequiredFormLabel>Last Name</RequiredFormLabel>
-              <FastField as={Form.Control}
-                         name="lastName"
-                         type="text"
-                         disabled={formik.isSubmitting}
-                         required />
+              <FastField
+                as={Form.Control}
+                name="lastName"
+                type="text"
+                disabled={formik.isSubmitting}
+                required
+              />
             </Form.Group>
 
             <Form.Group controlId="createUserEmail">
               <RequiredFormLabel>Email</RequiredFormLabel>
-              <FastField as={Form.Control}
-                         name="email"
-                         type="email"
-                         disabled={formik.isSubmitting}
-                         required />
+              <FastField
+                as={Form.Control}
+                name="email"
+                type="email"
+                disabled={formik.isSubmitting}
+                required
+              />
             </Form.Group>
 
             <Form.Group controlId="createUserPassword">
               <RequiredFormLabel>Password</RequiredFormLabel>
-              <FastField as={Form.Control}
-                         name="password"
-                         type="password"
-                         minlength="12"
-                         placeholder="Minimum 12 characters."
-                         disabled={formik.isSubmitting}
-                         required />
+              <FastField
+                as={Form.Control}
+                name="password"
+                type="password"
+                minlength="12"
+                placeholder="Minimum 12 characters."
+                disabled={formik.isSubmitting}
+                required
+              />
             </Form.Group>
 
             <Form.Group controlId="createUserRole">
               <RequiredFormLabel>Role</RequiredFormLabel>
-              <Select options={roleOptions}
-                      onChange={(option) => option && formik.setFieldValue('role', option.value)}
-                      isDisabled={formik.isSubmitting}
-                      required
+              <Select
+                options={roleOptions}
+                onChange={(option) =>
+                  option && formik.setFieldValue('role', option.value)
+                }
+                isDisabled={formik.isSubmitting}
+                required
               />
             </Form.Group>
 
-            <StyledSubmitButton type="submit" size="lg" disabled={formik.isSubmitting}>
+            <StyledSubmitButton
+              type="submit"
+              size="lg"
+              disabled={formik.isSubmitting}
+            >
               Create Account
             </StyledSubmitButton>
           </StyledAuthForm>

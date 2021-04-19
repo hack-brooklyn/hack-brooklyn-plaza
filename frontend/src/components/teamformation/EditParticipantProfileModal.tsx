@@ -149,7 +149,7 @@ const EditParticipantProfileModal = (props: CommonModalProps): JSX.Element => {
                 specialization: participantData.specialization,
                 objectiveStatement: participantData.objectiveStatement,
                 visibleInBrowser: participantData.visibleInBrowser,
-                contactInfo: participantData.contactInfo,
+                contactInfo: participantData.contactInfo
               }}
               onSubmit={updateProfile}
             >
