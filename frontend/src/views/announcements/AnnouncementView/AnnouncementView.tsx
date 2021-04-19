@@ -2,15 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AnnouncementBrowser } from 'components/announcements';
+import { HeadingActions } from 'components';
 import { HeadingSection, StyledH1 } from 'common/styles/commonStyles';
 import ac, { Resources } from 'security/accessControl';
-import { RootState } from 'types';
+import { MenuAction, RootState } from 'types';
 
 import postIcon from 'assets/icons/penWhite.svg';
-import { HeadingButton } from 'components';
+
+const announcementActions: MenuAction[] = [
+  {
+    link: '/announcements/post',
+    text: 'Post New',
+    type: 'link',
+    icon: postIcon
+  }
+];
 
 const AnnouncementView = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
+
   const [isAbleToModify, setIsAbleToModify] = useState(false);
 
   useEffect(() => {
@@ -21,6 +31,7 @@ const AnnouncementView = (): JSX.Element => {
     if (userRole !== null) {
       return ac.can(userRole).createAny(Resources.Announcements).granted;
     }
+
     return false;
   };
 
@@ -28,15 +39,11 @@ const AnnouncementView = (): JSX.Element => {
     <>
       <HeadingSection>
         <StyledH1>Announcements</StyledH1>
+
         {isAbleToModify && (
-          <HeadingButton
-            type={'link'}
-            icon={postIcon}
-            text={'Post New'}
-            link={'/announcements/post'}
-            onClick={() => {
-              return null;
-            }}
+          <HeadingActions
+            viewName="Announcement"
+            actions={announcementActions}
           />
         )}
       </HeadingSection>
