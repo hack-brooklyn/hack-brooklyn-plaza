@@ -7,20 +7,29 @@ import { Announcement } from './';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
-import { Breakpoints, ConnectionError, NoPermissionError, RootState, UnknownError } from 'types';
+import {
+  Announcement as IAnnouncement,
+  ConnectionError,
+  NoPermissionError,
+  RootState,
+  UnknownError
+} from 'types';
 
 interface AnnouncementBrowserProps {
   isAbleToModify?: boolean;
+  limit?: number;
 }
 
 const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
+  const { isAbleToModify, limit } = props;
+
   const history = useHistory();
 
   const accessToken = useSelector(
     (state: RootState) => state.auth.jwtAccessToken
   );
 
-  const [announcements, setAnnouncements] = useState([]);
+  const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
   const [refreshAnnouncements, setRefreshAnnouncements] = useState(false);
 
   useEffect(() => {
@@ -34,13 +43,15 @@ const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
   const getAnnouncements = async (overriddenAccessToken?: string) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
+    const queryParams = limit ? `?limit=${limit}` : '';
+
     let res;
     try {
-      res = await fetch(`${API_ROOT}/announcements?limit=5`, {
+      res = await fetch(`${API_ROOT}/announcements${queryParams}`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
     } catch (err) {
       throw new ConnectionError();
@@ -62,8 +73,13 @@ const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
 
   return (
     <AnnouncementBrowserContainer>
-      {announcements.map((e, idx) => (
-        <Announcement key={idx} {...e} displayControls={props.isAbleToModify} toggleRefresh={toggleRefresh}/>
+      {announcements.map((announcement) => (
+        <Announcement
+          {...announcement}
+          key={announcement.id}
+          displayControls={isAbleToModify !== undefined && isAbleToModify}
+          toggleRefresh={toggleRefresh}
+        />
       ))}
     </AnnouncementBrowserContainer>
   );
@@ -71,10 +87,6 @@ const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
 
 const AnnouncementBrowserContainer = styled.div`
   margin: 0 auto;
-  width: 80%;
-  @media (max-width: ${Breakpoints.Small}px) {
-    width: 100%;
-  }
 `;
 
 export default AnnouncementBrowser;

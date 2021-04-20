@@ -11,23 +11,20 @@ import ReactMarkdown from 'react-markdown';
 
 import { API_ROOT } from 'index';
 import {
+  Announcement as IAnnouncement,
   Breakpoints,
   ConnectionError,
   NoPermissionError,
   RootState,
-  UnknownError,
+  UnknownError
 } from 'types';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import editIcon from 'assets/icons/penBlack.svg';
 import deleteIcon from 'assets/icons/trashIcon.svg';
 
-interface AnnouncementProps {
-  body: string;
-  lastUpdated: string;
-  timeCreated: string;
+interface AnnouncementProps extends IAnnouncement {
   displayControls: boolean;
-  id: number;
   toggleRefresh: () => void;
 }
 
@@ -35,7 +32,14 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
 const Announcement = (props: AnnouncementProps): JSX.Element => {
-  const { body, lastUpdated, timeCreated, displayControls, id, toggleRefresh } = props;
+  const {
+    id,
+    body,
+    lastUpdated,
+    timeCreated,
+    displayControls,
+    toggleRefresh
+  } = props;
 
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
@@ -64,8 +68,8 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       res = await fetch(`${API_ROOT}/announcements/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
     } catch (err) {
       throw new ConnectionError();
@@ -94,8 +98,9 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       <Container>
         <BoldText>
           {timeCreated !== lastUpdated &&
-          `Updated: ${dayjs.utc(lastUpdated).fromNow()}`}
-          {timeCreated !== lastUpdated && (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
+            `Updated: ${dayjs.utc(lastUpdated).fromNow()}`}
+          {timeCreated !== lastUpdated &&
+            (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
           Created: {dayjs.utc(lastUpdated).fromNow()}
         </BoldText>
         {displayControls && (

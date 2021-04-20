@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { handleError } from 'util/plazaUtils';
 import { refreshAccessToken } from 'util/auth';
 import {
-  AnnouncementData,
+  AnnouncementFormData,
   ConnectionError,
   NoPermissionError,
   RootState,
@@ -22,12 +22,12 @@ const PostAnnouncement = (): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
-  const initialValues: AnnouncementData = {
+  const initialValues: AnnouncementFormData = {
     body: '',
     participantsOnly: false
   };
 
-  const submitPost = async (announcementData: AnnouncementData) => {
+  const submitPost = async (announcementData: AnnouncementFormData) => {
     try {
       await createAnnouncement(announcementData);
       toast.success('Post successfully created');
@@ -38,7 +38,7 @@ const PostAnnouncement = (): JSX.Element => {
   };
 
   const createAnnouncement = async (
-    announcementData: AnnouncementData,
+    announcementData: AnnouncementFormData,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
