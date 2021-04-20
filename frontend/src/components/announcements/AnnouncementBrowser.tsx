@@ -9,19 +9,24 @@ import { handleError } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
 import {
   Announcement as IAnnouncement,
+  Breakpoints,
   ConnectionError,
   NoPermissionError,
   RootState,
   UnknownError
 } from 'types';
 
-interface AnnouncementBrowserProps {
+interface AnnouncementBrowserContainerProps {
+  narrow?: boolean;
+}
+
+interface AnnouncementBrowserProps extends AnnouncementBrowserContainerProps {
   isAbleToModify?: boolean;
   limit?: number;
 }
 
 const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
-  const { isAbleToModify, limit } = props;
+  const { isAbleToModify, limit, narrow } = props;
 
   const history = useHistory();
 
@@ -72,7 +77,7 @@ const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
   };
 
   return (
-    <AnnouncementBrowserContainer>
+    <AnnouncementBrowserContainer narrow={narrow}>
       {announcements.map((announcement) => (
         <Announcement
           {...announcement}
@@ -87,6 +92,10 @@ const AnnouncementBrowser = (props: AnnouncementBrowserProps): JSX.Element => {
 
 const AnnouncementBrowserContainer = styled.div`
   margin: 0 auto;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    ${(props: AnnouncementBrowserContainerProps) =>
+      props.narrow && 'width: 80%;'}
 `;
 
 export default AnnouncementBrowser;

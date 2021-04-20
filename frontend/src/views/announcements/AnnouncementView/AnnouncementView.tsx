@@ -47,7 +47,7 @@ const AnnouncementView = (): JSX.Element => {
           />
         )}
       </HeadingSection>
-      <AnnouncementBrowser isAbleToModify={isAbleToModify} />
+      <AnnouncementBrowser isAbleToModify={isAbleToModify} narrow />
     </>
   );
 };

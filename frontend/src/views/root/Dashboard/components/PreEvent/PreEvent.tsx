@@ -36,7 +36,7 @@ const PreEvent = (props: PreEventProps): JSX.Element => {
 
       <section>
         <StyledCenteredMarginH2>What&apos;s New</StyledCenteredMarginH2>
-        <AnnouncementBrowser />
+        <AnnouncementBrowser limit={5} narrow />
       </section>
     </>
   );
