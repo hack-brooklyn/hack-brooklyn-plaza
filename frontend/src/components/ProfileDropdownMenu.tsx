@@ -7,6 +7,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 
 import { handleLogOut } from 'util/auth';
 import { RootState } from 'types';
+
 import profileImage from 'assets/icons/profile.svg';
 import dropdownArrowImage from 'assets/icons/dropdown-arrow.svg';
 
@@ -33,10 +34,6 @@ const ProfileDropdownMenu = (): JSX.Element => {
         <LoggedInUser>
           {userData.firstName} {userData.lastName}
         </LoggedInUser>
-
-        {/*<DropdownLinkItem to="/settings">*/}
-        {/*  Settings*/}
-        {/*</DropdownLinkItem>*/}
 
         <StyledDropdownItem href="mailto:contact@hackbrooklyn.org">
           Contact Us
