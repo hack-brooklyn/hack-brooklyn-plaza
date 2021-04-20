@@ -1,3 +1,2 @@
-export { default as ApplicationStatusSection } from './ApplicationStatusSection';
-export { default as ChecklistSection } from './ChecklistSection';
-export { default as CountdownSection } from './CountdownSection';
+export { default as Live } from './Live';
+export { default as PreEvent } from './PreEvent';

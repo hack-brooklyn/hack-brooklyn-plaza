@@ -428,9 +428,20 @@ export interface TeamFormationParticipantInvitation {
   invitationTimestamp: Date;
 }
 
-export interface AnnouncementData {
+export interface AnnouncementFormData {
   body: string;
   participantsOnly: boolean;
+}
+
+export interface Announcement extends AnnouncementFormData {
+  id: number;
+  timeCreated: Date;
+  lastUpdated: Date;
+}
+
+export interface HackathonLinks {
+  discordUrl: string;
+  devpostUrl: string;
 }
 
 export const roleOptions: Option[] = [

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { handleError } from 'util/plazaUtils';
 import { refreshAccessToken } from 'util/auth';
 import {
-  AnnouncementData,
+  AnnouncementFormData,
   AnnouncementNotFoundError,
   ConnectionError,
   NoPermissionError,
@@ -68,7 +68,7 @@ const EditAnnouncement = (): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
-  const submitPost = async (announcementData: AnnouncementData) => {
+  const submitPost = async (announcementData: AnnouncementFormData) => {
     try {
       await editAnnouncement(announcementData);
       toast.success('Announcement successfully edited');
@@ -79,7 +79,7 @@ const EditAnnouncement = (): JSX.Element => {
   };
 
   const editAnnouncement = async (
-    announcementData: AnnouncementData,
+    announcementData: AnnouncementFormData,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;

@@ -5,13 +5,14 @@ import styled from 'styled-components/macro';
 import { RequiredFormLabel } from '../';
 import { FastField, Formik } from 'formik';
 import { StyledH1, StyledSubmitButton } from 'common/styles/commonStyles';
-import { AnnouncementData } from 'types';
+import { AnnouncementFormData } from 'types';
 
 interface AnnouncementEditorData {
-  announcementData: AnnouncementData;
+  announcementData: AnnouncementFormData;
   actionType: string;
-  submitForm: (announcementData: AnnouncementData) => Promise<void>;
+  submitForm: (announcementData: AnnouncementFormData) => Promise<void>;
 }
+
 const AnnouncementEditor = (props: AnnouncementEditorData): JSX.Element => {
   const { announcementData, actionType, submitForm } = props;
 
