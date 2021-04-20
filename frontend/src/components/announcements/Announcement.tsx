@@ -171,6 +171,7 @@ const BodyText = styled.p`
 
 const BoldText = styled.p`
   font-weight: bold;
+  align-self: flex-end;
 `;
 
 const ButtonIcon = styled.img``;
