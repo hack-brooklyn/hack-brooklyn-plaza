@@ -57,6 +57,9 @@ public class UsersController {
         return new ResponseEntity<>(resBody, HttpStatus.OK);
     }
 
+    /**
+     * Logs a user out and invalidates their refresh token.
+     */
     @PostMapping("logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         // Add the refresh token to the blocklist if one was provided
@@ -115,6 +118,9 @@ public class UsersController {
         return new ResponseEntity<>(tokenDTOAndUser.getTokenDTO(), HttpStatus.OK);
     }
 
+    /**
+     * Requests a password reset email and sends a key necessary for resetting the user's password.
+     */
     @PostMapping("resetPassword/request")
     public ResponseEntity<Void> requestPasswordReset(@RequestBody @Valid EmailBodyRequest reqBody) {
         usersService.requestPasswordReset(reqBody.getEmail());
@@ -157,6 +163,9 @@ public class UsersController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Sets a specific user's role by their email.
+     */
     @PreAuthorize("hasAuthority(@authorities.USERS_UPDATE_ROLE)")
     @PostMapping("setRole")
     public ResponseEntity<Void> setRole(@RequestBody @Valid SetRoleDTO reqBody) {
@@ -166,7 +175,7 @@ public class UsersController {
     }
 
     /**
-     * Separate endpoint for getting decisions since we have to look up the application as well as the user
+     * Separate endpoint for getting decisions since we have to look up the application as well as the user.
      */
     @GetMapping("applicationDecision")
     public ResponseEntity<DecisionDTO> getApplicationDecision(@AuthenticationPrincipal User user) {
