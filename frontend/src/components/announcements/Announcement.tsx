@@ -98,10 +98,10 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       <Container>
         <BoldText>
           {timeCreated !== lastUpdated &&
-            `Updated: ${dayjs.utc(lastUpdated).fromNow()}`}
+            `Updated ${dayjs.utc(lastUpdated).fromNow()}`}
           {timeCreated !== lastUpdated &&
             (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
-          Created: {dayjs.utc(lastUpdated).fromNow()}
+          Posted {dayjs.utc(timeCreated).fromNow()}
         </BoldText>
         {displayControls && (
           <ControlContainer>
