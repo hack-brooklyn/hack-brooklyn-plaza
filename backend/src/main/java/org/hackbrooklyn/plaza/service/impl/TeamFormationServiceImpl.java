@@ -20,7 +20,7 @@ import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.hackbrooklyn.plaza.repository.TeamFormationParticipantInvitationRepository.*;
+import static org.hackbrooklyn.plaza.repository.TeamFormationParticipantInvitationRepository.InvitationIdsOnly;
 import static org.hackbrooklyn.plaza.util.TeamFormationUtils.cleanTopicOrSkillName;
 
 @Slf4j

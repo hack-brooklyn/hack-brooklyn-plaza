@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolationException;
@@ -80,10 +81,10 @@ public class RestControllerExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(FoundDataConflictException.class)
-    public ResponseEntity<Map<String, String>> handleFoundDataConflictException() {
+    @ExceptionHandler(DataConflictException.class)
+    public ResponseEntity<Map<String, String>> handleDataConflictException() {
         Map<String, String> body = new HashMap<>();
-        body.put("message", "There is conflicting data found in the database.");
+        body.put("message", "There was conflicting data found.");
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
@@ -316,4 +317,15 @@ public class RestControllerExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
+
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<Map<String, String>> handleHttpClientErrorException() {
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "An error occurred while interacting with an external server. Please try again later.");
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_GATEWAY);
+    }
+
+
 }
