@@ -74,7 +74,7 @@ const PostAnnouncement = (): JSX.Element => {
   return (
     <AnnouncementEditor
       announcementData={initialValues}
-      actionType={'Create'}
+      actionType="Create"
       submitForm={submitPost}
     />
   );

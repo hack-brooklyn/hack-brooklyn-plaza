@@ -89,7 +89,7 @@ const LinksSection = (props: LinksSectionProps): JSX.Element => {
         </ResumeLinkContents>
       ) : (
         <SubmittedLinkNotProvided>
-          <ResumeIcon src={fileMissingIcon} alt={'Resume not uploaded'} />
+          <ResumeIcon src={fileMissingIcon} alt="Resume not uploaded" />
           <SubmittedLinkUrl>Resume Not Uploaded</SubmittedLinkUrl>
         </SubmittedLinkNotProvided>
       )}

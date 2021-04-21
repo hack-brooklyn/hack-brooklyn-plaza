@@ -122,7 +122,7 @@ const EditAnnouncement = (): JSX.Element => {
       ) : (
         <AnnouncementEditor
           announcementData={announcement}
-          actionType={'Edit'}
+          actionType="Edit"
           submitForm={submitPost}
         />
       )}

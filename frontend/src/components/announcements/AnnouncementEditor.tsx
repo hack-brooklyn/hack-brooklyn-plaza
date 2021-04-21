@@ -27,7 +27,7 @@ const AnnouncementEditor = (props: AnnouncementEditorData): JSX.Element => {
               as="textarea"
               className="form-control"
               name="body"
-              id={'body'}
+              id="body"
               rows="5"
               maxLength={2000}
               placeholder={
