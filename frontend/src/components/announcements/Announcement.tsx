@@ -49,10 +49,10 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
   );
 
   const confirmDeleteAnnouncement = async () => {
-    if (confirm('Are you sure you want to delete?')) {
+    if (confirm('Are you sure you want to delete this announcement?')) {
       try {
         await deleteAnnouncement();
-        toast.success('Successfully deleted an announcement');
+        toast.success('The announcement has been deleted.');
         toggleRefresh();
       } catch (err) {
         handleError(err);
