@@ -71,7 +71,7 @@ const EditAnnouncement = (): JSX.Element => {
   const submitPost = async (announcementData: AnnouncementFormData) => {
     try {
       await editAnnouncement(announcementData);
-      toast.success('Announcement successfully edited');
+      toast.success('Your changes have been saved.');
       history.push('/announcements');
     } catch (err) {
       handleError(err);

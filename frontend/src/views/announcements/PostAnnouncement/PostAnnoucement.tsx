@@ -30,7 +30,7 @@ const PostAnnouncement = (): JSX.Element => {
   const submitPost = async (announcementData: AnnouncementFormData) => {
     try {
       await createAnnouncement(announcementData);
-      toast.success('Post successfully created');
+      toast.success('The announcement has been posted.');
       history.push('/announcements');
     } catch (err) {
       handleError(err);
