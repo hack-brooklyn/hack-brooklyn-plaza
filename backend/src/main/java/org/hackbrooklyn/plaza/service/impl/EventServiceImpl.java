@@ -85,7 +85,8 @@ public class EventServiceImpl implements EventService {
         event.setExternalLink(reqBody.getExternalLink());
         event.setStartTime(reqBody.getStartTime());
         event.setEndTime(reqBody.getEndTime());
-        event.setPresenters(reqBody.getPresenters());
+        event.setPresenter(reqBody.getPresenter());
+
         Event newEvent = eventRepository.save(event);
 
         try {
@@ -106,7 +107,8 @@ public class EventServiceImpl implements EventService {
         event.setExternalLink(reqBody.getExternalLink());
         event.setStartTime(reqBody.getStartTime());
         event.setEndTime(reqBody.getEndTime());
-        event.setPresenters(reqBody.getPresenters());
+        event.setPresenter(reqBody.getPresenter());
+
         eventRepository.save(event);
 
         try {

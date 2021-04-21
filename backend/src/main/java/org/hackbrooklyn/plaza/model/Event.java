@@ -8,7 +8,6 @@ import org.hibernate.validator.constraints.URL;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data
@@ -24,9 +23,9 @@ public class Event {
     @NotBlank
     private String title;
 
-    @Column(name = "presenters")
-    @ElementCollection
-    private List<@NotBlank String> presenters;
+    @Column(name = "presenter")
+    @NotBlank
+    private String presenter;
 
     @Column(name = "start_time")
     @JsonSerialize(using = LocalDateTimeWithUTCSerializer.class)
