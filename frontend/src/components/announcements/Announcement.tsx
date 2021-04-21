@@ -130,7 +130,7 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
 const LinkRenderer = (props: LinkProps) => {
   const { href, children } = props;
   return (
-    <a href={href} rel="noreferrer" target="_blank">
+    <a href={href} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );
