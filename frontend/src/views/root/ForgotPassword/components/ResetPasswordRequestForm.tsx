@@ -38,14 +38,14 @@ const ResetPasswordRequestForm = (): JSX.Element => {
     }
 
     if (res.status === 200) {
-      toast.success('Please check your email for an password reset link');
+      toast.success('Password reset email sent! Please check your email to finish resetting your password.');
     } else if (res.status === 400) {
-      toast.error('Please enter a valid email');
+      toast.error('Please enter a valid email.');
     } else if (res.status === 404) {
-      toast.error('Email not found');
+      toast.error('No account with this email could be found.');
     } else {
       console.error(await res.json());
-      toast.error('Unknown error');
+      toast.error('An unknown error occurred. Please try again.');
     }
 
     setSubmitting(false);
