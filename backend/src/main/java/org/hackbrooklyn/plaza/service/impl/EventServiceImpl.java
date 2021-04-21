@@ -4,7 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.dto.SaveEventDTO;
 import org.hackbrooklyn.plaza.exception.EventNotFoundException;
 import org.hackbrooklyn.plaza.model.Event;
+import org.hackbrooklyn.plaza.model.SavedEvent;
+import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.repository.EventRepository;
+import org.hackbrooklyn.plaza.repository.SavedEventRepository;
+import org.hackbrooklyn.plaza.repository.SavedEventRepository.UsersOnly;
 import org.hackbrooklyn.plaza.service.EventService;
 import org.hackbrooklyn.plaza.util.PushNotificationUtils;
 import org.hackbrooklyn.plaza.util.SendEventPushNotificationsTask;
@@ -20,6 +24,9 @@ import javax.transaction.Transactional;
 import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Timer;
+import java.util.stream.Collectors;
+
+import static org.hackbrooklyn.plaza.repository.SavedEventRepository.EventsOnly;
 
 @Slf4j
 @Service
@@ -54,10 +61,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Collection<Integer> getFollowedEventIds(User user) {
-        Collection<EventIdsOnly> idsProjection = savedEventRepository.findAllByUser(user);
+        Collection<EventsOnly> idsProjection = savedEventRepository.findAllByUser(user);
 
         return idsProjection.stream()
-                .map(EventIdsOnly::getEventId)
+                .map(EventsOnly::getEvent)
+                .map(Event::getId)
                 .collect(Collectors.toList());
     }
 
@@ -120,9 +128,31 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void deleteEvent(int id) {
         Event event = eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
+        savedEventRepository.deleteAllByEvent(event);
         eventRepository.delete(event);
+    }
+
+    @Override
+    public void saveEvent(int id, User user) {
+        Event event = eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
+
+        SavedEvent savedEvent = new SavedEvent();
+        savedEvent.setEvent(event);
+        savedEvent.setUser(user);
+
+        savedEventRepository.save(savedEvent);
+    }
+
+    @Override
+    public void unsaveEvent(int eventId, User user) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
+
+        SavedEvent savedEvent = savedEventRepository.findByEventAndUser(event, user).orElseThrow(EventNotFoundException::new);
+
+        savedEventRepository.delete(savedEvent);
     }
 
     private void scheduleEventPushNotification(Event event) {
