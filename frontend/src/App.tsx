@@ -149,10 +149,10 @@ const StyledHeader = styled.header`
 `;
 
 const StyledMain = styled.main`
-  margin: 7rem 1rem;
+  margin: 7rem 1rem 0;
 
   @media screen and (min-width: 992px) {
-    margin: 7rem auto;
+    margin: 7rem auto 0;
   }
 `;
 

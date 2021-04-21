@@ -111,12 +111,12 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
         {displayControls && (
           <ControlContainer>
             <StyledAnchor to={`/announcements/${id}/edit`}>
-              <ButtonIcon src={editIcon} alt={'Edit Icon'} />
+              <ButtonIcon src={editIcon} alt="Edit Icon" />
             </StyledAnchor>
-            <StyledAnchor to={'/announcements'}>
+            <StyledAnchor to="/announcements">
               <ButtonIcon
                 src={deleteIcon}
-                alt={'Delete Icon'}
+                alt="Delete Icon"
                 onClick={confirmDeleteAnnouncement}
               />
             </StyledAnchor>
