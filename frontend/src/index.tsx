@@ -25,6 +25,7 @@ export const HACKATHON_END_DATE_TIME = new Date(process.env.REACT_APP_HACKATHON_
 export const HAS_HACKATHON_STARTED = new Date(Date.now()) > HACKATHON_START_DATE_TIME;
 
 export const VAPID_PUBLIC_KEY = process.env.REACT_APP_VAPID_PUBLIC_KEY ? process.env.REACT_APP_VAPID_PUBLIC_KEY : '';
+export const TIME_BEFORE_EVENT_TO_DISPLAY_JOIN_BUTTON = process.env.REACT_APP_TIME_BEFORE_EVENT_TO_DISPLAY_JOIN_BUTTON ? process.env.REACT_APP_TIME_BEFORE_EVENT_TO_DISPLAY_JOIN_BUTTON : '';
 
 ReactDOM.render(
   <React.StrictMode>
