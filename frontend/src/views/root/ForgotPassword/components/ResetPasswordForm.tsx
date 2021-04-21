@@ -71,13 +71,13 @@ const ResetPasswordForm = (): JSX.Element => {
       await logInAndRefreshUserData(resBody.token);
 
       // Redirect user to their dashboard
-      toast.success('You have reset your password');
+      toast.success('Your password has been successfully reset.');
       history.push('/');
     } else if (res.status === 401) {
-      toast.error('Key is invalid');
+      toast.error('The password reset link is invalid. Please request another one.');
     } else {
       console.error(await res.json());
-      toast.error('Unknown error');
+      toast.error('An unknown error occurred. Please try again.');
     }
 
     setSubmitting(false);
