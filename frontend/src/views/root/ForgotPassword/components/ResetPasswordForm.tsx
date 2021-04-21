@@ -38,7 +38,7 @@ const ResetPasswordForm = (): JSX.Element => {
     const passwordResetKey = parsedQuery.key as string;
 
     if (!passwordResetKey) {
-      toast.error('Key does not exist');
+      toast.error('The password reset key could not be found. Please click the password reset link in the email you received and try again.');
       setSubmitting(false);
       return;
     }
