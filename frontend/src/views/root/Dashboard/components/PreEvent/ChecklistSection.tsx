@@ -88,7 +88,7 @@ export const ChecklistItem = (props: ChecklistItemProps): JSX.Element => {
         <ItemDescriptionDiv>{children}</ItemDescriptionDiv>
 
         {type === 'anchor' && buttonLink && (
-          <a href={buttonLink} rel="noopener noreferrer" target="_blank">
+          <a href={buttonLink} target="_blank" rel="noopener noreferrer">
             <Button variant="primary">{buttonText}</Button>
           </a>
         )}
