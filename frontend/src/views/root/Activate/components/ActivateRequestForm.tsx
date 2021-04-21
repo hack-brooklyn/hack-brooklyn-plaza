@@ -37,16 +37,16 @@ const ActivateRequestForm = (): JSX.Element => {
     }
 
     if (res.status === 200) {
-      toast.success('Please check your email for an activation link');
+      toast.success('Activation email sent! Please check your email to finish activating your account.');
     } else if (res.status === 400) {
-      toast.error('Please enter a valid email');
+      toast.error('Please enter a valid email.');
     } else if (res.status === 404) {
-      toast.error('No account with this email could be found.');
+      toast.error('No applicant with this email could be found.');
     } else if (res.status === 409) {
-      toast.error('Account already activated');
+      toast.error('This account has already been activated.');
     } else {
       console.error(await res.json());
-      toast.error('Unknown error');
+      toast.error('An unknown error occurred. Please try again.');
     }
 
     setSubmitting(false);
