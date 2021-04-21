@@ -48,7 +48,7 @@ const AnnouncementEditor = (props: AnnouncementEditorData): JSX.Element => {
               </Form.Check.Label>
             </StyledCheck>
             <StyledSubmitButton type="submit" size="lg">
-              {actionType === 'Create' ? 'Create Announcement' : 'Save Changes'}
+              {actionType === 'Create' ? 'Post Announcement' : 'Save Changes'}
             </StyledSubmitButton>
           </StyledPostAnnouncementForm>
         )}
