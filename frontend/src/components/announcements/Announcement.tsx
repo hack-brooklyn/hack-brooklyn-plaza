@@ -28,6 +28,11 @@ interface AnnouncementProps extends IAnnouncement {
   toggleRefresh: () => void;
 }
 
+interface LinkProps {
+  href: string;
+  children: React.ReactNode;
+}
+
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
@@ -121,11 +126,6 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
     </AnnouncementContainer>
   );
 };
-
-interface LinkProps {
-  href: string;
-  children: React.ReactNode;
-}
 
 const LinkRenderer = (props: LinkProps) => {
   const { href, children } = props;
