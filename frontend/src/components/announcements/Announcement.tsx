@@ -113,7 +113,7 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
             <StyledAnchor to={`/announcements/${id}/edit`}>
               <ButtonIcon src={editIcon} alt="Edit Announcement" />
             </StyledAnchor>
-            <StyledAnchor to={'/announcements'}>
+            <StyledAnchor to="/announcements">
               <ButtonIcon
                 src={deleteIcon}
                 alt="Delete Announcement"
