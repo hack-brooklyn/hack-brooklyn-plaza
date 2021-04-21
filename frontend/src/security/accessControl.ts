@@ -14,8 +14,6 @@ export enum Resources {
   Events = 'EVENTS',
   MentorMatcher = 'MENTOR_MATCHER',
   SavedEvents = 'SAVED_EVENTS',
-  ScheduleBuilder = 'SCHEDULE_BUILDER',
-  TeamFormation = 'TEAM_FORMATION',
   TeamFormationParticipants = 'TEAM_FORMATION_PARTICIPANTS',
   TeamFormationTeams = 'TEAM_FORMATION_TEAMS',
   Users = 'USERS'
@@ -65,9 +63,6 @@ const grants = {
       'create:own': ['*'],
       'read:own': ['*'],
       'delete:own': ['*']
-    },
-    [Resources.ScheduleBuilder]: {
-      'read:any': ['*']
     },
     [Resources.TeamFormationParticipants]: {
       'create:own': ['*'],
