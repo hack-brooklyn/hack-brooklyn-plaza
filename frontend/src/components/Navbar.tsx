@@ -10,7 +10,11 @@ import {
   LinkNavItem,
   ProfileDropdownMenu
 } from 'components';
-import { ButtonActiveOverrideStyles, Logo, StyledNavLink } from 'common/styles/commonStyles';
+import {
+  ButtonActiveOverrideStyles,
+  Logo,
+  StyledNavLink
+} from 'common/styles/commonStyles';
 import { enumHasValue } from 'util/plazaUtils';
 import ac, { Resources, Roles } from 'security/accessControl';
 import { Breakpoints, RootState } from 'types';
@@ -87,7 +91,7 @@ export const LoggedInNavItems = (): JSX.Element => {
             <LinkNavItem to="/teamformation">Team Formation</LinkNavItem>
           )}
 
-          {ac.can(userRole).readAny(Resources.ScheduleBuilder).granted && (
+          {ac.can(userRole).readAny(Resources.Events).granted && (
             <LinkNavItem to="/schedule">Schedule Builder</LinkNavItem>
           )}
         </>

@@ -444,6 +444,17 @@ export interface HackathonLinks {
   devpostUrl: string;
 }
 
+export interface EventData {
+  id: number;
+  title: string;
+  presenter: string;
+  startTime: string;
+  endTime: string;
+  description: string;
+  externalLink: string;
+  saved?: boolean;
+}
+
 export const roleOptions: Option[] = [
   { value: Roles.None, label: 'None' },
   { value: Roles.Applicant, label: 'Applicant' },
@@ -675,5 +686,21 @@ export class AnnouncementNotFoundError extends Error {
     super();
     this.name = 'AnnouncementNotFoundError';
     this.message = 'The requested announcement does not exist';
+  }
+}
+
+export class EventNotFoundError extends Error {
+  constructor() {
+    super();
+    this.name = 'EventNotFoundError';
+    this.message = 'The requested event does not exist';
+  }
+}
+
+export class InvalidEventDatesError extends Error {
+  constructor() {
+    super();
+    this.name = 'InvalidEventDatesError';
+    this.message = 'Start time must be before the end time';
   }
 }

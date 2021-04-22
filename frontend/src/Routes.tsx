@@ -33,6 +33,7 @@ import {
   ViewSubmittedApplication
 } from 'views/admin';
 import { RootState } from 'types';
+import { ScheduleBuilder, CreateEvent, EditEvent } from 'views/schedulebuilder';
 
 const Routes = (): JSX.Element => {
   const userIsLoggedIn = useSelector(
@@ -85,6 +86,23 @@ const Routes = (): JSX.Element => {
 
         <Route path="/announcements/:announcementId/edit">
           <EditAnnouncement />
+        </Route>
+
+        {/* Schedule */}
+        <Route path="/schedule" exact>
+          <ScheduleBuilder />
+        </Route>
+
+        <Route path="/schedule/post" exact>
+          <CreateEvent />
+        </Route>
+
+        <Route path="/schedule/:eventId/edit">
+          <EditEvent />
+        </Route>
+
+        <Route path="/schedule/:eventId">
+          <ScheduleBuilder />
         </Route>
 
         {/* Team Formation */}
