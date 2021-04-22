@@ -6,8 +6,10 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
+import EventEditor from './';
 import { acCan, refreshAccessToken } from 'util/auth';
-import EventEditor from 'components/schedulebuilder/EventEditor';
+import { handleError, handleErrorAndPush } from 'util/plazaUtils';
+import { Resources } from 'security/accessControl';
 import {
   AnnouncementNotFoundError,
   ConnectionError,
@@ -16,9 +18,7 @@ import {
   RootState,
   UnknownError
 } from 'types';
-import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { API_ROOT } from 'index';
-import { Resources } from 'security/accessControl';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

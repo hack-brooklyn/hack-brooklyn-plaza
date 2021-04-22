@@ -351,6 +351,10 @@ export interface PageParams {
   applicationNumberParam?: string;
 }
 
+export interface EventParams {
+  eventId: string;
+}
+
 export interface TeamFormationCommon {
   id: number;
   visibleInBrowser: boolean;

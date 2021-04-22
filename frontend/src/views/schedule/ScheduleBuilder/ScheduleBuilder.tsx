@@ -1,28 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components/macro';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
+import styled from 'styled-components/macro';
 
-import { ScheduleViewer, EventDetail, EventDetailModal } from 'components/schedulebuilder';
+import {
+  EventDetail,
+  EventDetailModal,
+  ScheduleViewer
+} from 'components/schedule';
+import { LinkButton } from 'components';
+import { StyledCenteredH1 } from 'common/styles/commonStyles';
+import { acCan, refreshAccessToken } from 'util/auth';
+import { handleError, handleErrorAndPush } from 'util/plazaUtils';
+import ac, { Resources } from 'security/accessControl';
 import {
   Breakpoints,
   ConnectionError,
   EventData,
+  EventParams,
   NoPermissionError,
   RootState,
   UnknownError
 } from 'types';
 import { API_ROOT } from 'index';
-import { acCan, refreshAccessToken } from 'util/auth';
-import { Resources } from 'security/accessControl';
-import { handleErrorAndPush } from 'util/plazaUtils';
-
-interface ParamId {
-  eventId: string;
-}
 
 const ScheduleBuilder = (): JSX.Element => {
   const history = useHistory();
+  const { eventId } = useParams<EventParams>();
 
   const accessToken = useSelector(
     (state: RootState) => state.auth.jwtAccessToken
@@ -30,22 +34,20 @@ const ScheduleBuilder = (): JSX.Element => {
   const userRole = useSelector((state: RootState) => state.user.role);
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
-  const { eventId } = useParams<ParamId>();
-
   const [event, setEvent] = useState<EventData>();
   const [show, setShow] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   const selectEvent = (e: EventData) => {
-    if (windowWidth < Breakpoints.Large) {
-      setShow(true);
-    }
     setEvent(e);
   };
 
   useEffect(() => {
+    setShow(false);
+
     if (eventId) {
-      getEvent();
+      getEvent().catch((err) => handleError(err));
+      setShow(true);
     }
   }, [eventId]);
 
@@ -95,13 +97,25 @@ const ScheduleBuilder = (): JSX.Element => {
 
   return (
     <>
-      <Container>
-        <ScheduleViewer
-          selectEvent={selectEvent}
-          selectedEvent={event}
-          refresh={refresh}
-          setRefresh={setRefresh}
-        />
+      <ScheduleBuilderContainer>
+        <EventListing>
+          <StyledCenteredH1>Schedule Builder</StyledCenteredH1>
+
+          {ac.can(userRole).createAny(Resources.Events).granted && (
+            <NewEventButton to="/schedule/create">
+              Create New Event
+            </NewEventButton>
+          )}
+
+          <ScheduleViewer
+            selectEvent={selectEvent}
+            selectedEvent={event}
+            refresh={refresh}
+            setRefresh={setRefresh}
+            setShow={setShow}
+          />
+        </EventListing>
+
         {windowWidth >= Breakpoints.Large && (
           <EventDetailContainer>
             <EventDetail
@@ -111,7 +125,9 @@ const ScheduleBuilder = (): JSX.Element => {
             />
           </EventDetailContainer>
         )}
-      </Container>
+      </ScheduleBuilderContainer>
+
+      {/* Modal shown only on mobile */}
       {windowWidth < Breakpoints.Large && (
         <EventDetailModal
           event={event}
@@ -125,24 +141,40 @@ const ScheduleBuilder = (): JSX.Element => {
   );
 };
 
+const ScheduleBuilderContainer = styled.div`
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    display: flex;
+    flex-direction: row;
+    max-height: 85vh;
+    overflow: hidden;
+    justify-content: space-between;
+  }
+`;
+
 const EventDetailContainer = styled.div`
-  width: 60%;
-  height: 100%;
+  min-height: 100%;
+  width: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
-  padding: 4rem;
+  padding: 2.25rem;
+
   -webkit-box-shadow: 0 0 10px 0.5px rgba(225, 225, 225, 1);
   -moz-box-shadow: 0 0 10px 0.5px rgba(225, 225, 225, 1);
   box-shadow: 0 0 10px 0.5px rgba(225, 225, 225, 1);
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin: 1rem;
+  }
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 85vh;
-  justify-content: space-between;
+const NewEventButton = styled(LinkButton)`
+  width: 97.5%;
+  margin: 0.25rem auto;
+  text-align: center;
 `;
+
+const EventListing = styled.div``;
 
 export default ScheduleBuilder;

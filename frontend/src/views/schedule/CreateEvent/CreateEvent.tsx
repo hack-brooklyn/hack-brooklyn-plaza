@@ -10,7 +10,7 @@ import { API_ROOT } from 'index';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { acCan, refreshAccessToken } from 'util/auth';
 import { Resources } from 'security/accessControl';
-import EventEditor from 'components/schedulebuilder/EventEditor';
+import EventEditor from 'components/schedule/EventEditor';
 import {
   ConnectionError,
   EventData,
