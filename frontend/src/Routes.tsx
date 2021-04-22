@@ -139,7 +139,7 @@ const Routes = (): JSX.Element => {
           <ManageApplications />
         </Route>
 
-        <Route path="/admin/applications/:applicationNumberParam">
+        <Route path="/admin/applications/:applicationNumberParam" exact>
           <ViewSubmittedApplication />
         </Route>
 
