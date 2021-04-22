@@ -158,8 +158,9 @@ const EventDetailContainer = styled.div`
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
-  padding: 2.25rem;
 
+  padding: 2.25rem;
+  border-radius: 5px;
   -webkit-box-shadow: 0 0 10px 0.5px rgba(225, 225, 225, 1);
   -moz-box-shadow: 0 0 10px 0.5px rgba(225, 225, 225, 1);
   box-shadow: 0 0 10px 0.5px rgba(225, 225, 225, 1);
