@@ -111,12 +111,12 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
         {displayControls && (
           <ControlContainer>
             <StyledAnchor to={`/announcements/${id}/edit`}>
-              <ButtonIcon src={editIcon} alt="Edit Announcement" />
+              <ButtonIcon src={editIcon} alt="Edit Icon" />
             </StyledAnchor>
             <StyledAnchor to="/announcements">
               <ButtonIcon
                 src={deleteIcon}
-                alt="Delete Announcement"
+                alt="Delete Icon"
                 onClick={confirmDeleteAnnouncement}
               />
             </StyledAnchor>
@@ -130,7 +130,7 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
 const LinkRenderer = (props: LinkProps) => {
   const { href, children } = props;
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer">
+    <a href={href} rel="noreferrer" target="_blank">
       {children}
     </a>
   );
