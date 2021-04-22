@@ -62,7 +62,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public Collection<Integer> getFollowedEventIds(User user) {
         Collection<EventsOnly> idsProjection = savedEventRepository.findAllByUser(user);
-
         return idsProjection.stream()
                 .map(EventsOnly::getEvent)
                 .map(Event::getId)
@@ -71,18 +70,21 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Collection<User> getUsersFollowing(int eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
-        Collection<UsersOnly> usersProjection = savedEventRepository.findAllByEvent(event);
+        Event event = eventRepository
+                .findById(eventId)
+                .orElseThrow(EventNotFoundException::new);
 
+        Collection<UsersOnly> usersProjection = savedEventRepository.findAllByEvent(event);
         return usersProjection.stream()
                 .map(UsersOnly::getUser)
                 .collect(Collectors.toList());
-
     }
 
     @Override
     public Event getEventById(int eventId) {
-        return eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
+        return eventRepository
+                .findById(eventId)
+                .orElseThrow(EventNotFoundException::new);
     }
 
     @Override
@@ -94,7 +96,6 @@ public class EventServiceImpl implements EventService {
         event.setStartTime(reqBody.getStartTime());
         event.setEndTime(reqBody.getEndTime());
         event.setPresenter(reqBody.getPresenter());
-
         Event newEvent = eventRepository.save(event);
 
         try {
@@ -109,14 +110,16 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void updateEvent(int id, SaveEventDTO reqBody) {
-        Event event = eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
+        Event event = eventRepository
+                .findById(id)
+                .orElseThrow(EventNotFoundException::new);
+
         event.setDescription(reqBody.getDescription());
         event.setTitle(reqBody.getTitle());
         event.setExternalLink(reqBody.getExternalLink());
         event.setStartTime(reqBody.getStartTime());
         event.setEndTime(reqBody.getEndTime());
         event.setPresenter(reqBody.getPresenter());
-
         eventRepository.save(event);
 
         try {
@@ -130,27 +133,35 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public void deleteEvent(int id) {
-        Event event = eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
+        Event event = eventRepository
+                .findById(id)
+                .orElseThrow(EventNotFoundException::new);
+
         savedEventRepository.deleteAllByEvent(event);
         eventRepository.delete(event);
     }
 
     @Override
     public void saveEvent(int id, User user) {
-        Event event = eventRepository.findById(id).orElseThrow(EventNotFoundException::new);
+        Event event = eventRepository
+                .findById(id)
+                .orElseThrow(EventNotFoundException::new);
 
         SavedEvent savedEvent = new SavedEvent();
         savedEvent.setEvent(event);
         savedEvent.setUser(user);
-
         savedEventRepository.save(savedEvent);
     }
 
     @Override
     public void unsaveEvent(int eventId, User user) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EventNotFoundException::new);
+        Event event = eventRepository
+                .findById(eventId)
+                .orElseThrow(EventNotFoundException::new);
 
-        SavedEvent savedEvent = savedEventRepository.findByEventAndUser(event, user).orElseThrow(EventNotFoundException::new);
+        SavedEvent savedEvent = savedEventRepository
+                .findByEventAndUser(event, user)
+                .orElseThrow(EventNotFoundException::new);
 
         savedEventRepository.delete(savedEvent);
     }
