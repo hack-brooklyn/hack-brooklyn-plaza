@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { handleError } from 'util/plazaUtils';
 import { refreshAccessToken } from 'util/auth';
 import {
-  AnnouncementData,
+  AnnouncementFormData,
   AnnouncementNotFoundError,
   ConnectionError,
   NoPermissionError,
@@ -16,7 +16,7 @@ import {
 import { API_ROOT } from 'index';
 import { AnnouncementEditor } from 'components/announcements';
 
-interface ParamId {
+interface AnnouncementParams {
   announcementId: string;
 }
 
@@ -26,7 +26,7 @@ const EditAnnouncement = (): JSX.Element => {
     body: '',
     participantsOnly: false
   });
-  const { announcementId } = useParams<ParamId>();
+  const { announcementId } = useParams<AnnouncementParams>();
 
   useEffect(() => {
     getAnnouncement().catch((err) => handleError(err));
@@ -68,10 +68,10 @@ const EditAnnouncement = (): JSX.Element => {
     (state: RootState) => state.auth.jwtAccessToken
   );
 
-  const submitPost = async (announcementData: AnnouncementData) => {
+  const submitPost = async (announcementData: AnnouncementFormData) => {
     try {
       await editAnnouncement(announcementData);
-      toast.success('Announcement successfully edited');
+      toast.success('Your changes have been saved.');
       history.push('/announcements');
     } catch (err) {
       handleError(err);
@@ -79,7 +79,7 @@ const EditAnnouncement = (): JSX.Element => {
   };
 
   const editAnnouncement = async (
-    announcementData: AnnouncementData,
+    announcementData: AnnouncementFormData,
     overriddenAccessToken?: string
   ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
@@ -122,7 +122,7 @@ const EditAnnouncement = (): JSX.Element => {
       ) : (
         <AnnouncementEditor
           announcementData={announcement}
-          actionType={'Edit'}
+          actionType="Edit"
           submitForm={submitPost}
         />
       )}

@@ -165,6 +165,7 @@ const TeamFormationTeamHome = (): JSX.Element => {
             to="/teamformation/teams/search"
             variant="secondary"
             size="lg"
+            centered={true}
           >
             Browse All Teams
           </LinkButton>

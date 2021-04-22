@@ -357,7 +357,6 @@ const CommonButtonStyles = css`
   margin-bottom: 0.75rem;
   width: 100%;
 
-
   @media screen and (min-width: ${Breakpoints.Medium}px) {
     margin-bottom: 0;
     width: auto;
@@ -438,7 +437,7 @@ const StyledLinkButton = styled(LinkButton)`
   ${ButtonActiveOverrideStyles};
 `;
 
-const DeleteApplicationButton = styled(Button)`;
+const DeleteApplicationButton = styled(Button)`
   display: block;
   margin: 0 auto;
 `;

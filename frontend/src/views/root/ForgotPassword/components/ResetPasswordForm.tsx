@@ -1,8 +1,8 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { FastField, Formik, FormikHelpers } from 'formik';
 import queryString from 'query-string';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';
@@ -38,7 +38,7 @@ const ResetPasswordForm = (): JSX.Element => {
     const passwordResetKey = parsedQuery.key as string;
 
     if (!passwordResetKey) {
-      toast.error('Key does not exist');
+      toast.error('The password reset key could not be found. Please click the password reset link in the email you received and try again.');
       setSubmitting(false);
       return;
     }
@@ -71,13 +71,13 @@ const ResetPasswordForm = (): JSX.Element => {
       await logInAndRefreshUserData(resBody.token);
 
       // Redirect user to their dashboard
-      toast.success('You have reset your password');
+      toast.success('Your password has been successfully reset.');
       history.push('/');
     } else if (res.status === 401) {
-      toast.error('Key is invalid');
+      toast.error('The password reset link is invalid. Please request another one.');
     } else {
       console.error(await res.json());
-      toast.error('Unknown error');
+      toast.error('An unknown error occurred. Please try again.');
     }
 
     setSubmitting(false);

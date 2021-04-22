@@ -3,8 +3,6 @@ package org.hackbrooklyn.plaza.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.exception.MultipartFormDataValidationException;
 import org.hackbrooklyn.plaza.model.SubmittedApplication;
@@ -72,15 +70,6 @@ public class ApplyController {
         response.setEligible(applyService.checkPriorityEligibility(email));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @RequiredArgsConstructor
-    @Getter
-    private static class ApplicationFormRequest {
-        private final MultipartFile resumeFile;
-
-        @NotBlank
-        private final String formDataJson;
     }
 
     @Data

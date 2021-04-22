@@ -62,10 +62,18 @@ const ManageSubmittedApplications = (): JSX.Element => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const accessToken = useSelector((state: RootState) => state.auth.jwtAccessToken);
-  const reviewModeLoading = useSelector((state: RootState) => state.applicationReview.loading);
-  const reviewModeEnabled = useSelector((state: RootState) => state.applicationReview.enabled);
-  const reviewModeApplications = useSelector((state: RootState) => state.applicationReview.applicationNumbers);
+  const accessToken = useSelector(
+    (state: RootState) => state.auth.jwtAccessToken
+  );
+  const reviewModeLoading = useSelector(
+    (state: RootState) => state.applicationReview.loading
+  );
+  const reviewModeEnabled = useSelector(
+    (state: RootState) => state.applicationReview.enabled
+  );
+  const reviewModeApplications = useSelector(
+    (state: RootState) => state.applicationReview.applicationNumbers
+  );
   const userRole = useSelector((state: RootState) => state.user.role);
 
   const [tableReady, setTableReady] = useState(false);
@@ -73,12 +81,19 @@ const ManageSubmittedApplications = (): JSX.Element => {
   const [currentPage, setCurrentPage] = useState(1);
   // Request parameters
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentRequestParams, setCurrentRequestParams] = useState<GetApplicationsRequestParams>({});
+  const [
+    currentRequestParams,
+    setCurrentRequestParams
+  ] = useState<GetApplicationsRequestParams>({});
   // Table data
-  const [applications, setApplications] = useState<SubmittedApplicationLite[]>([]);
+  const [applications, setApplications] = useState<SubmittedApplicationLite[]>(
+    []
+  );
   const [totalPages, setTotalPages] = useState(0);
   const [totalFoundApplications, setTotalFoundApplications] = useState(0);
-  const [totalUndecidedApplications, setTotalUndecidedApplications] = useState(0);
+  const [totalUndecidedApplications, setTotalUndecidedApplications] = useState(
+    0
+  );
 
   useEffect(() => {
     try {
@@ -89,7 +104,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
       return;
     }
 
-    getApplications(currentRequestParams).catch(err => {
+    getApplications(currentRequestParams).catch((err) => {
       handleError(err);
     });
   }, [currentRequestParams]);
@@ -101,47 +116,50 @@ const ManageSubmittedApplications = (): JSX.Element => {
     }
   }, [reviewModeEnabled]);
 
-  const tableColumns: Array<Column<SubmittedApplicationLite>> = useMemo(() => [
-    {
-      Header: 'Application #',
-      accessor: 'applicationNumber'
-    },
-    {
-      Header: 'First Name',
-      accessor: 'firstName'
-    },
-    {
-      Header: 'Last Name',
-      accessor: 'lastName'
-    },
-    {
-      Header: 'Email',
-      accessor: 'email'
-    },
-    {
-      Header: 'Submitted On',
-      Cell: ({ value }) => {
-        return dayjs(value).format('M/DD/YY, h:mm A');
+  const tableColumns: Array<Column<SubmittedApplicationLite>> = useMemo(
+    () => [
+      {
+        Header: 'Application #',
+        accessor: 'applicationNumber'
       },
-      accessor: 'applicationTimestamp'
-    },
-    {
-      Header: 'Decision',
-      Cell: function Decision(cell) {
-        switch (cell.value) {
-          case ApplicationDecisions.Accepted:
-            return <span style={{ color: 'green' }}>Accepted</span>;
-          case ApplicationDecisions.Rejected:
-            return <span style={{ color: 'red' }}>Rejected</span>;
-          case ApplicationDecisions.Undecided:
-            return <span style={{ color: 'gray' }}>Undecided</span>;
-          default:
-            return null;
-        }
+      {
+        Header: 'First Name',
+        accessor: 'firstName'
       },
-      accessor: 'decision'
-    }
-  ], []);
+      {
+        Header: 'Last Name',
+        accessor: 'lastName'
+      },
+      {
+        Header: 'Email',
+        accessor: 'email'
+      },
+      {
+        Header: 'Submitted On',
+        Cell: ({ value }) => {
+          return dayjs(value).format('M/DD/YY, h:mm A');
+        },
+        accessor: 'applicationTimestamp'
+      },
+      {
+        Header: 'Decision',
+        Cell: function Decision(cell) {
+          switch (cell.value) {
+            case ApplicationDecisions.Accepted:
+              return <span style={{ color: 'green' }}>Accepted</span>;
+            case ApplicationDecisions.Rejected:
+              return <span style={{ color: 'red' }}>Rejected</span>;
+            case ApplicationDecisions.Undecided:
+              return <span style={{ color: 'gray' }}>Undecided</span>;
+            default:
+              return null;
+          }
+        },
+        accessor: 'decision'
+      }
+    ],
+    []
+  );
 
   const {
     getTableProps,
@@ -149,12 +167,18 @@ const ManageSubmittedApplications = (): JSX.Element => {
     headerGroups,
     rows,
     prepareRow
-  } = useTable({
-    columns: tableColumns,
-    data: applications
-  }, useSortBy);
+  } = useTable(
+    {
+      columns: tableColumns,
+      data: applications
+    },
+    useSortBy
+  );
 
-  const getApplications = async (options?: GetApplicationsRequestParams, overriddenAccessToken?: string) => {
+  const getApplications = async (
+    options?: GetApplicationsRequestParams,
+    overriddenAccessToken?: string
+  ) => {
     setTableReady(false);
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
@@ -168,7 +192,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
       res = await fetch(`${API_ROOT}/applications${queryParams}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
       });
     } catch (err) {
@@ -195,7 +219,10 @@ const ManageSubmittedApplications = (): JSX.Element => {
     }
   };
 
-  const exportApplications = async (type: ApplicationExportTypes, overriddenAccessToken?: string) => {
+  const exportApplications = async (
+    type: ApplicationExportTypes,
+    overriddenAccessToken?: string
+  ) => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
@@ -203,7 +230,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
       res = await fetch(`${API_ROOT}/applications/export?type=${type}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
       });
     } catch (err) {
@@ -216,7 +243,7 @@ const ManageSubmittedApplications = (): JSX.Element => {
     } else if (res.status === 401) {
       refreshAccessToken(history)
         .then((refreshedToken) => exportApplications(type, refreshedToken))
-        .catch(err => toast.error(err.message));
+        .catch((err) => toast.error(err.message));
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -249,63 +276,83 @@ const ManageSubmittedApplications = (): JSX.Element => {
               : 'Loading...'}
           </ApplicationCount>
 
-          {tableReady &&
-          <ActionButtons>
-            <EnterReviewModeButton
-              onClick={() => {
-                try {
-                  dispatch(enterApplicationReviewMode());
-                } catch (err) {
-                  handleError(err);
-                }
-              }}
-              disabled={reviewModeLoading || totalUndecidedApplications < 1}
-            >
-              {reviewModeLoading ? 'Loading...' : 'Enter Review Mode'}
-            </EnterReviewModeButton>
-
-            <Dropdown>
-              <ExportDropdownButton
-                variant="secondary"
-                disabled={isExporting}
+          {tableReady && (
+            <ActionButtons>
+              <EnterReviewModeButton
+                onClick={() => {
+                  try {
+                    dispatch(enterApplicationReviewMode());
+                  } catch (err) {
+                    handleError(err);
+                  }
+                }}
+                disabled={reviewModeLoading || totalUndecidedApplications < 1}
               >
-                Export
-              </ExportDropdownButton>
+                {reviewModeLoading ? 'Loading...' : 'Enter Review Mode'}
+              </EnterReviewModeButton>
 
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => handleExportApplications(ApplicationExportTypes.CSV)}>
-                  CSV
-                </Dropdown.Item>
+              <Dropdown>
+                <ExportDropdownButton
+                  variant="secondary"
+                  disabled={isExporting}
+                >
+                  Export
+                </ExportDropdownButton>
 
-                <Dropdown.Item onClick={() => handleExportApplications(ApplicationExportTypes.JSON)}>
-                  JSON
-                </Dropdown.Item>
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    onClick={() =>
+                      handleExportApplications(ApplicationExportTypes.CSV)
+                    }
+                  >
+                    CSV
+                  </Dropdown.Item>
 
-                <Dropdown.Item onClick={() => handleExportApplications(ApplicationExportTypes.XML)}>
-                  XML
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </ActionButtons>
-          }
+                  <Dropdown.Item
+                    onClick={() =>
+                      handleExportApplications(ApplicationExportTypes.JSON)
+                    }
+                  >
+                    JSON
+                  </Dropdown.Item>
+
+                  <Dropdown.Item
+                    onClick={() =>
+                      handleExportApplications(ApplicationExportTypes.XML)
+                    }
+                  >
+                    XML
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </ActionButtons>
+          )}
         </ManageActions>
       </HeadingSection>
 
       <FilterSection>
         <Row>
           <StyledCol lg={6}>
-            <SearchForm onSubmit={(e: React.FormEvent) => {
-              e.preventDefault();
-              setCurrentRequestParams({ ...currentRequestParams, searchQuery: searchQuery });
-            }}>
-              <Form.Control name="query"
-                            type="text"
-                            placeholder="Search for applications..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+            <SearchForm
+              onSubmit={(e: React.FormEvent) => {
+                e.preventDefault();
+                setCurrentRequestParams({
+                  ...currentRequestParams,
+                  searchQuery: searchQuery
+                });
+              }}
+            >
+              <Form.Control
+                name="query"
+                type="text"
+                placeholder="Search for applications..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
 
-              <SearchButton variant="secondary" type="submit">Search</SearchButton>
+              <SearchButton variant="secondary" type="submit">
+                Search
+              </SearchButton>
             </SearchForm>
           </StyledCol>
 
@@ -316,7 +363,11 @@ const ManageSubmittedApplications = (): JSX.Element => {
               onChange={(option) => {
                 const decision = option ? option.value : undefined;
                 setCurrentPage(1);
-                setCurrentRequestParams({ ...currentRequestParams, page: 1, decision: decision });
+                setCurrentRequestParams({
+                  ...currentRequestParams,
+                  page: 1,
+                  decision: decision
+                });
               }}
               isClearable
             />
@@ -329,7 +380,11 @@ const ManageSubmittedApplications = (): JSX.Element => {
               onChange={(option) => {
                 const limit = option ? option.value : undefined;
                 setCurrentPage(1);
-                setCurrentRequestParams({ ...currentRequestParams, page: 1, limit: limit });
+                setCurrentRequestParams({
+                  ...currentRequestParams,
+                  page: 1,
+                  limit: limit
+                });
               }}
               isClearable
             />
@@ -339,48 +394,54 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
       <Table responsive hover {...getTableProps}>
         <thead>
-        {headerGroups.map((headerGroup, index) => (
-          <tr {...headerGroup.getHeaderGroupProps()} key={index}>
-            {headerGroup.headers.map((column, index) => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())} key={index}>
-                {column.render('Header')}
-                {column.isSorted
-                  ? column.isSortedDesc
-                    ? ' 🔽'
-                    : ' 🔼'
-                  : ''}
-              </th>
-            ))}
-          </tr>
-        ))}
+          {headerGroups.map((headerGroup, index) => (
+            <tr {...headerGroup.getHeaderGroupProps()} key={index}>
+              {headerGroup.headers.map((column, index) => (
+                <th
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  key={index}
+                >
+                  {column.render('Header')}
+                  {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                </th>
+              ))}
+            </tr>
+          ))}
         </thead>
 
         <tbody {...getTableBodyProps()}>
-        {rows.map((row, index) => {
-          prepareRow(row);
-          return (
-            <ApplicationRow {...row.getRowProps()}
-                            onClick={() => history.push(`/admin/applications/${row.values.applicationNumber}`)}
-                            key={index}>
-              {row.cells.map((cell, index) => {
-                return (
-                  <td {...cell.getCellProps()} key={index}>
-                    {cell.render('Cell')}
-                  </td>
-                );
-              })}
-            </ApplicationRow>
-          );
-        })}
+          {rows.map((row, index) => {
+            prepareRow(row);
+            return (
+              <ApplicationRow
+                {...row.getRowProps()}
+                onClick={() =>
+                  history.push(
+                    `/admin/applications/${row.values.applicationNumber}`
+                  )
+                }
+                key={index}
+              >
+                {row.cells.map((cell, index) => {
+                  return (
+                    <td {...cell.getCellProps()} key={index}>
+                      {cell.render('Cell')}
+                    </td>
+                  );
+                })}
+              </ApplicationRow>
+            );
+          })}
         </tbody>
       </Table>
 
       <PageControls>
         <PageIndicator>
           {totalFoundApplications > 0
-            ? `Page ${currentPage} of ${totalPages} (${totalFoundApplications} result${totalFoundApplications === 1 ? '' : 's'} found)`
-            : 'No results found'
-          }
+            ? `Page ${currentPage} of ${totalPages} (${totalFoundApplications} result${
+                totalFoundApplications === 1 ? '' : 's'
+              } found)`
+            : 'No results found'}
         </PageIndicator>
 
         <PageButtonContainer>
@@ -391,7 +452,10 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
               const newPage = currentPage - 1;
               setCurrentPage(newPage);
-              setCurrentRequestParams({ ...currentRequestParams, page: newPage });
+              setCurrentRequestParams({
+                ...currentRequestParams,
+                page: newPage
+              });
             }}
             disabled={currentPage <= 1}
           >
@@ -404,7 +468,10 @@ const ManageSubmittedApplications = (): JSX.Element => {
 
               const newPage = currentPage + 1;
               setCurrentPage(newPage);
-              setCurrentRequestParams({ ...currentRequestParams, page: newPage });
+              setCurrentRequestParams({
+                ...currentRequestParams,
+                page: newPage
+              });
             }}
             disabled={currentPage >= totalPages}
           >

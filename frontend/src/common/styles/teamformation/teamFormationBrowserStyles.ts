@@ -69,9 +69,6 @@ export const MessageText = styled.div`
 
 export const LinkButtonContainer = styled.div`
   margin: 2rem auto 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 export const LoadingSection = styled.section`

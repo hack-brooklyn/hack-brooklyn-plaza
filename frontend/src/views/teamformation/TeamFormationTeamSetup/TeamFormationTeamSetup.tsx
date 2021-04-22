@@ -151,7 +151,7 @@ const TeamFormationTeamSetup = (): JSX.Element => {
           formData.participantInterestedTopicsAndSkills,
         specialization: formData.participantSpecialization,
         objectiveStatement: formData.participantObjectiveStatement,
-        contactInfo: formData.participantContactInfo,
+        contactInfo: formData.participantContactInfo
       },
       team: {
         name: formData.teamName,

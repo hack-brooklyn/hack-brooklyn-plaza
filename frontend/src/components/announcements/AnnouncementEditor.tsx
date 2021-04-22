@@ -1,17 +1,18 @@
 import React from 'react';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import styled from 'styled-components/macro';
 
 import { RequiredFormLabel } from '../';
 import { FastField, Formik } from 'formik';
 import { StyledH1, StyledSubmitButton } from 'common/styles/commonStyles';
-import { AnnouncementData } from 'types';
+import { AnnouncementFormData } from 'types';
 
 interface AnnouncementEditorData {
-  announcementData: AnnouncementData;
+  announcementData: AnnouncementFormData;
   actionType: string;
-  submitForm: (announcementData: AnnouncementData) => Promise<void>;
+  submitForm: (announcementData: AnnouncementFormData) => Promise<void>;
 }
+
 const AnnouncementEditor = (props: AnnouncementEditorData): JSX.Element => {
   const { announcementData, actionType, submitForm } = props;
 
@@ -26,7 +27,7 @@ const AnnouncementEditor = (props: AnnouncementEditorData): JSX.Element => {
               as="textarea"
               className="form-control"
               name="body"
-              id={'body'}
+              id="body"
               rows="5"
               maxLength={2000}
               placeholder={
@@ -47,7 +48,7 @@ const AnnouncementEditor = (props: AnnouncementEditorData): JSX.Element => {
               </Form.Check.Label>
             </StyledCheck>
             <StyledSubmitButton type="submit" size="lg">
-              {actionType === 'Create' ? 'Create Announcement' : 'Save Changes'}
+              {actionType === 'Create' ? 'Post Announcement' : 'Save Changes'}
             </StyledSubmitButton>
           </StyledPostAnnouncementForm>
         )}

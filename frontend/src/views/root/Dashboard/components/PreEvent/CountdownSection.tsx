@@ -4,13 +4,14 @@ import Countdown, { CountdownRenderProps } from 'react-countdown';
 
 import { StyledH2 } from 'common/styles/commonStyles';
 import { Breakpoints } from 'types';
+import { HACKATHON_START_DATE_TIME } from 'index';
 
 const CountdownSection = (): JSX.Element => {
   return (
     <StyledSection>
       <StyledH2>Hacking Begins In</StyledH2>
       <Countdown
-        date={new Date('April 23, 2021 6:00 PM')}
+        date={new Date(HACKATHON_START_DATE_TIME)}
         renderer={countdownRenderer}
       />
     </StyledSection>
@@ -26,7 +27,9 @@ const countdownRenderer = (props: CountdownRenderProps): JSX.Element => {
     return (
       <div role="text">
         <DaysRemainingText>{days} days</DaysRemainingText>
-        <HMSRemainingText>{hours} hours, {minutes} minutes, and {seconds} seconds</HMSRemainingText>
+        <HMSRemainingText>
+          {hours} hours, {minutes} minutes, and {seconds} seconds
+        </HMSRemainingText>
       </div>
     );
   }

@@ -16,6 +16,7 @@ import {
   PostAnnouncement,
   EditAnnouncement
 } from 'views/announcements';
+import { ScheduleBuilder, CreateEvent, EditEvent } from 'views/schedule';
 import {
   TeamFormationHome,
   TeamFormationParticipantHome,
@@ -85,6 +86,23 @@ const Routes = (): JSX.Element => {
 
         <Route path="/announcements/:announcementId/edit">
           <EditAnnouncement />
+        </Route>
+
+        {/* Schedule Builder */}
+        <Route path="/schedule" exact>
+          <ScheduleBuilder />
+        </Route>
+
+        <Route path="/schedule/create">
+          <CreateEvent />
+        </Route>
+
+        <Route path="/schedule/:eventId/edit">
+          <EditEvent />
+        </Route>
+
+        <Route path="/schedule/:eventId">
+          <ScheduleBuilder />
         </Route>
 
         {/* Team Formation */}

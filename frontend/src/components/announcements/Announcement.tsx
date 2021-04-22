@@ -11,31 +11,40 @@ import ReactMarkdown from 'react-markdown';
 
 import { API_ROOT } from 'index';
 import {
+  Announcement as IAnnouncement,
   Breakpoints,
   ConnectionError,
   NoPermissionError,
   RootState,
-  UnknownError,
+  UnknownError
 } from 'types';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import editIcon from 'assets/icons/penBlack.svg';
 import deleteIcon from 'assets/icons/trashIcon.svg';
 
-interface AnnouncementProps {
-  body: string;
-  lastUpdated: string;
-  timeCreated: string;
+interface AnnouncementProps extends IAnnouncement {
   displayControls: boolean;
-  id: number;
   toggleRefresh: () => void;
+}
+
+interface LinkProps {
+  href: string;
+  children: React.ReactNode;
 }
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
 const Announcement = (props: AnnouncementProps): JSX.Element => {
-  const { body, lastUpdated, timeCreated, displayControls, id, toggleRefresh } = props;
+  const {
+    id,
+    body,
+    lastUpdated,
+    timeCreated,
+    displayControls,
+    toggleRefresh
+  } = props;
 
   const windowWidth = useSelector((state: RootState) => state.app.windowWidth);
 
@@ -45,10 +54,10 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
   );
 
   const confirmDeleteAnnouncement = async () => {
-    if (confirm('Are you sure you want to delete?')) {
+    if (confirm('Are you sure you want to delete this announcement?')) {
       try {
         await deleteAnnouncement();
-        toast.success('Successfully deleted an announcement');
+        toast.success('The announcement has been deleted.');
         toggleRefresh();
       } catch (err) {
         handleError(err);
@@ -64,8 +73,8 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       res = await fetch(`${API_ROOT}/announcements/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
     } catch (err) {
       throw new ConnectionError();
@@ -94,19 +103,20 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
       <Container>
         <BoldText>
           {timeCreated !== lastUpdated &&
-          `Updated: ${dayjs.utc(lastUpdated).fromNow()}`}
-          {timeCreated !== lastUpdated && (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
-          Created: {dayjs.utc(lastUpdated).fromNow()}
+            `Updated ${dayjs.utc(lastUpdated).fromNow()}`}
+          {timeCreated !== lastUpdated &&
+            (windowWidth < Breakpoints.Small ? <br /> : ' | ')}
+          Posted {dayjs.utc(timeCreated).fromNow()}
         </BoldText>
         {displayControls && (
           <ControlContainer>
             <StyledAnchor to={`/announcements/${id}/edit`}>
-              <ButtonIcon src={editIcon} alt={'Edit Icon'} />
+              <ButtonIcon src={editIcon} alt="Edit Announcement" />
             </StyledAnchor>
-            <StyledAnchor to={'/announcements'}>
+            <StyledAnchor to="/announcements">
               <ButtonIcon
                 src={deleteIcon}
-                alt={'Delete Icon'}
+                alt="Delete Announcement"
                 onClick={confirmDeleteAnnouncement}
               />
             </StyledAnchor>
@@ -117,15 +127,10 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
   );
 };
 
-interface LinkProps {
-  href: string;
-  children: React.ReactNode;
-}
-
 const LinkRenderer = (props: LinkProps) => {
   const { href, children } = props;
   return (
-    <a href={href} rel="noreferrer" target="_blank">
+    <a href={href} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );
@@ -152,20 +157,29 @@ const Container = styled.div`
 `;
 
 const ControlContainer = styled.div`
-  @media (max-width: ${Breakpoints.Small}px) {
-    justify-self: flex-end;
-    display: flex;
+  justify-self: flex-end;
+  display: flex;
+  
+  @media (min-width: ${Breakpoints.Small}px) {
+    display: initial;
   }
 `;
 
-const BodyText = styled.p`
+const BodyText = styled.div`
   width: 100%;
-  word-break: break-word;
+  margin-bottom: 0;
   font-size: 1.1rem;
+
+  img {
+    display: block;
+    margin: 0 auto;
+    width: 75%;
+  }
 `;
 
 const BoldText = styled.p`
   font-weight: bold;
+  align-self: flex-end;
 `;
 
 const ButtonIcon = styled.img``;

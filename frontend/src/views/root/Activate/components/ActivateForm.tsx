@@ -1,8 +1,8 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { FastField, Formik, FormikHelpers } from 'formik';
 import queryString from 'query-string';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';
@@ -38,7 +38,7 @@ const ActivateForm = (): JSX.Element => {
     const activationKey = parsedQuery.key as string;
 
     if (!activationKey) {
-      toast.error('Key does not exist');
+      toast.error('The activation key could not be found. Please click the activation link in the email you received and try again.');
       setSubmitting(false);
       return;
     }
@@ -71,15 +71,15 @@ const ActivateForm = (): JSX.Element => {
       await logInAndRefreshUserData(resBody.token);
 
       // Redirect user to their dashboard
-      toast.success('You have activated your account');
+      toast.success('Your account has been successfully activated.');
       history.push('/');
     } else if (res.status === 401) {
-      toast.error('Key is invalid');
+      toast.error('The activation link is invalid. Please request another one.');
     } else if (res.status === 409) {
-      toast.error('Account already activated');
+      toast.error('This account has already been activated.');
     } else {
       console.error(await res.json());
-      toast.error('Unknown error');
+      toast.error('An unknown error occurred. Please try again.');
     }
 
     setSubmitting(false);

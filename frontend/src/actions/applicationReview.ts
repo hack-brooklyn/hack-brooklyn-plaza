@@ -6,7 +6,6 @@ import {
   EXIT_APPLICATION_REVIEW_MODE,
   SET_APPLICATIONS_LOADING
 } from '../constants';
-import { API_ROOT } from 'index';
 import {
   ApplicationReviewActionTypes,
   AppThunk,
@@ -16,6 +15,7 @@ import {
   RootState,
   UnknownError
 } from 'types';
+import { API_ROOT } from 'index';
 
 export const enterApplicationReviewMode = (): AppThunk => {
   return async (dispatch, getState) => {
@@ -63,7 +63,6 @@ export const advanceApplicationIndex = (): ApplicationReviewActionTypes => {
   };
 };
 
-
 export const setApplicationsLoading = (isLoading: boolean): ApplicationReviewActionTypes => {
   return {
     type: SET_APPLICATIONS_LOADING,
@@ -80,7 +79,7 @@ const getApplicationsDataForReviewMode = async (getState: () => RootState, overr
     res = await fetch(`${API_ROOT}/applications/undecidedApplicationNumbers`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       }
     });
   } catch (err) {

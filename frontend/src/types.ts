@@ -351,6 +351,10 @@ export interface PageParams {
   applicationNumberParam?: string;
 }
 
+export interface EventParams {
+  eventId: string;
+}
+
 export interface TeamFormationCommon {
   id: number;
   visibleInBrowser: boolean;
@@ -428,9 +432,32 @@ export interface TeamFormationParticipantInvitation {
   invitationTimestamp: Date;
 }
 
-export interface AnnouncementData {
+export interface AnnouncementFormData {
   body: string;
   participantsOnly: boolean;
+}
+
+export interface Announcement extends AnnouncementFormData {
+  id: number;
+  timeCreated: Date;
+  lastUpdated: Date;
+}
+
+export interface HackathonLinks {
+  discordUrl: string;
+  devpostUrl: string;
+  guideUrl: string;
+}
+
+export interface EventData {
+  id: number;
+  title: string;
+  presenter: string;
+  startTime: string;
+  endTime: string;
+  description: string;
+  externalLink: string;
+  saved?: boolean;
 }
 
 export const roleOptions: Option[] = [
@@ -664,5 +691,21 @@ export class AnnouncementNotFoundError extends Error {
     super();
     this.name = 'AnnouncementNotFoundError';
     this.message = 'The requested announcement does not exist';
+  }
+}
+
+export class EventNotFoundError extends Error {
+  constructor() {
+    super();
+    this.name = 'EventNotFoundError';
+    this.message = 'The requested event does not exist';
+  }
+}
+
+export class InvalidEventDatesError extends Error {
+  constructor() {
+    super();
+    this.name = 'InvalidEventDatesError';
+    this.message = 'Start time must be before the end time';
   }
 }

@@ -2,7 +2,7 @@ package org.hackbrooklyn.plaza.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hackbrooklyn.plaza.exception.ApplicationTermsNotAcceptedException;
-import org.hackbrooklyn.plaza.exception.FoundDataConflictException;
+import org.hackbrooklyn.plaza.exception.DataConflictException;
 import org.hackbrooklyn.plaza.exception.PriorityApplicantIneligibleException;
 import org.hackbrooklyn.plaza.exception.RejectedFileTypeException;
 import org.hackbrooklyn.plaza.model.PreviousSubmittedApplication;
@@ -84,14 +84,14 @@ public class ApplyServiceImpl implements ApplyService {
         // Check email submitted in the form itself first
         SubmittedApplication existingApplicationEmail = submittedApplicationRepository.findFirstByEmailOrPriorityApplicantEmail(email, email);
         if (existingApplicationEmail != null) {
-            throw new FoundDataConflictException();
+            throw new DataConflictException();
         }
 
         // Then check the email used to verify priority applicant eligibility if priority applications are open
         if (PRIORITY_APPLICATIONS_ACTIVE) {
             SubmittedApplication existingApplicationPriorityApplicantEmail = submittedApplicationRepository.findFirstByEmailOrPriorityApplicantEmail(priorityApplicantEmail, priorityApplicantEmail);
             if (existingApplicationPriorityApplicantEmail != null) {
-                throw new FoundDataConflictException();
+                throw new DataConflictException();
             }
         }
 

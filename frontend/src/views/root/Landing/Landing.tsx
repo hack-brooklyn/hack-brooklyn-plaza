@@ -1,5 +1,6 @@
 import React from 'react';
-import { Col, Row } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import styled from 'styled-components/macro';
 
 import { ActionLink } from './components';

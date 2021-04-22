@@ -2,18 +2,21 @@ package org.hackbrooklyn.plaza.controller;
 
 import org.hackbrooklyn.plaza.dto.SaveEventDTO;
 import org.hackbrooklyn.plaza.model.Event;
+import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.Collection;
+import java.util.Collections;
 
 @Validated
 @RestController
@@ -47,9 +50,10 @@ public class EventsController {
     @PostMapping
     public ResponseEntity<Void> addEvent(@RequestBody @Valid SaveEventDTO bodyReq) {
         int id = eventService.createNewEvent(bodyReq);
-        String location = "/events" + id;
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", location);
+        headers.add("Location", String.format("/schedule/%s", id));
+        headers.setAccessControlExposeHeaders(Collections.singletonList("Location"));
 
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
@@ -66,6 +70,30 @@ public class EventsController {
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> deleteEvent(@PathVariable @Positive int eventId) {
         eventService.deleteEvent(eventId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.SAVED_EVENTS_READ)")
+    @GetMapping("/save")
+    public ResponseEntity<Collection<Integer>> getSavedEvents(@AuthenticationPrincipal User user) {
+        Collection<Integer> eventIds = eventService.getFollowedEventIds(user);
+
+        return new ResponseEntity<>(eventIds, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.SAVED_EVENTS_ADD)")
+    @PostMapping("/save/{eventId}")
+    public ResponseEntity<Void> saveEvent(@AuthenticationPrincipal User user, @PathVariable @Positive int eventId) {
+        eventService.saveEvent(eventId, user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority(@authorities.SAVED_EVENTS_REMOVE)")
+    @DeleteMapping("/save/{eventId}")
+    public ResponseEntity<Void> unsaveEvent(@AuthenticationPrincipal User user, @PathVariable @Positive int eventId) {
+        eventService.unsaveEvent(eventId, user);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
