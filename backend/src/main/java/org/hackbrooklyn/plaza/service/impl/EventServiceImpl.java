@@ -173,7 +173,7 @@ public class EventServiceImpl implements EventService {
         if (eventStartTimeMs > currentTimeMs) {
             log.info(String.format("Scheduling a push notification for event ID: %s", event.getId()));
             new Timer().schedule(
-                    new SendEventPushNotificationsTask(event, pushNotificationUtils, eventRepository),
+                    new SendEventPushNotificationsTask(event, pushNotificationUtils, eventRepository, savedEventRepository),
                     eventStartTimeMs - currentTimeMs
             );
         }

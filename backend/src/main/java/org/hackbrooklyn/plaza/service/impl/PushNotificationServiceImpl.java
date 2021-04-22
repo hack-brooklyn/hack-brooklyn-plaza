@@ -8,6 +8,7 @@ import org.hackbrooklyn.plaza.model.PushNotificationSubscription;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.repository.EventRepository;
 import org.hackbrooklyn.plaza.repository.PushNotificationSubscriptionRepository;
+import org.hackbrooklyn.plaza.repository.SavedEventRepository;
 import org.hackbrooklyn.plaza.service.PushNotificationService;
 import org.hackbrooklyn.plaza.util.PushNotificationUtils;
 import org.hackbrooklyn.plaza.util.SendEventPushNotificationsTask;
@@ -27,12 +28,14 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 
     private final PushNotificationSubscriptionRepository pushNotificationSubscriptionRepository;
     private final EventRepository eventRepository;
+    private final SavedEventRepository savedEventRepository;
     private final PushNotificationUtils pushNotificationUtils;
 
     @Autowired
-    public PushNotificationServiceImpl(PushNotificationSubscriptionRepository pushNotificationSubscriptionRepository, EventRepository eventRepository, PushNotificationUtils pushNotificationUtils) {
+    public PushNotificationServiceImpl(PushNotificationSubscriptionRepository pushNotificationSubscriptionRepository, EventRepository eventRepository, SavedEventRepository savedEventRepository, PushNotificationUtils pushNotificationUtils) {
         this.pushNotificationSubscriptionRepository = pushNotificationSubscriptionRepository;
         this.eventRepository = eventRepository;
+        this.savedEventRepository = savedEventRepository;
         this.pushNotificationUtils = pushNotificationUtils;
     }
 
@@ -48,7 +51,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
             if (eventStartTimeMs > currentTimeMs) {
                 totalScheduledEvents++;
                 new Timer().schedule(
-                        new SendEventPushNotificationsTask(event, pushNotificationUtils, eventRepository),
+                        new SendEventPushNotificationsTask(event, pushNotificationUtils, eventRepository, savedEventRepository),
                         eventStartTimeMs - currentTimeMs
                 );
             }

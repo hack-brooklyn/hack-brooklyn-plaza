@@ -6,10 +6,13 @@ import org.hackbrooklyn.plaza.dto.NotificationContentDTO;
 import org.hackbrooklyn.plaza.model.Event;
 import org.hackbrooklyn.plaza.model.User;
 import org.hackbrooklyn.plaza.repository.EventRepository;
+import org.hackbrooklyn.plaza.repository.SavedEventRepository;
+import org.hackbrooklyn.plaza.repository.SavedEventRepository.UsersOnly;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
@@ -18,6 +21,7 @@ public class SendEventPushNotificationsTask extends TimerTask {
     private final Event event;
     private final PushNotificationUtils pushNotificationUtils;
     private final EventRepository eventRepository;
+    private final SavedEventRepository savedEventRepository;
 
     @Override
     public void run() {
@@ -53,8 +57,11 @@ public class SendEventPushNotificationsTask extends TimerTask {
                 false
         );
 
-        // TODO: Get a list of users that saved this event and send them the push notification
-        Collection<User> savedEventUsers = new ArrayList<>();
+        Collection<UsersOnly> usersOnlyProjection = savedEventRepository.findAllByEvent(event);
+        Set<User> savedEventUsers = usersOnlyProjection.stream()
+                .map(UsersOnly::getUser)
+                .collect(Collectors.toSet());
+
         pushNotificationUtils.sendBackgroundSimplePushNotificationToUsers(savedEventUsers, notification);
     }
 }
