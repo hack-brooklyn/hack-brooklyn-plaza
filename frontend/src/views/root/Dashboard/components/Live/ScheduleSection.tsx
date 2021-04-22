@@ -14,7 +14,7 @@ const ScheduleSection = (): JSX.Element => {
   const history = useHistory();
 
   return (
-    <LiveDashboardSection>
+    <ScheduleViewerSection>
       <ScheduleHeading>My Schedule</ScheduleHeading>
 
       <ScheduleViewer
@@ -31,8 +31,8 @@ const ScheduleSection = (): JSX.Element => {
           </DirectionText>
 
           <DirectionText>
-            You will receive push notifications for each event added to your
-            schedule when they&apos;re about to begin.
+            You will receive push notifications for each event in your schedule
+            when they&apos;re about to begin.
           </DirectionText>
         </div>
 
@@ -40,7 +40,7 @@ const ScheduleSection = (): JSX.Element => {
           Go to Schedule Builder
         </LinkButton>
       </Directions>
-    </LiveDashboardSection>
+    </ScheduleViewerSection>
   );
 };
 
@@ -50,6 +50,13 @@ const ScheduleHeading = styled(LiveDashboardHeading)`
 
   @media screen and (min-width: ${Breakpoints.Large}px) {
     margin-bottom: 0;
+  }
+`;
+
+const ScheduleViewerSection = styled(LiveDashboardSection)`
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    max-width: 29.375rem;
+    margin-left: auto;
   }
 `;
 
@@ -75,8 +82,8 @@ const DirectionText = styled.p`
     margin-bottom: 1.25rem;
   }
 
-  @media screen and (min-width: ${Breakpoints.Large}px) {
-    max-width: 80%;
+  @media screen and (min-width: ${Breakpoints.ExtraLarge}px) {
+    max-width: 25rem;
   }
 `;
 
