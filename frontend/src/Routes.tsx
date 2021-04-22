@@ -16,6 +16,7 @@ import {
   PostAnnouncement,
   EditAnnouncement
 } from 'views/announcements';
+import { ScheduleBuilder, CreateEvent, EditEvent } from 'views/schedule';
 import {
   TeamFormationHome,
   TeamFormationParticipantHome,
@@ -33,7 +34,6 @@ import {
   ViewSubmittedApplication
 } from 'views/admin';
 import { RootState } from 'types';
-import { ScheduleBuilder, CreateEvent, EditEvent } from 'views/schedulebuilder';
 
 const Routes = (): JSX.Element => {
   const userIsLoggedIn = useSelector(
@@ -88,12 +88,12 @@ const Routes = (): JSX.Element => {
           <EditAnnouncement />
         </Route>
 
-        {/* Schedule */}
+        {/* Schedule Builder */}
         <Route path="/schedule" exact>
           <ScheduleBuilder />
         </Route>
 
-        <Route path="/schedule/post" exact>
+        <Route path="/schedule/create">
           <CreateEvent />
         </Route>
 
