@@ -127,7 +127,6 @@ const Announcement = (props: AnnouncementProps): JSX.Element => {
   );
 };
 
-
 const LinkRenderer = (props: LinkProps) => {
   const { href, children } = props;
   return (
@@ -164,10 +163,16 @@ const ControlContainer = styled.div`
   }
 `;
 
-const BodyText = styled.p`
+const BodyText = styled.div`
   width: 100%;
-  word-break: break-word;
+  margin-bottom: 0;
   font-size: 1.1rem;
+
+  img {
+    display: block;
+    margin: 0 auto;
+    width: 75%;
+  }
 `;
 
 const BoldText = styled.p`
