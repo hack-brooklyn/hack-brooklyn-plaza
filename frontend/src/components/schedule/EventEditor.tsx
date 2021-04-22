@@ -21,6 +21,7 @@ const EventEditor = (props: EventEditorData): JSX.Element => {
   return (
     <>
       <StyledH1>{`${actionType} Event`}</StyledH1>
+
       <Formik initialValues={eventData} onSubmit={submitForm}>
         {(formik) => (
           <StyledEventEditorForm onSubmit={formik.handleSubmit}>
@@ -45,9 +46,6 @@ const EventEditor = (props: EventEditorData): JSX.Element => {
                   <RequiredFormLabel>Start Date & Time</RequiredFormLabel>
                   <DateTimePicker
                     value={formik.values.startTime}
-                    minDate={new Date('2021-4-23T00:00:00')}
-                    maxDate={new Date('2021-4-25T00:00:00')}
-                    disablePast
                     fullWidth
                     required
                     onChange={(e) => {
@@ -62,7 +60,6 @@ const EventEditor = (props: EventEditorData): JSX.Element => {
                   <RequiredFormLabel>End Date & Time</RequiredFormLabel>
                   <DateTimePicker
                     value={formik.values.endTime}
-                    disablePast
                     fullWidth
                     required
                     onChange={(e) => {
@@ -81,8 +78,7 @@ const EventEditor = (props: EventEditorData): JSX.Element => {
                 as="textarea"
                 className="form-control"
                 name="description"
-                rows="5"
-                maxLength={2000}
+                rows="10"
                 placeholder={
                   'Enter a description for the event. Markdown is supported.'
                 }
@@ -97,7 +93,7 @@ const EventEditor = (props: EventEditorData): JSX.Element => {
                 as={Form.Control}
                 type="text"
                 name="externalLink"
-                id="externalLink"
+                placeholder="External links must begin with http:// or https://."
                 required
               />
             </Form.Group>
