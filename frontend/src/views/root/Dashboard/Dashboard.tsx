@@ -24,6 +24,7 @@ import { API_ROOT, HAS_HACKATHON_STARTED } from 'index';
 
 import discordIcon from 'assets/icons/discord.svg';
 import devpostIcon from 'assets/icons/devpost.svg';
+import bookIcon from 'assets/icons/book.svg';
 import listIcon from 'assets/icons/list.svg';
 import announcementIcon from 'assets/icons/announcement.svg';
 import calendarPlusIcon from 'assets/icons/calendar-plus.svg';
@@ -112,6 +113,12 @@ const Dashboard = (): JSX.Element => {
       text: 'Devpost',
       type: 'anchor',
       icon: devpostIcon
+    },
+    {
+      link: links?.guideUrl,
+      text: 'Guide',
+      type: 'anchor',
+      icon: bookIcon
     }
   ];
 

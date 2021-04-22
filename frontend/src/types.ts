@@ -446,6 +446,7 @@ export interface Announcement extends AnnouncementFormData {
 export interface HackathonLinks {
   discordUrl: string;
   devpostUrl: string;
+  guideUrl: string;
 }
 
 export interface EventData {
