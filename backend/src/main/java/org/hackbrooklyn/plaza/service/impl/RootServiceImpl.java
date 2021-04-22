@@ -14,8 +14,11 @@ public class RootServiceImpl implements RootService {
     @Value("${DEVPOST_URL}")
     private String DEVPOST_URL;
 
+    @Value("${GUIDE_URL}")
+    private String GUIDE_URL;
+
     @Override
     public ChecklistLinksDTO getChecklistLinks() {
-        return new ChecklistLinksDTO(DISCORD_URL, DEVPOST_URL);
+        return new ChecklistLinksDTO(DISCORD_URL, DEVPOST_URL, GUIDE_URL);
     }
 }

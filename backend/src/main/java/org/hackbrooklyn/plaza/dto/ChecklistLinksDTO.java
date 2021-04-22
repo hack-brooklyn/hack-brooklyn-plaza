@@ -17,4 +17,8 @@ public class ChecklistLinksDTO {
     @URL
     @NotEmpty
     private String devpostUrl;
+
+    @URL
+    @NotEmpty
+    private String guideUrl;
 }
