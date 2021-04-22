@@ -111,7 +111,8 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
     }
   };
 
-  const saveEvent = async () => {
+  const saveEvent = async (overriddenAccessToken?: string) => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
     let res;
 
     if (!event) {
@@ -122,7 +123,7 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
         method: 'POST',
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -132,6 +133,9 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
 
     if (res.status === 200) {
       return;
+    } else if (res.status === 401) {
+      const refreshedToken = await refreshAccessToken(history);
+      await saveEvent(refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -140,7 +144,8 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
     }
   };
 
-  const unsaveEvent = async () => {
+  const unsaveEvent = async (overriddenAccessToken?: string) => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
     let res;
 
     if (!event) {
@@ -151,7 +156,7 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
         method: 'DELETE',
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -161,6 +166,9 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
 
     if (res.status === 200) {
       return;
+    } else if (res.status === 401) {
+      const refreshedToken = await refreshAccessToken(history);
+      await unsaveEvent(refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();

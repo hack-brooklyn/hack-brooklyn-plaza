@@ -18,6 +18,7 @@ import SavedStar from 'assets/icons/white-star.svg';
 import UnsavedStar from 'assets/icons/yellow-star.svg';
 import LiveIndicator from 'assets/icons/red-circle.svg';
 import { API_ROOT, TIME_BEFORE_EVENT_TO_DISPLAY_JOIN_BUTTON } from 'index';
+import { refreshAccessToken } from 'util/auth';
 
 dayjs.extend(utc);
 
@@ -58,14 +59,16 @@ const Event = (props: EventProps): JSX.Element => {
     toggleRefresh();
   };
 
-  const saveEvent = async () => {
+  const saveEvent = async (overriddenAccessToken?: string) => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
+
     let res;
     try {
       res = await fetch(`${API_ROOT}/events/save/${id}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -75,6 +78,9 @@ const Event = (props: EventProps): JSX.Element => {
 
     if (res.status === 200) {
       return;
+    } else if (res.status === 401) {
+      const refreshedToken = await refreshAccessToken(history);
+      await saveEvent(refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -83,14 +89,15 @@ const Event = (props: EventProps): JSX.Element => {
     }
   };
 
-  const unsaveEvent = async () => {
+  const unsaveEvent = async (overriddenAccessToken?: string) => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
     let res;
     try {
       res = await fetch(`${API_ROOT}/events/save/${id}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -100,6 +107,9 @@ const Event = (props: EventProps): JSX.Element => {
 
     if (res.status === 200) {
       return;
+    } else if (res.status === 401) {
+      const refreshedToken = await refreshAccessToken(history);
+      await unsaveEvent(refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();

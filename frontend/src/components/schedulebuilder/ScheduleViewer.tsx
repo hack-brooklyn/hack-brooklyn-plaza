@@ -20,6 +20,7 @@ import {
   RootState,
   UnknownError
 } from 'types';
+import { refreshAccessToken } from 'util/auth';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -49,7 +50,7 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
     getSavedEventIds()
       .then(getEvents)
       .then(refreshSavedEvents)
-      .catch((err) => handleError(err));
+      .catch((err: Error) => handleError(err));
   }, [props.refresh]);
 
   const toggleRefresh = () => {
@@ -78,13 +79,15 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
     }
   };
 
-  const getEvents = async (saved: number[]) => {
+  const getEvents = async (saved: number[], overriddenAccessToken?: string): Promise<(number[] | EventState)[]> => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
+
     let res;
     try {
       res = await fetch(`${API_ROOT}/events`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         }
       });
     } catch (err) {
@@ -106,6 +109,9 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
       });
 
       return [newEvents, saved];
+    } else if (res.status === 401) {
+      const refreshedToken = await refreshAccessToken(history);
+      return await getEvents(saved, refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
@@ -114,13 +120,15 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
     }
   };
 
-  const getSavedEventIds = async () => {
+  const getSavedEventIds = async (overriddenAccessToken?: string): Promise<number[]> => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
+
     let res;
     try {
       res = await fetch(`${API_ROOT}/events/save`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${accessToken}`
+          Authorization: `Bearer ${token}`
         }
       });
     } catch (err) {
@@ -129,6 +137,9 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
 
     if (res.status === 200) {
       return res.json();
+    } else if (res.status === 401) {
+      const refreshedToken = await refreshAccessToken(history);
+      return await getSavedEventIds(refreshedToken);
     } else if (res.status === 403) {
       history.push('/');
       throw new NoPermissionError();
