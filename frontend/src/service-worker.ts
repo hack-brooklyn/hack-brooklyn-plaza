@@ -120,6 +120,11 @@ self.addEventListener('notificationclick', function (e) {
     targetPath = '/announcements';
   } else if (tag.startsWith('teamformation-')) {
     targetPath = '/teamformation';
+  } else if (tag.startsWith('event-reminder-')) {
+    // Tag format is 'event-reminder-id'
+    // Get the ID to route the user to
+    const eventId = tag.split('-')[2];
+    targetPath = `/schedule/${eventId}`;
   }
 
   const urlToOpen = new URL(
