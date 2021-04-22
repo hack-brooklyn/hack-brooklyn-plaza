@@ -42,7 +42,7 @@ const adminActions: MenuAction[] = [
     icon: announcementIcon
   },
   {
-    link: '/events/create',
+    link: '/schedule/create',
     text: 'Create New Event',
     type: 'link',
     icon: calendarPlusIcon
