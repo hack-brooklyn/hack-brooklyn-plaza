@@ -157,9 +157,11 @@ const Container = styled.div`
 `;
 
 const ControlContainer = styled.div`
-  @media (max-width: ${Breakpoints.Small}px) {
-    justify-self: flex-end;
-    display: flex;
+  justify-self: flex-end;
+  display: flex;
+  
+  @media (min-width: ${Breakpoints.Small}px) {
+    display: initial;
   }
 `;
 
