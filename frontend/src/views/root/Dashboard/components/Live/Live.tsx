@@ -11,12 +11,12 @@ import {
 const Live = (): JSX.Element => {
   return (
     <Row>
-      <Col lg={6}>
+      <Col lg={7}>
         <TimeRemainingSection />
         <AnnouncementsSection />
       </Col>
 
-      <Col lg={6}>
+      <Col lg={5}>
         <ScheduleSection />
       </Col>
     </Row>
