@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter as Router, useHistory } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  useHistory,
+  useRouteMatch
+} from 'react-router-dom';
 import styled from 'styled-components/macro';
 import Container from 'react-bootstrap/Container';
 import { toast, ToastContainer } from 'react-toastify';
@@ -10,12 +14,13 @@ import { BurgerMenu, Navbar } from './components';
 import Routes from './Routes';
 import store from './store';
 import { setWindowWidth } from 'actions/app';
+import { logIn } from 'actions/auth';
 import { refreshAccessToken, refreshUserData } from 'util/auth';
 import { subscribeToPushNotifications } from 'util/notificationService';
+import { Breakpoints, RootState } from 'types';
+
 import logo from 'assets/logo.png';
 import loadingIcon from 'assets/icons/loading.svg';
-import { logIn } from 'actions/auth';
-import { Breakpoints, RootState } from 'types';
 
 const App = (): JSX.Element => {
   return (
@@ -107,6 +112,9 @@ const AppContent = () => {
 };
 
 const MainContent = () => {
+  // Hide extra page bottom padding on fullscreen pages without scrolling
+  const isOnFullscreenPage = useRouteMatch(['/schedule']);
+
   return (
     <>
       <StyledHeader>
@@ -120,6 +128,8 @@ const MainContent = () => {
           <Routes />
         </Container>
       </StyledMain>
+
+      {!isOnFullscreenPage && <PageBottomPadding />}
     </>
   );
 };
@@ -172,6 +182,10 @@ const LoadingLogoImg = styled.img`
 const LoadingSpinnerImg = styled.img`
   height: 4rem;
   width: 4rem;
+`;
+
+const PageBottomPadding = styled.div`
+  margin-bottom: 4rem;
 `;
 
 export default App;
