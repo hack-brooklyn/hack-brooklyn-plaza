@@ -16,7 +16,7 @@ import {
 import { API_ROOT } from 'index';
 import { AnnouncementEditor } from 'components/announcements';
 
-interface ParamId {
+interface AnnouncementParams {
   announcementId: string;
 }
 
@@ -26,7 +26,7 @@ const EditAnnouncement = (): JSX.Element => {
     body: '',
     participantsOnly: false
   });
-  const { announcementId } = useParams<ParamId>();
+  const { announcementId } = useParams<AnnouncementParams>();
 
   useEffect(() => {
     getAnnouncement().catch((err) => handleError(err));
