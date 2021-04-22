@@ -1,6 +1,6 @@
 import React from 'react';
 import { FastField, Formik, FormikHelpers } from 'formik';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';

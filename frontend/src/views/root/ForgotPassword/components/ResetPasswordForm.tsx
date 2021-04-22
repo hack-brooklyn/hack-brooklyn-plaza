@@ -1,8 +1,8 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { FastField, Formik, FormikHelpers } from 'formik';
 import queryString from 'query-string';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 
 import { RequiredFormLabel } from 'components';
