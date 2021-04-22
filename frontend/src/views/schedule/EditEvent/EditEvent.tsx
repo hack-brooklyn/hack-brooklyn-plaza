@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import EventEditor from './';
+import { EventEditor } from 'components/schedule';
 import { acCan, refreshAccessToken } from 'util/auth';
 import { handleError, handleErrorAndPush } from 'util/plazaUtils';
 import { Resources } from 'security/accessControl';
@@ -23,10 +23,6 @@ import { API_ROOT } from 'index';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-interface ParamId {
-  eventId: string;
-}
 
 const initialValues: EventData = {
   id: 0,
@@ -147,7 +143,7 @@ const EditEvent = (): JSX.Element => {
       ) : (
         <EventEditor
           eventData={event}
-          actionType={'Edit'}
+          actionType="Edit"
           submitForm={submitPost}
         />
       )}
