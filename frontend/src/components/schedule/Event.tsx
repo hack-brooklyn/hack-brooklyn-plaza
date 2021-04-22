@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
+import { isEventLive } from 'util/scheduleBuilder';
 import { refreshAccessToken } from 'util/auth';
 import { handleError } from 'util/plazaUtils';
 import {
@@ -124,15 +125,6 @@ const Event = (props: EventProps): JSX.Element => {
     }
   };
 
-  const checkIfLive = () => {
-    const currentTime = Date.now();
-
-    return (
-      dayjs(currentTime).isAfter(dayjs(startTime)) &&
-      dayjs(currentTime).isBefore(dayjs(endTime))
-    );
-  };
-
   const checkToDisplayJoinButton = () => {
     const currentTime = Date.now();
 
@@ -149,7 +141,7 @@ const Event = (props: EventProps): JSX.Element => {
       <div>
         <ExtraContainer>
           <TimeContainer>
-            {checkIfLive() && (
+            {isEventLive(event) && (
               <LiveText>
                 <img src={LiveIndicator} alt="This Event is Live" /> LIVE
               </LiveText>
@@ -241,8 +233,6 @@ const EventContainer = styled.div`
 
   @media screen and (min-width: ${Breakpoints.ExtraLarge}px) {
     height: 10rem;
-    width: 28.125rem;
-    max-width: 28.125rem;
   }
 `;
 
@@ -252,14 +242,14 @@ const ExtraContainer = styled.div`
   align-items: flex-end;
 `;
 
-const LiveText = styled.div`
+export const LiveText = styled.div`
   color: #ff0000;
   font-weight: bold;
   display: flex;
   align-content: flex-end;
 
   & > img {
-    margin-right: 0.25rem;
+    margin-right: 0.35rem;
   }
 `;
 
