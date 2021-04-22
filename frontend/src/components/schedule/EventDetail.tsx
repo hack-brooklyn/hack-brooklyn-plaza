@@ -90,10 +90,10 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
   };
 
   const confirmDeleteEvent = async () => {
-    if (confirm('Are you sure you want to delete?')) {
+    if (confirm('Are you sure you want to delete this event?')) {
       try {
         await deleteEvent();
-        toast.success('Successfully deleted an event');
+        toast.success('The event has been deleted.');
       } catch (err) {
         handleError(err);
       }
