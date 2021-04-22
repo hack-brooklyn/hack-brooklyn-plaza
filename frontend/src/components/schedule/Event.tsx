@@ -215,19 +215,22 @@ const EventContainer = styled.div`
   -moz-box-shadow: 0 0 10px 0.5px rgba(225, 225, 225, 1);
   box-shadow: 0 0 10px 0.5px rgba(225, 225, 225, 1);
 
+  transition: 0.15s;
+  transition-timing-function: ease-in-out;
+
   &:last-child {
     margin-bottom: 0.5rem;
   }
 
   @media screen and (min-width: ${Breakpoints.Large}px) {
-    width: 350px;
+    max-width: 28.125rem;
 
     ${(props: EventContainerProps) =>
       props.eventId === props.passedEventId &&
       `
-      -webkit-box-shadow: 0px 0px 0px 2px #0066ff, 0 0 10px 0.5px rgba(225, 225, 225, 1);
-      -moz-box-shadow: 0px 0px 0px 2px #0066ff, 0 0 10px 0.5px rgba(225, 225, 225, 1);
-      box-shadow: 0px 0px 0px 2px #0066ff, 0 0 10px 0.5px rgba(225, 225, 225, 1);
+        -webkit-box-shadow: 0px 0px 0px 2px #0066ff, 0 0 10px 0.5px rgba(225, 225, 225, 1);
+        -moz-box-shadow: 0px 0px 0px 2px #0066ff, 0 0 10px 0.5px rgba(225, 225, 225, 1);
+        box-shadow: 0px 0px 0px 2px #0066ff, 0 0 10px 0.5px rgba(225, 225, 225, 1);
     `};
   }
 
