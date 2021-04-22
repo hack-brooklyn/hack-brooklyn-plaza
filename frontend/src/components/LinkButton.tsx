@@ -26,10 +26,10 @@ export interface LinkButtonProps
 }
 
 const LinkButton = (props: LinkButtonProps): JSX.Element => {
-  const { to, size, variant, centered, children } = props;
+  const { to, size, variant, centered, className, children } = props;
 
   return (
-    <LinkButtonContainer centered={centered}>
+    <LinkButtonContainer centered={centered} className={className}>
       <LinkContainer to={to}>
         <StyledButton variant={variant} size={size} {...props}>
           {children}
