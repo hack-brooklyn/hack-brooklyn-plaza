@@ -1,17 +1,15 @@
 import React, { Dispatch, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import dayjs from 'dayjs';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
-import { Button } from 'react-bootstrap';
+import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import { API_ROOT } from 'index';
+import { Event } from './';
 import { handleError } from 'util/plazaUtils';
-import { Event } from './index';
-import { StyledH1 } from 'common/styles/commonStyles';
-import ac, { Resources } from 'security/accessControl';
+import { refreshAccessToken } from 'util/auth';
+import { API_ROOT } from 'index';
 import {
   Breakpoints,
   ConnectionError,
@@ -20,7 +18,6 @@ import {
   RootState,
   UnknownError
 } from 'types';
-import { refreshAccessToken } from 'util/auth';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -31,18 +28,30 @@ interface EventState {
 
 interface ScheduleViewerProps {
   selectEvent: (id: EventData) => void;
+  savedOnly?: boolean;
+  showSaveButton?: boolean;
   refresh?: boolean;
   setRefresh?: Dispatch<React.SetStateAction<boolean>>;
+  setShow?: React.Dispatch<React.SetStateAction<boolean>>;
   selectedEvent?: EventData;
 }
 
 const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
+  const {
+    refresh,
+    selectEvent,
+    selectedEvent,
+    setRefresh,
+    savedOnly,
+    showSaveButton,
+    setShow
+  } = props;
+
   const history = useHistory();
 
   const accessToken = useSelector(
     (state: RootState) => state.auth.jwtAccessToken
   );
-  const userRole = useSelector((state: RootState) => state.user.role);
 
   const [events, setEvents] = useState<EventState>({});
 
@@ -50,12 +59,12 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
     getSavedEventIds()
       .then(getEvents)
       .then(refreshSavedEvents)
-      .catch((err: Error) => handleError(err));
-  }, [props.refresh]);
+      .catch((err) => handleError(err));
+  }, [refresh]);
 
   const toggleRefresh = () => {
-    if (props.setRefresh) {
-      props.setRefresh(!props.refresh);
+    if (setRefresh) {
+      setRefresh(!refresh);
     }
   };
 
@@ -64,22 +73,27 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
   ) => {
     const [newEvents, saved] = arr;
     const temp = JSON.parse(JSON.stringify(newEvents));
+
     Object.keys(newEvents).forEach((key) => {
       for (let i = 0; i < temp[key].length; i++) {
         const e: EventData = temp[key][i];
         e.saved = saved.includes(e.id);
-        if (props.selectedEvent && props.selectedEvent.id === e.id) {
-          props.selectEvent(e);
+        if (selectedEvent && selectedEvent.id === e.id) {
+          selectEvent(e);
         }
       }
     });
+
     setEvents(temp);
-    if (props.setRefresh) {
-      props.setRefresh(false);
+    if (setRefresh) {
+      setRefresh(false);
     }
   };
 
-  const getEvents = async (saved: number[], overriddenAccessToken?: string): Promise<(number[] | EventState)[]> => {
+  const getEvents = async (
+    saved: number[],
+    overriddenAccessToken?: string
+  ): Promise<(number[] | EventState)[]> => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
@@ -95,20 +109,20 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
     }
 
     if (res.status === 200) {
-      const json = await res.json();
+      const events: EventData[] = await res.json();
 
-      const newEvents: EventState = {};
-
-      json.forEach((e: EventData) => {
-        const day = dayjs(e.startTime).format('ddd, M/DD');
-        if (!newEvents[day]) {
-          newEvents[day] = [e];
+      // Categorize events by date
+      const eventsByDate: EventState = {};
+      events.forEach((event: EventData) => {
+        const day = dayjs(event.startTime).format('ddd, M/DD');
+        if (!eventsByDate[day]) {
+          eventsByDate[day] = [event];
         } else {
-          newEvents[day].push(e);
+          eventsByDate[day].push(event);
         }
       });
 
-      return [newEvents, saved];
+      return [eventsByDate, saved];
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
       return await getEvents(saved, refreshedToken);
@@ -120,7 +134,9 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
     }
   };
 
-  const getSavedEventIds = async (overriddenAccessToken?: string): Promise<number[]> => {
+  const getSavedEventIds = async (
+    overriddenAccessToken?: string
+  ): Promise<number[]> => {
     const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
 
     let res;
@@ -136,7 +152,7 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
     }
 
     if (res.status === 200) {
-      return res.json();
+      return await res.json();
     } else if (res.status === 401) {
       const refreshedToken = await refreshAccessToken(history);
       return await getSavedEventIds(refreshedToken);
@@ -148,78 +164,85 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
     }
   };
 
-  const displayEvents = (date: string) => {
-    return events[`${date}`].map((e: EventData, idx: number) => (
-      <StyledAnchor
-        key={idx}
-        onClick={() => {
-          props.selectEvent(e);
-        }}
-      >
-        <Event event={e} toggleRefresh={toggleRefresh} />
-      </StyledAnchor>
-    ));
+  const displayEventsForDate = (date: string) => {
+    return events[date]
+      .filter((event) => (savedOnly ? event.saved : true))
+      .map((event: EventData) => (
+        <EventCardLink
+          to={`/schedule/${event.id}`}
+          onClick={() => setShow && setShow(true)}
+          key={event.id}
+        >
+          <Event
+            event={event}
+            toggleRefresh={toggleRefresh}
+            showSaveButton={showSaveButton}
+          />
+        </EventCardLink>
+      ));
   };
 
   return (
     <ViewerContainer>
-      <>
-        <StyledH1>Schedule Builder</StyledH1>
-        {ac.can(userRole).createAny(Resources.Events).granted && (
-          <StyledNewButton
-            onClick={() => {
-              history.push('/schedule/post');
-            }}
-          >
-            New Event
-          </StyledNewButton>
-        )}
-      </>
       <EventContainer>
-        {Object.keys(events).length > 0 ? (
-          Object.keys(events).map((date, idx) => {
-            return (
-              <DayContainer key={idx}>
-                <h2 style={{ position: 'sticky' }}>{date}</h2>
-                {events[`${date}`].length > 0 ? (
-                  displayEvents(date)
-                ) : (
-                  <p>No events for this day</p>
-                )}
-              </DayContainer>
-            );
-          })
-        ) : (
-          <p>There are no events at this time</p>
-        )}
+        {Object.keys(events).length > 0
+          ? // Display events for each found date
+            Object.keys(events).map((date, idx) => {
+              if (savedOnly) {
+                // Show only dates with events in them
+                if (events[date].filter((event) => event.saved).length > 0) {
+                  return (
+                    <>
+                      <DayHeading>{date}</DayHeading>
+                      <DayContainer key={idx}>
+                        {displayEventsForDate(date)}
+                      </DayContainer>
+                    </>
+                  );
+                }
+              } else {
+                return (
+                  <>
+                    <DayHeading>{date}</DayHeading>
+                    <DayContainer key={idx}>
+                      {displayEventsForDate(date)}
+                    </DayContainer>
+                  </>
+                );
+              }
+            })
+          : !savedOnly && (
+              <NoEventsMessage>
+                There are no events at this time.
+              </NoEventsMessage>
+            )}
       </EventContainer>
     </ViewerContainer>
   );
 };
 
-const StyledNewButton = styled(Button)`
-  width: 100%;
-  @media screen and (min-width: ${Breakpoints.Medium}px) {
-    max-width: 32rem;
+const NoEventsMessage = styled.div`
+  text-align: center;
+  margin: 1rem auto;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    width: 25rem;
   }
 `;
 
 const ViewerContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  width: 35%;
-
-  @media (max-width: ${Breakpoints.Large}px) {
-    width: 100%;
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
   }
 `;
 
 const EventContainer = styled.div`
   overflow-scrolling: auto;
   overflow-y: scroll;
-  padding: 0 1rem;
+  padding: 0 0.5rem 9rem;
   width: 100%;
   height: 100%;
 
@@ -234,26 +257,31 @@ const EventContainer = styled.div`
     margin-top: 1rem;
     top: 0;
   }
-  
+
   & > p {
     margin-top: 1rem;
     text-align: center;
   }
-  
 `;
 
 const DayContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  text-align: left;
+  text-align: center;
 
-  @media screen and (max-width: ${Breakpoints.Large}px) {
-    //max-width: 32rem;
-    text-align: center;
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    background-color: white;
   }
 `;
 
-const StyledAnchor = styled.a`
+const DayHeading = styled.h2`
+  position: sticky;
+  margin-bottom: 0;
+  outline: 5px solid white;
+`;
+
+const EventCardLink = styled(Link)`
   text-align: left;
   cursor: pointer;
   text-decoration: none;
@@ -263,10 +291,6 @@ const StyledAnchor = styled.a`
 
   &:hover {
     color: black;
-  }
-
-  @media screen and (min-width: ${Breakpoints.Medium}px) {
-    max-width: 32rem;
   }
 `;
 

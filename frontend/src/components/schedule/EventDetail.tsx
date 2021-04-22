@@ -1,13 +1,16 @@
-import React, { Dispatch } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Button } from 'react-bootstrap';
-import ReactMarkdown from 'react-markdown';
-import { LinkProps } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { useHistory } from 'react-router';
+import { LinkProps, useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
+import Button from 'react-bootstrap/Button';
+import { toast } from 'react-toastify';
+import ReactMarkdown from 'react-markdown';
 import dayjs from 'dayjs';
 
+import { LinkButton } from 'components';
+import { handleError } from 'util/plazaUtils';
+import { refreshAccessToken } from 'util/auth';
+import ac, { Resources } from 'security/accessControl';
 import {
   Breakpoints,
   ConnectionError,
@@ -17,14 +20,7 @@ import {
   RootState,
   UnknownError
 } from 'types';
-import { LinkButton } from '../index';
-import ac, { Resources } from 'security/accessControl';
-import {
-  API_ROOT,
-  TIME_BEFORE_EVENT_TO_DISPLAY_JOIN_BUTTON
-} from 'index';
-import { handleError } from 'util/plazaUtils';
-import { refreshAccessToken } from 'util/auth';
+import { API_ROOT, TIME_BEFORE_EVENT_TO_DISPLAY_JOIN_BUTTON } from 'index';
 
 interface EventDetailProps {
   event?: EventData;
@@ -39,12 +35,49 @@ const formatTime = (time: string): string => {
 const EventDetail = (props: EventDetailProps): JSX.Element => {
   const { event, setRefresh, removeSelectedEvent } = props;
 
+  const history = useHistory();
+
   const userRole = useSelector((state: RootState) => state.user.role);
   const accessToken = useSelector(
     (state: RootState) => state.auth.jwtAccessToken
   );
 
-  const history = useHistory();
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    getSavedEventIds().catch((err) => handleError(err));
+  }, [event]);
+
+  const getSavedEventIds = async (
+    overriddenAccessToken?: string
+  ): Promise<void> => {
+    const token = overriddenAccessToken ? overriddenAccessToken : accessToken;
+
+    let res;
+    try {
+      res = await fetch(`${API_ROOT}/events/save`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    } catch (err) {
+      throw new ConnectionError();
+    }
+
+    if (res.status === 200) {
+      const savedIds: number[] = await res.json();
+      event && setIsSaved(savedIds.includes(event.id));
+    } else if (res.status === 401) {
+      const refreshedToken = await refreshAccessToken(history);
+      return await getSavedEventIds(refreshedToken);
+    } else if (res.status === 403) {
+      history.push('/');
+      throw new NoPermissionError();
+    } else {
+      throw new UnknownError();
+    }
+  };
 
   const checkIfAbleToModify = (): boolean => {
     if (userRole !== null) {
@@ -98,13 +131,15 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
     }
   };
 
-  const toggleFavorite = async () => {
+  const toggleSaveEvent = async () => {
     try {
-      if (event && event.saved) {
+      if (isSaved) {
         await unsaveEvent();
       } else {
         await saveEvent();
       }
+
+      await getSavedEventIds();
       setRefresh(true);
     } catch (err) {
       handleError(err);
@@ -180,39 +215,47 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
   if (event) {
     return (
       <>
-        <h3>{event.title}</h3>
-        <p>By {event.presenter}</p>
-        <p>{dayjs(event.startTime).format('dddd, MMMM D, YYYY')}</p>
-        <p>
-          {formatTime(event.startTime)} - {formatTime(event.endTime)}
-        </p>
-        <ButtonContainer>
+        <TitleText>{event.title}</TitleText>
+        <SubtitleText>By {event.presenter}</SubtitleText>
+
+        <DateTimeGroup>
+          <SubtitleText>
+            {dayjs(event.startTime).format('dddd, MMMM D, YYYY')}
+          </SubtitleText>
+          <SubtitleText>
+            {formatTime(event.startTime)} - {formatTime(event.endTime)}
+          </SubtitleText>
+        </DateTimeGroup>
+
+        <ActionButtons>
           {dayjs(event.startTime).valueOf() - dayjs(Date.now()).valueOf() <
             parseInt(TIME_BEFORE_EVENT_TO_DISPLAY_JOIN_BUTTON) && (
-            <Button href={event.externalLink}>Join Event</Button>
+            <JoinButton
+              href={event.externalLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Join Event
+            </JoinButton>
           )}
 
-          <Button
-            style={{
-              backgroundColor: '#7000FF',
-              border: '#7000FF',
-              display: 'inline-block'
-            }}
-            onClick={toggleFavorite}
-          >
-            {event.saved ? 'Remove from Schedule' : 'Add to Schedule'}
-          </Button>
+          <ScheduleButton onClick={toggleSaveEvent}>
+            {isSaved ? 'Remove from Schedule' : 'Add to Schedule'}
+          </ScheduleButton>
+
           {checkIfAbleToModify() && (
-            <LinkButton variant="success" to={`schedule/${event.id}/edit`}>
+            <EditButton variant="success" to={`/schedule/${event.id}/edit`}>
               Edit Event
-            </LinkButton>
+            </EditButton>
           )}
-        </ButtonContainer>
+        </ActionButtons>
+
         <DescriptionText>
           <ReactMarkdown skipHtml={true} renderers={{ link: LinkRenderer }}>
             {event.description}
           </ReactMarkdown>
         </DescriptionText>
+
         {checkIfAbleToModify() && (
           <Button
             variant="outline-danger"
@@ -225,34 +268,13 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
       </>
     );
   } else {
-    return <p>Select an event on the left to view its details.</p>;
+    return (
+      <NoEventSelectedMessage>
+        Select an event on the left to view its details.
+      </NoEventSelectedMessage>
+    );
   }
 };
-
-const DescriptionText = styled.div`
-  word-break: break-all;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1rem;
-
-  & > button,
-  & > a {
-    margin: 0.5rem;
-  }
-
-  @media screen and (max-width: ${Breakpoints.Small}px) {
-    width: 100%;
-
-    & > button,
-    & > a {
-      width: 100%;
-    }
-  }
-`;
 
 const LinkRenderer = (props: LinkProps) => {
   const { href, children } = props;
@@ -262,5 +284,87 @@ const LinkRenderer = (props: LinkProps) => {
     </a>
   );
 };
+
+const TitleText = styled.h3`
+  font-weight: 600;
+  font-size: 1.5rem;
+  text-align: center;
+`;
+
+const SubtitleText = styled.h4`
+  font-size: 1.25rem;
+  font-weight: normal;
+`;
+
+const DateTimeGroup = styled.div`
+  margin-top: 1rem;
+  text-align: center;
+`;
+
+const DescriptionText = styled.div`
+  word-break: break-all;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 0.75rem auto 1rem;
+  width: 100%;
+  align-items: center;
+
+  & > button,
+  & > a {
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+
+  @media screen and (min-width: ${Breakpoints.Medium}px) {
+    width: auto;
+
+    & > button,
+    & > a {
+      width: auto;
+    }
+  }
+`;
+
+const JoinButton = styled(Button)`
+  width: 100%;
+
+  @media screen and (min-width: ${Breakpoints.Small}px) {
+    width: auto;
+  }
+`;
+
+const ScheduleButton = styled(Button)`
+  background-color: #7000ff;
+  border-color: #7000ff;
+
+  &:hover,
+  &:focus {
+    background-color: #5e00d7;
+    border-color: #5b00cc;
+  }
+
+  &:active {
+    background-color: #5f00db;
+    border-color: #7a12ff;
+  }
+`;
+
+const EditButton = styled(LinkButton)`
+  width: 100%;
+
+  @media screen and (min-width: ${Breakpoints.Small}px) {
+    width: auto;
+  }
+`;
+
+const NoEventSelectedMessage = styled.div`
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-top: 2rem;
+  text-align: center;
+`;
 
 export default EventDetail;

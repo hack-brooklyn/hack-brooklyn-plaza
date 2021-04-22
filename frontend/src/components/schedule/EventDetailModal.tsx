@@ -3,13 +3,14 @@ import styled from 'styled-components/macro';
 import Modal from 'react-bootstrap/Modal';
 import ModalBody from 'react-bootstrap/ModalBody';
 
-import { CommonModalProps, EventData } from 'types';
+import { EventDetail } from './';
 import {
   CloseButton,
   CloseButtonContainer,
   CloseIconImg
 } from 'common/styles/teamformation/teamFormationInboxModalStyles';
-import EventDetail from './EventDetail';
+import { Breakpoints, CommonModalProps, EventData } from 'types';
+
 import closeIcon from 'assets/icons/close.svg';
 
 interface EventDetailModal extends CommonModalProps {
@@ -20,6 +21,7 @@ interface EventDetailModal extends CommonModalProps {
 
 const EventDetailModal = (props: EventDetailModal): JSX.Element => {
   const { event, setShow, show, setRefresh, removeSelectedEvent } = props;
+
   return (
     <Modal
       show={show}
@@ -34,6 +36,7 @@ const EventDetailModal = (props: EventDetailModal): JSX.Element => {
             <CloseIconImg src={closeIcon} alt="Close Team Event Detail" />
           </CloseButton>
         </CloseButtonContainer>
+
         {show && (
           <EventDetailContainer>
             <EventDetail
@@ -53,9 +56,13 @@ const EventDetailContainer = styled.div`
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
+  margin: 1.25rem auto 0;
   padding: 1rem;
-  max-width: 37rem;
-  margin: 0 auto;
+  max-width: 600px;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    padding: 2.25rem;
+  }
 `;
 
 export default EventDetailModal;
