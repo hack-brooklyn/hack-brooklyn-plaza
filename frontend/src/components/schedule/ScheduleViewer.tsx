@@ -166,7 +166,11 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
 
   const displayEventsForDate = (date: string) => {
     return events[date]
-      .filter((event) => (savedOnly ? event.saved : true))
+      .filter((event) =>
+        savedOnly
+          ? event.saved && new Date(event.endTime) > new Date(Date.now())
+          : true
+      )
       .map((event: EventData) => (
         <EventCardLink
           to={`/schedule/${event.id}`}
@@ -190,7 +194,13 @@ const ScheduleViewer = (props: ScheduleViewerProps): JSX.Element => {
             Object.keys(events).map((date, idx) => {
               if (savedOnly) {
                 // Show only dates with events in them
-                if (events[date].filter((event) => event.saved).length > 0) {
+                if (
+                  events[date].filter(
+                    (event) =>
+                      event.saved &&
+                      new Date(event.endTime) > new Date(Date.now())
+                  ).length > 0
+                ) {
                   return (
                     <>
                       <DayHeading>{date}</DayHeading>
