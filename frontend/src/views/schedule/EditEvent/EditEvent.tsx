@@ -14,6 +14,7 @@ import {
   AnnouncementNotFoundError,
   ConnectionError,
   EventData,
+  EventParams,
   NoPermissionError,
   RootState,
   UnknownError
@@ -39,15 +40,14 @@ const initialValues: EventData = {
 
 const EditEvent = (): JSX.Element => {
   const history = useHistory();
-  
-  const userRole = useSelector((state: RootState) => state.user.role);
-  
-  const [event, setEvent] = useState(initialValues);
-  const { eventId } = useParams<ParamId>();
+  const { eventId } = useParams<EventParams>();
 
+  const userRole = useSelector((state: RootState) => state.user.role);
   const accessToken = useSelector(
     (state: RootState) => state.auth.jwtAccessToken
   );
+
+  const [event, setEvent] = useState(initialValues);
 
   useEffect(() => {
     try {
@@ -57,7 +57,7 @@ const EditEvent = (): JSX.Element => {
       handleErrorAndPush(err, history);
       return;
     }
-    
+
     getEvent().catch((err) => handleError(err));
   }, []);
 
