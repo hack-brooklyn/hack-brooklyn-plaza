@@ -72,7 +72,7 @@ public class EventsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority(@authorities.EVENTS_READ)")
+    @PreAuthorize("hasAuthority(@authorities.SAVED_EVENTS_READ)")
     @GetMapping("/save")
     public ResponseEntity<Collection<Integer>> getSavedEvents(@AuthenticationPrincipal User user) {
         Collection<Integer> eventIds = eventService.getFollowedEventIds(user);
@@ -80,7 +80,7 @@ public class EventsController {
         return new ResponseEntity<>(eventIds, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority(@authorities.EVENTS_READ)")
+    @PreAuthorize("hasAuthority(@authorities.SAVED_EVENTS_ADD)")
     @PostMapping("/save/{eventId}")
     public ResponseEntity<Void> saveEvent(@AuthenticationPrincipal User user, @PathVariable @Positive int eventId) {
         eventService.saveEvent(eventId, user);
@@ -88,7 +88,7 @@ public class EventsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority(@authorities.EVENTS_READ)")
+    @PreAuthorize("hasAuthority(@authorities.SAVED_EVENTS_REMOVE)")
     @DeleteMapping("/save/{eventId}")
     public ResponseEntity<Void> unsaveEvent(@AuthenticationPrincipal User user, @PathVariable @Positive int eventId) {
         eventService.unsaveEvent(eventId, user);
