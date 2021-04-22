@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import styled from 'styled-components/macro';
 
 import { RequiredFormLabel } from '../';
