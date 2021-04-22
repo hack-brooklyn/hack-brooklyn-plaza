@@ -145,14 +145,14 @@ const ScheduleBuilderContainer = styled.div`
   @media screen and (min-width: ${Breakpoints.Large}px) {
     display: flex;
     flex-direction: row;
-    max-height: 85vh;
+    height: 100vh;
+    max-height: 82.5vh;
     overflow: hidden;
     justify-content: space-between;
   }
 `;
 
 const EventDetailContainer = styled.div`
-  min-height: 100%;
   width: 80%;
   display: flex;
   flex-direction: column;
