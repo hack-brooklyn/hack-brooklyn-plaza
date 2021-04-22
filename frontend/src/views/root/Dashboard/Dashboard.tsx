@@ -38,13 +38,13 @@ const adminActions: MenuAction[] = [
   },
   {
     link: '/announcements/post',
-    text: 'Post New Announcement',
+    text: 'Post Announcement',
     type: 'link',
     icon: announcementIcon
   },
   {
     link: '/schedule/create',
-    text: 'Create New Event',
+    text: 'Create Event',
     type: 'link',
     icon: calendarPlusIcon
   }
