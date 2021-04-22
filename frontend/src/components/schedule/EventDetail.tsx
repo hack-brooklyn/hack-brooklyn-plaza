@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import dayjs from 'dayjs';
 
 import { LinkButton } from 'components';
+import { isEventLive } from 'util/scheduleBuilder';
 import { handleError } from 'util/plazaUtils';
 import { refreshAccessToken } from 'util/auth';
 import ac, { Resources } from 'security/accessControl';
@@ -21,6 +22,8 @@ import {
   UnknownError
 } from 'types';
 import { API_ROOT, TIME_BEFORE_EVENT_TO_DISPLAY_JOIN_BUTTON } from 'index';
+
+import LiveIndicator from 'assets/icons/red-circle.svg';
 
 interface EventDetailProps {
   event?: EventData;
@@ -219,6 +222,13 @@ const EventDetail = (props: EventDetailProps): JSX.Element => {
         <SubtitleText>By {event.presenter}</SubtitleText>
 
         <DateTimeGroup>
+          {isEventLive(event) && (
+            <LiveContainer>
+              <img src={LiveIndicator} alt="This Event is Live" />
+              <LiveDetailText>LIVE</LiveDetailText>
+            </LiveContainer>
+          )}
+
           <SubtitleText>
             {dayjs(event.startTime).format('dddd, MMMM D, YYYY')}
           </SubtitleText>
@@ -294,6 +304,26 @@ const TitleText = styled.h3`
 const SubtitleText = styled.h4`
   font-size: 1.25rem;
   font-weight: normal;
+  margin: 0 auto 0.25rem;
+  text-align: center;
+  align-self: center;
+  justify-self: center;
+`;
+
+const LiveContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+
+  & > img {
+    margin-right: 0.5rem;
+  }
+`;
+
+const LiveDetailText = styled.div`
+  color: #ff0000;
+  font-size: 1.5rem;
+  font-weight: bold;
 `;
 
 const DateTimeGroup = styled.div`
@@ -302,7 +332,11 @@ const DateTimeGroup = styled.div`
 `;
 
 const DescriptionText = styled.div`
-  word-break: break-all;
+  img {
+    display: block;
+    margin: 0 auto;
+    width: 75%;
+  }
 `;
 
 const ActionButtons = styled.div`
