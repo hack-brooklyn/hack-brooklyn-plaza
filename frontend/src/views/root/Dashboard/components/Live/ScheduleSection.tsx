@@ -1,6 +1,8 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
+import { ScheduleViewer } from 'components/schedule';
 import { LinkButton } from 'components';
 import {
   LiveDashboardHeading,
@@ -9,39 +11,72 @@ import {
 import { Breakpoints } from 'types';
 
 const ScheduleSection = (): JSX.Element => {
+  const history = useHistory();
+
   return (
     <LiveDashboardSection>
-      <LiveDashboardHeading>My Schedule</LiveDashboardHeading>
+      <ScheduleHeading>My Schedule</ScheduleHeading>
 
-      {/* TODO: Add personalized schedule section */}
-      {/* Awaiting completion of the schedule builder */}
+      <ScheduleViewer
+        selectEvent={(event) => history.push(`/schedule/${event.id}`)}
+        savedOnly={true}
+        showSaveButton={false}
+      />
 
-      {/* TODO: Conditionally render this if the user's schedule is empty */}
-      <EmptyScheduleNotice>
-        <p>
-          Your personal schedule is empty! Go to the Schedule Builder to find
-          and add events to your schedule.
-        </p>
-        <p>
-          You will be able to receive push notifications for events added to
-          your personal schedule.
-        </p>
-      </EmptyScheduleNotice>
+      <Directions>
+        <div>
+          <DirectionText>
+            To find and add events to your schedule, visit the Schedule Builder
+            by clicking the button below.
+          </DirectionText>
 
-      <LinkButton to="/schedule" centered={true}>
-        Go to Schedule Builder
-      </LinkButton>
+          <DirectionText>
+            You will receive push notifications for each event added to your
+            schedule when they&apos;re about to begin.
+          </DirectionText>
+        </div>
+
+        <LinkButton to="/schedule" centered={true}>
+          Go to Schedule Builder
+        </LinkButton>
+      </Directions>
     </LiveDashboardSection>
   );
 };
 
-const EmptyScheduleNotice = styled.div`
-  margin: 1.5rem auto 2rem;
+const ScheduleHeading = styled(LiveDashboardHeading)`
+  margin-left: 0.5rem;
+  margin-bottom: 0.25rem;
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-bottom: 0;
+  }
+`;
+
+const Directions = styled.div`
+  margin: -8rem auto 1.5rem;
   text-align: center;
   font-size: 1.1rem;
 
   @media screen and (min-width: ${Breakpoints.Medium}px) {
-    max-width: 70%;
+    max-width: 600px;
+  }
+
+  @media screen and (min-width: ${Breakpoints.ExtraLarge}px) {
+    padding-left: 0.5rem;
+  }
+`;
+
+const DirectionText = styled.p`
+  max-width: 90%;
+  margin: 0 auto 0.5rem;
+
+  &:last-child {
+    margin-bottom: 1.25rem;
+  }
+
+  @media screen and (min-width: ${Breakpoints.Large}px) {
+    max-width: 80%;
   }
 `;
 
