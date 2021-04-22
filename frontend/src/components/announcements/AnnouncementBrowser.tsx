@@ -96,6 +96,7 @@ const AnnouncementBrowserContainer = styled.div`
   @media screen and (min-width: ${Breakpoints.Large}px) {
     ${(props: AnnouncementBrowserContainerProps) =>
       props.narrow && 'width: 80%;'}
+  }
 `;
 
 export default AnnouncementBrowser;
