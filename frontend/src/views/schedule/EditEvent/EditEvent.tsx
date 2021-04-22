@@ -96,8 +96,6 @@ const EditEvent = (): JSX.Element => {
   const submitPost = async (eventData: EventData) => {
     try {
       await editEvent(eventData);
-      toast.success('Event successfully edited');
-      history.push('/schedule');
     } catch (err) {
       handleError(err);
     }
@@ -128,7 +126,8 @@ const EditEvent = (): JSX.Element => {
     }
 
     if (res.status === 200) {
-      history.push('/schedule');
+      toast.success('Your changes have been saved.');
+      history.push(`/schedule/${eventId}`);
       return;
     } else if (res.status === 401) {
       const refreshToken = await refreshAccessToken(history);
