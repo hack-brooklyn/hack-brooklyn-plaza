@@ -55,8 +55,6 @@ const CreateEvent = (): JSX.Element => {
   const submitPost = async (eventData: EventData) => {
     try {
       await createEvent(eventData);
-      toast.success('Event successfully created');
-      history.push('/schedule');
     } catch (err) {
       handleError(err);
     }
@@ -94,7 +92,12 @@ const CreateEvent = (): JSX.Element => {
     }
 
     if (res.status === 201) {
-      return;
+      toast.success('The event has been created.');
+
+      const createdEventLocation = res.headers.get('Location');
+      if (createdEventLocation !== null) {
+        history.push(createdEventLocation);
+      }
     } else if (res.status === 400) {
       const errors = (await res.json()).errors;
       console.warn(errors);

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.Collection;
+import java.util.Collections;
 
 @Validated
 @RestController
@@ -49,9 +50,10 @@ public class EventsController {
     @PostMapping
     public ResponseEntity<Void> addEvent(@RequestBody @Valid SaveEventDTO bodyReq) {
         int id = eventService.createNewEvent(bodyReq);
-        String location = "/events" + id;
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Location", location);
+        headers.add("Location", String.format("/schedule/%s", id));
+        headers.setAccessControlExposeHeaders(Collections.singletonList("Location"));
 
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
