@@ -28,8 +28,8 @@ const initialValues: EventData = {
   id: 0,
   title: '',
   presenter: '',
-  startTime: '2021-4-23T00:00:00',
-  endTime: '2021-4-23T00:00:00',
+  startTime: new Date(Date.now()).toISOString(),
+  endTime: new Date(Date.now()).toISOString(),
   description: '',
   externalLink: ''
 };

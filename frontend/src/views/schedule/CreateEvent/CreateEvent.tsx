@@ -15,6 +15,7 @@ import {
   ConnectionError,
   EventData,
   InvalidEventDatesError,
+  InvalidSubmittedDataError,
   NoPermissionError,
   RootState,
   UnknownError
@@ -35,8 +36,8 @@ const CreateEvent = (): JSX.Element => {
     id: 0,
     title: '',
     presenter: '',
-    startTime: '2021-4-23T00:00:00',
-    endTime: '2021-4-23T00:00:00',
+    startTime: new Date(Date.now()).toISOString(),
+    endTime: new Date(Date.now()).toISOString(),
     description: '',
     externalLink: ''
   };
@@ -71,6 +72,12 @@ const CreateEvent = (): JSX.Element => {
       throw new InvalidEventDatesError();
     }
 
+    const processedEventData = { ...eventData };
+    processedEventData.startTime = new Date(eventData.startTime).toISOString();
+    processedEventData.endTime = new Date(eventData.endTime).toISOString();
+
+    console.log(processedEventData);
+
     let res;
     try {
       res = await fetch(`${API_ROOT}/events`, {
@@ -88,6 +95,10 @@ const CreateEvent = (): JSX.Element => {
 
     if (res.status === 201) {
       return;
+    } else if (res.status === 400) {
+      const errors = (await res.json()).errors;
+      console.warn(errors);
+      throw new InvalidSubmittedDataError();
     } else if (res.status === 401) {
       const refreshToken = await refreshAccessToken(history);
       await createEvent(eventData, refreshToken);
