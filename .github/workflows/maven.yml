@@ -38,6 +38,7 @@ jobs:
           DISCORD_WEBHOOK: https://discord.com/api/webhooks
           DISCORD_URL: https://discord.com
           DEVPOST_URL: https://devpost.com
+          GUIDE_URL: https://example.com
 
           # Security
           BCRYPT_SALT_ROUNDS: 10
@@ -57,7 +58,7 @@ jobs:
 
           # SendGrid
           SENDGRID_API_KEY: SG.fakekey
-          SENDGRID_FROM_EMAIL: noreply@hackbrooklyn.org
+          SENDGRID_FROM_EMAIL: email@example.com
           SENDGRID_ACTIVATE_ACCOUNT_TEMPLATE_ID: d-faketemplate
           SENDGRID_RESET_PASSWORD_TEMPLATE_ID: d-faketemplate2
 
