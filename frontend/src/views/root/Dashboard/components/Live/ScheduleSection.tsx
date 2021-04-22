@@ -45,10 +45,10 @@ const ScheduleSection = (): JSX.Element => {
 };
 
 const ScheduleHeading = styled(LiveDashboardHeading)`
-  margin-left: 0.5rem;
   margin-bottom: 0.25rem;
 
   @media screen and (min-width: ${Breakpoints.Large}px) {
+    margin-left: 0.5rem;
     margin-bottom: 0;
   }
 `;
