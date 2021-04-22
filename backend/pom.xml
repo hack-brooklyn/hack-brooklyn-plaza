@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.hackbrooklyn</groupId>
     <artifactId>plaza</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>hack-brooklyn-plaza</name>
     <description>The digital platform for Hack Brooklyn.</description>
 
