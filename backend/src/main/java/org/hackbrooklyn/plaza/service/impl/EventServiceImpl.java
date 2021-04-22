@@ -171,7 +171,7 @@ public class EventServiceImpl implements EventService {
         long eventStartTimeMs = event.getStartTime().atZone(ZoneId.of("UTC")).toInstant().toEpochMilli();
 
         if (eventStartTimeMs > currentTimeMs) {
-            log.warn(String.format("Scheduling a push notification for event ID: %s", event.getId()));
+            log.info(String.format("Scheduling a push notification for event ID: %s", event.getId()));
             new Timer().schedule(
                     new SendEventPushNotificationsTask(event, pushNotificationUtils, eventRepository),
                     eventStartTimeMs - currentTimeMs
